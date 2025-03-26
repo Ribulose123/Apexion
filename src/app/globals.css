@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+:root {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #01040F;
+    --foreground: #ededed;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Hero Background with Grid */
+.bg-hero {
+  position: relative;
+  z-index: 0;
+}
+
+/* Grid lines with fading effect */
+.bg-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+ 
+  background-image:  
+    linear-gradient(rgba(200, 200, 200, 0.1) 1px, transparent 6px),
+    linear-gradient(90deg, rgba(200, 200, 200, 0.1) 1px, transparent 2px);
+  background-size: 100px 100px; 
+
+  /* Fading Effect */
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+
+  pointer-events: none;
+}
+
+.border-glitch {
+  position: relative;
+  text-decoration: none;
+}
+
+.border-glitch::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(180, 180, 180, 0.8));
+  
+}
+
+.bg-cn{
+  background-color: #6967AE;
+  position: relative;
+
+}
+
+.bg-cn::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 60px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 60px);
+    background-size: 50px 50px;
+    mask-image:  linear-gradient(to bottom, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 90%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 90%);
+}
+}
