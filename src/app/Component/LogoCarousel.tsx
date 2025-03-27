@@ -13,15 +13,26 @@ const logos = [
 
 const LogoCarousel = () => {
   return (
-    <div className="w-full overflow-hidden mt-[70px] py-4 ">
+    <div className="w-full overflow-hidden mt-[70px] py-4">
       <motion.div
         className="flex items-center whitespace-nowrap"
-        animate={{ x: ["0%", "-100%"] }} 
-        transition={{ repeat: Infinity, duration: 20, ease: "linear" }} 
+        animate={{ 
+          x: ["0%", "-100%"] 
+        }} 
+        transition={{ 
+          repeat: Infinity, 
+          duration: 20, 
+          ease: "linear",
+          repeatType: "loop"
+        }} 
         style={{ width: "200%" }} 
       >
-        {[...logos, ...logos].map((logo, index) => (
-          <div key={index} className="mx-6 opacity-70 hover:opacity-100 transition-opacity">
+        {/* Duplicating logos to create an infinite scroll effect */}
+        {[...logos, ...logos, ...logos].map((logo, index) => (
+          <div 
+            key={index} 
+            className="mx-6 opacity-70 hover:opacity-100 transition-opacity"
+          >
             <Image 
               src={logo} 
               alt="Brand Logo" 

@@ -42,38 +42,34 @@ const Exchange = () => {
   };
 
   return (
-    <div className="sm:w-[355px] sm:h-[355px] w-[450px] h-[290px] mx-auto p-6 bg-[#0D0E13] text-white shadow-xl rounded-2xl border border-gray-800 relative">
-      <h2 className="text-center sm:text-lg text-[15px] font-semibold mb-6 opacity-80">Online Money Exchange</h2>
+    <div className="w-full max-w-[450px] sm:max-w-[355px] h-[240px] mx-auto p-4 bg-[#0D0E13] text-white shadow-xl rounded-2xl border border-gray-800 relative flex flex-col">
+      <h2 className="text-center text-[15px] sm:text-lg font-semibold mb-6 opacity-80">
+        Online Money Exchange
+      </h2>
 
-      {/* Swap Button */}
-     
-
-      {/* CURRENCY CONTAINER */}
-      <div className=" p-4 rounded-xl shadow-lg relative">
-
-
-      <div className="absolute left-1/2 transform -translate-x-1/2 top-[75px] z-10">
-        <button 
-          onClick={swapCurrency} 
-          className="bg-[#5E5FE0] p-3 rounded-full shadow-lg transition-all duration-300 hover:bg-[#6E70F2]"
-        >
-          <CgArrowsExchangeAltV className="text-white text-[20px]" />
-        </button>
-      </div>
+      <div className="flex-grow p-4 rounded-xl shadow-lg relative flex flex-col">
+        <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 z-10">
+          <button 
+            onClick={swapCurrency} 
+            className="bg-[#5E5FE0] p-2 rounded-full shadow-lg transition-all duration-300 hover:bg-[#6E70F2]"
+          >
+            <CgArrowsExchangeAltV className="text-white text-[16px]" />
+          </button>
+        </div>
         
         {/* FROM CURRENCY */}
-        <div className="relative flex items-center mb-3 border border-gray-200/10 top-1.5 bg-transparent p-4 rounded-lg">
-          <span className="absolute left-4 text-2xl">{currencySymbols[fromCurrency]}</span>
+        <div className="relative flex items-center mb-2 border border-gray-200/10 bg-transparent p-3 rounded-lg">
+          <span className="absolute left-4 text-xl">{currencySymbols[fromCurrency]}</span>
           <input
             type="number"
             value={amount}
             onChange={(e) => setAmount(parseFloat(e.target.value) || 1)}
-            className="bg-transparent text-white w-full text-xl text-center outline-none py-2"
+            className="bg-transparent text-white w-full text-lg text-center outline-none py-1"
           />
           <select
             value={fromCurrency}
             onChange={(e) => setFromCurrency(e.target.value)}
-            className="absolute right-4 bg-[#0D0E13] border border-gray-100/10 text-white p-2 rounded-lg cursor-pointer"
+            className="absolute right-4 bg-[#0D0E13] border border-gray-100/10 text-white p-1 rounded-lg cursor-pointer text-sm"
           >
             {currencies.map((currency) => (
               <option key={currency} value={currency}>{currency}</option>
@@ -82,28 +78,28 @@ const Exchange = () => {
         </div>
 
         {/* TO CURRENCY */}
-        <div className="relative flex items-center mt-3 bg-[#191B23] p-4 rounded-lg bottom-1.5">
-          <span className="absolute left-4 text-2xl">{currencySymbols[toCurrency]}</span>
+        <div className="relative flex items-center mt-2 bg-[#191B23] p-3 rounded-lg">
+          <span className="absolute left-4 text-xl">{currencySymbols[toCurrency]}</span>
           <input
             type="number"
             value={exchangeAmount.toFixed(2)}
             readOnly
-            className="bg-transparent text-white w-full text-xl text-center outline-none py-2"
+            className="bg-transparent text-white w-full text-lg text-center outline-none py-1"
           />
           <select
             value={toCurrency}
             onChange={(e) => setToCurrency(e.target.value)}
-            className="absolute right-4 bg-[#0D0E13]  border border-gray-100/10 text-white p-2 rounded-lg cursor-pointer outline-0"
+            className="absolute right-4 bg-[#0D0E13] border border-gray-100/10 text-white p-1 rounded-lg cursor-pointer text-sm outline-0"
           >
             {currencies.map((currency) => (
               <option key={currency} value={currency}>{currency}</option>
             ))}
           </select>
         </div>
-
       </div>
     </div>
   );
 };
 
 export default Exchange;
+
