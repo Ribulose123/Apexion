@@ -92,7 +92,7 @@ const TestimonialSlider: React.FC = () => {
             {testimonials.map((testimonial) => (
               <div key={testimonial.id} className="px-2 md:px-4">
                 <div className="bg-[#0A0E17] rounded-xl p-4 md:p-6 shadow-lg border-2 border-[#141E32] 
-                  w-full max-w-[320px] sm:max-w-[380px] md:max-w-[400px] mx-auto 
+                  w-full max-w-[450px] sm:max-w-[380px] md:max-w-[400px] mx-auto 
                   h-[240px] sm:h-[260px] flex flex-col justify-between">
                   
                   {/* Rating (Stars) */}

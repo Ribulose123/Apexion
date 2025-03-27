@@ -10,8 +10,8 @@ import LogoCarousel from "./Component/LogoCarousel";
 
 export default function Home() {
   return (
-    <header>
-      <section className="text-center py-20 px-4 flex flex-col items-center">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="text-center py-20 flex flex-col items-center">
         <h1 className="sm:text-[96px] text-[40px] font-semibold sm:font-medium leading-tight">
           Step into a new chapter of online trading.
         </h1>
@@ -25,16 +25,38 @@ export default function Home() {
           <FaArrowRight className="w-4 h-4 bg-white text-black text-[14px] rounded-full p-1" />
         </button>
 
-        <Card />
+        <div className="w-full mt-20">
+          <Card />
+        </div>
 
-        <ProductsSection />
-        <ExecutionSection />
-        <ProductCard />
-        <Testimony />
-        <FAQSection />
-        <ConTab />
-        <LogoCarousel />
+        <div className="w-full mt-20">
+          <ProductsSection />
+        </div>
+
+        <div className="w-full mt-20">
+          <ExecutionSection />
+        </div>
+
+        <div className="w-full mt-20">
+          <ProductCard />
+        </div>
+
+        <div className="w-full mt-20">
+          <Testimony />
+        </div>
+
+        <div className="w-full mt-20">
+          <FAQSection />
+        </div>
+
+        <div className="w-full mt-20">
+          <ConTab />
+        </div>
+
+        <div className="w-full mt-20">
+          <LogoCarousel />
+        </div>
       </section>
-    </header>
+    </main>
   );
 }
