@@ -23,7 +23,7 @@ const ProductCard = () => {
           {/* Card Content */}
           <div className="flex flex-col justify-start items-start h-full">
             <h3 className="text-lg md:text-xl font-medium relative z-10">Apexion Card</h3>
-            <p className="text-gray-400 mt-2 relative z-10 text-start text-sm md:text-[16px] w-[80%]">
+            <p className="text-gray-400 mt-2 relative z-10 text-start text-sm md:text-[16px] w-[65%]">
               Up to 10% Cashback, 8% AVR, VIP Privileges and More
             </p>
             <a href="#" className="text-blue-400 mt-auto inline-block relative z-10">Details →</a>
@@ -50,7 +50,7 @@ const ProductCard = () => {
           {/* Card Content */}
           <div className="flex flex-col justify-start items-start h-full">
             <h3 className="text-lg md:text-xl font-medium relative z-10">Apexion Card</h3>
-            <p className="text-gray-400 mt-2 relative z-10 text-start text-sm md:text-[16px] w-[80%]">
+            <p className="text-gray-400 mt-2 relative z-10 text-start text-sm md:text-[16px] w-[65%]">
               Up to 10% Cashback, 8% AVR, VIP Privileges and More
             </p>
             <a href="#" className="text-blue-400 mt-auto inline-block relative z-10">Details →</a>

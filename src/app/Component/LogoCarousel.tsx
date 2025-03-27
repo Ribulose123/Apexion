@@ -31,14 +31,14 @@ const LogoCarousel = () => {
         {[...logos, ...logos, ...logos].map((logo, index) => (
           <div 
             key={index} 
-            className="mx-6 opacity-70 hover:opacity-100 transition-opacity"
+            className="mx-3 sm:mx-6 opacity-70 hover:opacity-100 transition-opacity"
           >
             <Image 
               src={logo} 
               alt="Brand Logo" 
-              width={150} 
-              height={75} 
-              className="w-[180px] sm:w-[150px] md:w-[180px] lg:w-[200px] h-auto" 
+              width={250}  // Increased base width
+              height={125}  // Proportionally increased height
+              className="w-[230px] sm:w-[180px] md:w-[200px] lg:w-[250px] h-auto" 
             />
           </div>
         ))}

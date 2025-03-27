@@ -36,7 +36,6 @@ export default function Home() {
 <FAQSection/>
 <ConTab/>
 <LogoCarousel/>
-<Footer/>
 </section>
 
     </header>
