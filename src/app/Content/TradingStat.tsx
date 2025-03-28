@@ -22,7 +22,7 @@ const TradingStats = () => {
       </div>
 
       <Image
-        src="/img/GlobexNoGLow 1.png" 
+        src="/img/GlobexNoGLow 2.png" 
         alt="Globe Network"
         layout="fill"
         objectFit="cover"

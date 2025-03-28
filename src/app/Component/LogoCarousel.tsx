@@ -25,7 +25,7 @@ const LogoCarousel = () => {
           ease: "linear",
           repeatType: "loop"
         }} 
-        style={{ width: "200%" }} 
+        style={{ width: "400%" }} 
       >
         {/* Duplicating logos to create an infinite scroll effect */}
         {[...logos, ...logos, ...logos].map((logo, index) => (
@@ -38,7 +38,7 @@ const LogoCarousel = () => {
     alt="Brand Logo" 
     width={1200}  // Large base width
     height={400}  // Proportional height
-    className="w-full sm:w-full md:w-full lg:w-full h-auto object-cover" 
+    className="w-full sm:w-full md:w-full  lg:w-full h-auto object-cover" 
   />
 </div>
         ))}
