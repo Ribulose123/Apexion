@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 const TradingStats = () => {
   return (
-    <div className="w-full max-w-[450px] sm:max-w-[550px] mx-auto relative bg-[#0D0E13] text-white p-4 rounded-2xl shadow-lg border border-gray-800 overflow-hidden">
+    <div className="w-full max-w-[450px] sm:max-w-[550px] h-[240px] mx-auto relative bg-[#0D0E13] text-white p-4 rounded-2xl shadow-lg border border-gray-800 overflow-hidden">
       <div className="flex flex-col justify-start items-start">
         <div className="flex items-center text-[35px] sm:text-[60px] font-normal text-[#E8E8E8]">
           68.2%

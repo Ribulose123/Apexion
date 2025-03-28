@@ -38,7 +38,7 @@ const LogoCarousel = () => {
               alt="Brand Logo" 
               width={250}  // Increased base width
               height={125}  // Proportionally increased height
-              className="w-[230px] sm:w-[180px] md:w-[200px] lg:w-[250px] h-auto" 
+              className="w-[350px] sm:w-[180px] md:w-[200px] lg:w-[250px] h-auto" 
             />
           </div>
         ))}

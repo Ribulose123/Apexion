@@ -30,7 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
        
       >
-        <div className="bg-hero bg-cover bg-center min-h-screen">
+        <div className="bg-hero bg-grid bg-cover bg-center min-h-screen">
           <Navbar /> {/* Include the Navbar component */}
           {children}
           <Footer/>

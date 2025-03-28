@@ -36,42 +36,41 @@ const products = [
 
 const ProductsSection = () => {
   return (
-    <div className=" text-white py-16 px-6  mt-[70px] ">
+    <div className="text-white py-16 px-4 sm:px-6 mt-[70px] w-full">
       {/* Title & Description */}
       <div className="text-center max-w-3xl mx-auto">
         <h2 className="text-3xl font-semibold">1 Account 200+ Products</h2>
         <p className="text-gray-400 mt-4">
           Diversify your portfolio with access to over 15,000 products across 7 asset classes.
-          Trade CFDs on Forex, Futures, Indices, Metals, Energies and Shares.
+          Trade CFDs on Forex, Futures, Indices, Metals, Energies, and Shares.
         </p>
       </div>
 
       {/* Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-10 max-w-6xl mx-auto">
-  {products.map((product, index) => (
-    <div
-      key={index}
-      className="bg-white text-black rounded-2xl shadow-lg p-6 flex flex-col items-center text-center h-full gap-4"
-    >
-      <Image
-        src={product.img}
-        alt={product.title}
-        width={80} 
-        height={80} 
-        className="bg-gray-200 p-4 rounded-full mb-4"
-      />
-      <div className="flex-1 flex flex-col">
-        <h3 className="text-lg font-semibold">{product.title}</h3>
-        <p className="text-sm text-gray-500 mt-2">{product.description}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10 max-w-none w-full mx-auto">
+        {products.map((product, index) => (
+          <div
+            key={index}
+            className="bg-white text-black rounded-2xl shadow-lg p-6 flex flex-col items-center text-center h-full gap-4"
+          >
+            <Image
+              src={product.img}
+              alt={product.title}
+              width={80}
+              height={80}
+              className="bg-gray-200 p-4 rounded-full mb-4"
+            />
+            <div className="flex-1 flex flex-col">
+              <h3 className="text-lg font-semibold">{product.title}</h3>
+              <p className="text-sm text-gray-500 mt-2">{product.description}</p>
+            </div>
+            <button className="mt-auto border border-gray-600 px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-gray-100 transition items-center flex gap-2">
+              More
+              <FaArrowRight className="inline ml-2" />
+            </button>
+          </div>
+        ))}
       </div>
-      <button className="mt-auto border border-gray-600 px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-gray-100 transition items-center flex gap-2">
-        More
-        <FaArrowRight className="inline ml-2" />
-      </button>
-    </div>
-  ))}
-</div>
-
     </div>
   );
 };

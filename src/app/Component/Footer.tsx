@@ -1,5 +1,6 @@
 import React from "react";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaDiscord ,FaYoutube  } from "react-icons/fa";
+import Link from "next/link";
 
 const Footer = () => {
   return (
@@ -8,29 +9,29 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row md:justify-between md:items-start items-start">
           {/* Logo Section */}
           <div className="mb-6 md:mb-0">
-            <h2 className="text-2xl sm:text-[40px] text-[25px] font-bold">LOGO</h2>
+            <h2 className="text-2xl sm:text-[40px] text-[30px] font-bold">LOGO</h2>
           </div>
           
           {/* Footer Links */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-12 text-sm">
             <div className="text-start ">
-              <h3 className="font-semibold mb-2 text-[13px] sm:text-[18px]">Company</h3>
-              <ul className="space-y-1 opacity-70 hover:opacity-100  text-[#6B6B6B] text-[12px] sm:text-[15px] font-medium">
-                <li><a href="#">Career</a></li>
-                <li><a href="#">About Apexion</a></li>
-                <li><a href="#">FAQs</a></li>
+              <h3 className="font-semibold mb-2 text-[14px] sm:text-[18px]">Company</h3>
+              <ul className="space-y-1 opacity-70 hover:opacity-100  text-[#6B6B6B] text-[13px] sm:text-[15px] font-medium">
+                <li><Link href="/contact">Career</Link></li>
+                <li><Link href="/about">About Apexion</Link></li>
+                <li><Link href="faq">FAQs</Link></li>
               </ul>
             </div>
             <div className="text-start ">
-              <h3 className="font-semibold mb-2 text-[13px] sm:text-[18px]">Support</h3>
+              <h3 className="font-semibold mb-2 text-[14px] sm:text-[18px]"><Link href='/contact'>Support</Link></h3>
               <ul className="space-y-1 opacity-70 hover:opacity-100 sm:block hidden text-[#6B6B6B] text-[12px] sm:text-[15px] font-medium">
-                <li><a href="#">Contact us</a></li>
+                <li className="sm:block hidden"><Link href="/contact">Contact us</Link></li>
                 <li><a href="#">Community</a></li>
                 <li><a href="#">Help Center</a></li>
               </ul>
             </div>
             <div className="text-start ">
-              <h3 className="font-semibold mb-2 text-[13px] sm:text-[18px]">Services</h3>
+              <h3 className="font-semibold mb-2 text-[14px] sm:text-[18px]">Services</h3>
               <ul className="space-y-1 opacity-70 hover:opacity-100 sm:block hidden text-[#6B6B6B] text-[12px] sm:text-[15px] font-medium">
                 <li><a href="#">Stock</a></li>
                 <li><a href="#">Forex</a></li>
@@ -39,7 +40,7 @@ const Footer = () => {
               </ul>
             </div>
             <div className="text-start ">
-              <h3 className="font-semibold mb-2 text-[13px] sm:text-[18px]">Legal & Privacy</h3>
+              <h3 className="font-semibold mb-2 text-[14px] sm:text-[18px]"><Link href='/policy'>Legal & Privacy</Link></h3>
               <ul className="space-y-1 opacity-70 hover:opacity-100 sm:block hidden text-[#6B6B6B] text-[12px] sm:text-[15px] font-medium">
                 <li><a href="#">Cookie Policy</a></li>
                 <li><a href="#">Cookie Preferences</a></li>
