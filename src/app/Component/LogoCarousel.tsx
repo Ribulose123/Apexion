@@ -25,7 +25,7 @@ const LogoCarousel = () => {
           ease: "linear",
           repeatType: "loop"
         }} 
-        style={{ width: "400%" }} 
+        style={{ width: "300%" }} 
       >
         {/* Duplicating logos to create an infinite scroll effect */}
         {[...logos, ...logos, ...logos].map((logo, index) => (
