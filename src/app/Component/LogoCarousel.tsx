@@ -29,18 +29,18 @@ const LogoCarousel = () => {
       >
         {/* Duplicating logos to create an infinite scroll effect */}
         {[...logos, ...logos, ...logos].map((logo, index) => (
-          <div 
-            key={index} 
-            className="mx-3 sm:mx-6 opacity-70 hover:opacity-100 transition-opacity"
-          >
-            <Image 
-              src={logo} 
-              alt="Brand Logo" 
-              width={250}  // Increased base width
-              height={125}  // Proportionally increased height
-              className="w-[350px] sm:w-[180px] md:w-[200px] lg:w-[250px] h-auto" 
-            />
-          </div>
+        <div 
+  key={index} 
+  className="w-full px-4 sm:px-6"
+>
+  <Image 
+    src={logo} 
+    alt="Brand Logo" 
+    width={1200}  // Large base width
+    height={400}  // Proportional height
+    className="w-full sm:w-full md:w-full lg:w-full h-auto object-cover" 
+  />
+</div>
         ))}
       </motion.div>
     </div>

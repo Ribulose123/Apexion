@@ -2,6 +2,7 @@ import React from "react";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaDiscord ,FaYoutube  } from "react-icons/fa";
 import Link from "next/link";
 
+
 const Footer = () => {
   return (
     <footer className=" text-white py-8 px-6 md:px-20 w-full mt-[150px]">
@@ -23,16 +24,16 @@ const Footer = () => {
               </ul>
             </div>
             <div className="text-start ">
-              <h3 className="font-semibold mb-2 text-[14px] sm:text-[18px]"><Link href='/contact'>Support</Link></h3>
-              <ul className="space-y-1 opacity-70 hover:opacity-100 sm:block hidden text-[#6B6B6B] text-[12px] sm:text-[15px] font-medium">
+              <h3 className="font-semibold mb-2 text-[15px] sm:text-[18px]"><Link href='/contact'>Support</Link></h3>
+              <ul className="space-y-1 opacity-70 hover:opacity-100 sm:block hidden text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium">
                 <li className="sm:block hidden"><Link href="/contact">Contact us</Link></li>
                 <li><a href="#">Community</a></li>
                 <li><a href="#">Help Center</a></li>
               </ul>
             </div>
             <div className="text-start ">
-              <h3 className="font-semibold mb-2 text-[14px] sm:text-[18px]">Services</h3>
-              <ul className="space-y-1 opacity-70 hover:opacity-100 sm:block hidden text-[#6B6B6B] text-[12px] sm:text-[15px] font-medium">
+              <h3 className="font-semibold mb-2 text-[15px] sm:text-[18px]">Services</h3>
+              <ul className="space-y-1 opacity-70 hover:opacity-100 sm:block hidden text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium">
                 <li><a href="#">Stock</a></li>
                 <li><a href="#">Forex</a></li>
                 <li><a href="#">Crypto</a></li>
@@ -40,8 +41,8 @@ const Footer = () => {
               </ul>
             </div>
             <div className="text-start ">
-              <h3 className="font-semibold mb-2 text-[14px] sm:text-[18px]"><Link href='/policy'>Legal & Privacy</Link></h3>
-              <ul className="space-y-1 opacity-70 hover:opacity-100 sm:block hidden text-[#6B6B6B] text-[12px] sm:text-[15px] font-medium">
+              <h3 className="font-semibold mb-2 text-[15px] sm:text-[18px]"><Link href='/policy'>Legal & Privacy</Link></h3>
+              <ul className="space-y-1 opacity-70 hover:opacity-100 sm:block hidden text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium">
                 <li><a href="#">Cookie Policy</a></li>
                 <li><a href="#">Cookie Preferences</a></li>
                 <li><a href="#">Terms of Use</a></li>

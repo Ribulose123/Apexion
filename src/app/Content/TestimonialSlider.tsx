@@ -155,12 +155,7 @@ const TestimonialSlider: React.FC = () => {
             </button>
           </div>
 
-          {/* Add Comment Button */}
-          <div className="sm:hidden block mt-4 text-center">
-            <button className="bg-[#6967AE] px-4 py-2 rounded-full cursor-pointer text-sm">
-              Add comment
-            </button>
-          </div>
+          
         </div>
       </div>
     </div>

@@ -12,7 +12,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-transparent text-white py-4">
-      <div className="container mx-auto flex justify-between items-center px-6 mt-10">
+      <div className="container mx-auto flex justify-between items-center px-10 mt-10">
         {/* Logo */}
         <h1 className="text-2xl font-bold">LOGO</h1>
 
