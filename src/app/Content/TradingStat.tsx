@@ -15,7 +15,7 @@ const TradingStats = () => {
           Spots · <span className="text-yellow-400">Worldwide</span>
         </p>
 
-        <p className="text-[#E8E8E8] text-[14px] sm:text-[15px] mt-4 w-full sm:w-[70%] text-start">
+        <p className="text-[#E8E8E8] text-[14px] sm:text-[15px] mt-1 w-full sm:w-[68%] text-start">
           Join Apexion Trades to enjoy the benefits of trading with a regulated, 
           secure broker designed to execute your transactions in seconds.
         </p>

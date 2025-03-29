@@ -20,7 +20,7 @@ const FAQSection = () => {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto text-white py-12  px-1 mt-[70px]">
+    <div className="w-full max-w-5xl mx-auto text-white py-12  px-1  sm:mt-[40px]">
       <h2 className="text-center text-[24px] sm:text[50px] font-semibold mb-6">
         Everything You Need to Know
       </h2>

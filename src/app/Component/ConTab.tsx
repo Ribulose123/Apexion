@@ -2,7 +2,7 @@ import React from 'react'
 
 const ConTab = () => {
   return (
-    <div className='mt-12 sm:mt-[70px] w-full px-4 sm:px-6 lg:px-8'>
+    <div className='mt-12 sm:mt-[40px] w-full px-4 sm:px-6 lg:px-8'>
       <div className="relative w-full max-w-[1300px] p-6 sm:p-12 lg:p-16 rounded-2xl bg-cn text-center flex flex-col items-center justify-center mx-auto">
         {/* Text */}
         <h1 className="text-white text-2xl sm:text-4xl lg:text-[48px] font-semibold leading-normal sm:leading-tight max-w-4xl mx-auto">

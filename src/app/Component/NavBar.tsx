@@ -58,7 +58,7 @@ const Navbar = () => {
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        <div className="md:hidden bg-gray-800 text-center py-4">
+        <div className="md:hidden bg-[#101011] mx-auto p-10">
           <ul className="space-y-4">
             {["Home", "About Us", "FAQs", "Pricing"].map((item, index) => {
               const href = item === "Home" ? "/" : `/${item.toLowerCase().replace(/\s+/g, "-")}`;
@@ -74,10 +74,10 @@ const Navbar = () => {
 
           {/* Mobile Login/Register */}
           <div className="mt-4 space-y-2">
-            <Link href="/login" className="block px-4 py-2 border border-gray-200/10 transition">
+            <Link href="/login" className="block px-4 py-2 border border-gray-200/10 transition w-1/2 rounded-full">
               Login
             </Link>
-            <Link href="/register" className="block bg-[#6967AE] rounded-full px-4 py-2 transition">
+            <Link href="/register" className="block bg-[#6967AE] rounded-full px-4 py-2 transition w-1/2">
               Register
             </Link>
           </div>

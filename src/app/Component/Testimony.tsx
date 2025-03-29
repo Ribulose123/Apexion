@@ -3,7 +3,7 @@ import TestimonialSlider from '../Content/TestimonialSlider'
 
 const Testimony = () => {
   return (
-    <div className='mt-[70px]'>
+    <div className='sm:mt-[40px] -mt-4'>
       <TestimonialSlider/>
     </div>
   )

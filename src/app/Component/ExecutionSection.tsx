@@ -3,7 +3,7 @@ import { FaCheck } from "react-icons/fa6";
 
 const ExecutionSection = () => {
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between py-12 text-white mt-[70px]">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between py-12 text-white mt-[40px]">
       {/* Left Content */}
       <div className="w-full md:w-1/2 md:pr-12">
         <h2 className="text-3xl md:text-[57px] font-semibold text-start leading-tight">
