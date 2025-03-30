@@ -14,7 +14,7 @@ const Navbar = () => {
     <nav className="bg-transparent text-white py-4">
       <div className="container mx-auto flex justify-between items-center px-10 mt-10">
         {/* Logo */}
-        <h1 className="text-2xl font-bold">LOGO</h1>
+        <Image src='/img/logo.jpg' alt="logo" width={200} height={100}/>
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-6">
@@ -58,7 +58,7 @@ const Navbar = () => {
 
       {/* Mobile Dropdown Menu */}
       {isOpen && (
-        <div className="md:hidden bg-[#101011] mx-auto p-10">
+        <div className="md:hidden bg-[#01040F] relative mx-auto p-10">
           <ul className="space-y-4">
             {["Home", "About Us", "FAQs", "Pricing"].map((item, index) => {
               const href = item === "Home" ? "/" : `/${item.toLowerCase().replace(/\s+/g, "-")}`;

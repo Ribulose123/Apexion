@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaDiscord, FaYoutube, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Link from "next/link";
+import Image from "next/image"
 
 const Footer = () => {
   const [activeSection, setActiveSection] = useState({
@@ -21,10 +22,10 @@ const Footer = () => {
   return (
     <footer className="text-white py-8 px-6 md:px-20 w-full sm:mt-[120px]">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-start items-start">
+        <div className="flex flex-col md:flex-row md:justify-between lg:gap-2 md:items-start items-start">
           {/* Logo Section */}
           <div className="mb-6 md:mb-0">
-            <h2 className="text-2xl sm:text-[40px] text-[30px] font-bold">LOGO</h2>
+            <Image src='/img/logo.jpg' alt="logo" width={200} height={100}/>
           </div>
           
           {/* Footer Links */}
@@ -39,7 +40,7 @@ const Footer = () => {
                   {activeSection.company ? <FaChevronUp /> : <FaChevronDown />}
                 </div>
               </div>
-              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[13px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.company ? 'block' : 'hidden sm:block'}`}>
+              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[13px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.company ? 'block' : 'hidden'}`}>
                 <li><Link href="/contact">Career</Link></li>
                 <li><Link href="/about">About Apexion</Link></li>
                 <li><Link href="faq">FAQs</Link></li>
@@ -48,7 +49,7 @@ const Footer = () => {
             
             <div className="text-start">
               <div 
-                className="flex justify-between items-center cursor-pointer md:cursor-default"
+                className="flex justify-between items-center cursor-pointer"
                 onClick={() => toggleSection('support')}
               >
                 <h3 className="font-semibold mb-2 text-[15px] sm:text-[18px]"><Link href='#'>Support</Link></h3>
@@ -56,7 +57,7 @@ const Footer = () => {
                   {activeSection.support ? <FaChevronUp /> : <FaChevronDown />}
                 </div>
               </div>
-              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.support ? 'block' : 'hidden sm:block'}`}>
+              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.support ? 'block' : 'hidden '}`}>
                 <li><Link href="/contact">Contact us</Link></li>
                 <li><a href="#">Community</a></li>
                 <li><Link href="/feedback">Help Center</Link></li>
@@ -73,7 +74,7 @@ const Footer = () => {
                   {activeSection.services ? <FaChevronUp /> : <FaChevronDown />}
                 </div>
               </div>
-              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.services ? 'block' : 'hidden sm:block'}`}>
+              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.services ? 'block' : 'hidden'}`}>
                 <li><a href="#">Stock</a></li>
                 <li><a href="#">Forex</a></li>
                 <li><a href="#">Crypto</a></li>
@@ -91,7 +92,7 @@ const Footer = () => {
                   {activeSection.legal ? <FaChevronUp /> : <FaChevronDown />}
                 </div>
               </div>
-              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.legal ? 'block' : 'hidden sm:block'}`}>
+              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.legal ? 'block' : 'hidden'}`}>
                 <li><a href="#">Cookie Policy</a></li>
                 <li><a href="#">Cookie Preferences</a></li>
                 <li><a href="#">Terms of Use</a></li>

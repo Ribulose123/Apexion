@@ -31,13 +31,13 @@ const CryptoTable = () => {
 
   return (
     <div className="bg-[#01040F] text-white min-h-screen p-2 sm:p-6 relative w-full">
-      <h2 className="text-xl sm:text-2xl font-bold text-center mb-4">Cryptocurrency Prices Today</h2>
-      <div className="w-full max-w-5xl mx-auto p-2 sm:p-4 rounded-lg overflow-x-auto">
-        <div className="flex flex-wrap gap-2 justify-between text-gray-400 mb-4">
+     
+      <div className="w-full max-w-7xl mx-auto p-2 sm:p-4 rounded-lg overflow-x-auto">
+      <div className="flex overflow-auto items-center gap-10 justify-between text-gray-400 mb-4 px-3">
           {["All", "Gainers", "Losers", "Hot", "Tradeable", "New", "Volume", "Watchlist"].map((cat) => (
             <span
               key={cat}
-              className={`cursor-pointer text-sm whitespace-nowrap ${category === cat ? "text-white border-b-2 border-b-green-950  " : ""}`}
+              className={`cursor-pointer text-sm whitespace-nowrap ${category === cat ? "text-white border-b-3 border-b-green-500  " : ""}`}
               onClick={() => { setCategory(cat); setCurrentPage(1); }}
             >
               {cat}
@@ -55,8 +55,9 @@ const CryptoTable = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm mt-4 min-w-[700px]">
             <thead>
-              <tr className="border-b border-t border-[#141E325C] p-4">
+              <tr className="border-b border-t border-[#141E325C] p-7">
                 
+                <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]"></th>
                 <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Name</th>
                 <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Price</th>
                 <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">24hr High</th>
