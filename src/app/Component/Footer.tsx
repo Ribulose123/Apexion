@@ -25,7 +25,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row md:justify-between lg:gap-2 md:items-start items-start">
           {/* Logo Section */}
           <div className="mb-6 md:mb-0">
-            <Image src='/img/logo.jpg' alt="logo" width={200} height={100}/>
+            <Image src='/img/logo2.jpg' alt="logo" width={50} height={50}/>
           </div>
           
           {/* Footer Links */}
@@ -40,7 +40,7 @@ const Footer = () => {
                   {activeSection.company ? <FaChevronUp /> : <FaChevronDown />}
                 </div>
               </div>
-              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[13px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.company ? 'block' : 'hidden'}`}>
+              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[13px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.company ? 'block' : 'hidden md:block'}`}>
                 <li><Link href="/contact">Career</Link></li>
                 <li><Link href="/about">About Apexion</Link></li>
                 <li><Link href="faq">FAQs</Link></li>
@@ -49,7 +49,7 @@ const Footer = () => {
             
             <div className="text-start">
               <div 
-                className="flex justify-between items-center cursor-pointer"
+                className="flex justify-between items-center cursor-pointer md:cursor-default"
                 onClick={() => toggleSection('support')}
               >
                 <h3 className="font-semibold mb-2 text-[15px] sm:text-[18px]"><Link href='#'>Support</Link></h3>
@@ -57,11 +57,11 @@ const Footer = () => {
                   {activeSection.support ? <FaChevronUp /> : <FaChevronDown />}
                 </div>
               </div>
-              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.support ? 'block' : 'hidden '}`}>
+              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.support ? 'block' : 'hidden md:block'}`}>
                 <li><Link href="/contact">Contact us</Link></li>
                 <li><a href="#">Community</a></li>
                 <li><Link href="/feedback">Help Center</Link></li>
-           </ul>
+              </ul>
             </div>
             
             <div className="text-start">
@@ -74,7 +74,7 @@ const Footer = () => {
                   {activeSection.services ? <FaChevronUp /> : <FaChevronDown />}
                 </div>
               </div>
-              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.services ? 'block' : 'hidden'}`}>
+              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.services ? 'block' : 'hidden md:block'}`}>
                 <li><a href="#">Stock</a></li>
                 <li><a href="#">Forex</a></li>
                 <li><a href="#">Crypto</a></li>
@@ -92,7 +92,7 @@ const Footer = () => {
                   {activeSection.legal ? <FaChevronUp /> : <FaChevronDown />}
                 </div>
               </div>
-              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.legal ? 'block' : 'hidden'}`}>
+              <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#6B6B6B] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.legal ? 'block' : 'hidden md:block'}`}>
                 <li><a href="#">Cookie Policy</a></li>
                 <li><a href="#">Cookie Preferences</a></li>
                 <li><a href="#">Terms of Use</a></li>

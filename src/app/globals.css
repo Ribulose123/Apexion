@@ -96,7 +96,7 @@ body {
   background-blend-mode: overlay;
   position: relative;
   overflow: hidden;
-  top: -13px;
+  top: 100px;
 }
 .crypto-layout::before {
   content: "";

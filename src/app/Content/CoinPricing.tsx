@@ -30,14 +30,14 @@ const CryptoTable = () => {
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <div className="bg-[#01040F] text-white min-h-screen p-2 sm:p-6 relative w-full">
+    <div className="bg-[#01040F] text-white min-h-screen p-2 sm:p-6 relative w-full mt-32">
      
       <div className="w-full max-w-7xl mx-auto p-2 sm:p-4 rounded-lg overflow-x-auto">
-      <div className="flex overflow-auto items-center gap-10 justify-between text-gray-400 mb-4 px-3">
+        <div className="flex overflow-auto items-center gap-10 justify-between text-gray-400 mb-4 px-3">
           {["All", "Gainers", "Losers", "Hot", "Tradeable", "New", "Volume", "Watchlist"].map((cat) => (
             <span
               key={cat}
-              className={`cursor-pointer text-sm whitespace-nowrap ${category === cat ? "text-white border-b-3 border-b-green-500  " : ""}`}
+              className={`cursor-pointer text-sm whitespace-nowrap ${category === cat ? "text-white border-b-3 border-b-green-500" : ""}`}
               onClick={() => { setCategory(cat); setCurrentPage(1); }}
             >
               {cat}
@@ -48,7 +48,7 @@ const CryptoTable = () => {
             <FaSearch className="absolute top-3 left-4 text-[10px]" />
           </div>
         </div>
-        <h2 className="text-white capitalize flex items-center gap-1 text-sm sm:text-base">
+        <h2 className="text-white capitalize flex items-center gap-1 text-sm sm:text-base px-3">
           all cryptocurrencies 
           <span><IoIosInformationCircleOutline/></span>
         </h2>
@@ -56,7 +56,6 @@ const CryptoTable = () => {
           <table className="w-full text-left text-sm mt-4 min-w-[700px]">
             <thead>
               <tr className="border-b border-t border-[#141E325C] p-7">
-                
                 <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]"></th>
                 <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Name</th>
                 <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Price</th>
@@ -70,7 +69,7 @@ const CryptoTable = () => {
             </thead>
             <tbody>
               {currentItems.map((coin) => (
-                <tr key={coin.id} className="">
+                <tr key={coin.id} className="border-b border-[#141E325C]">
                   <td className="py-3 sm:py-5 px-2 sm:px-4"><FaRegStar className="text-gray-500"/></td>
                   <td className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">{coin.name} ({coin.symbol})</td>
                   <td className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">{coin.price}</td>
@@ -88,18 +87,30 @@ const CryptoTable = () => {
           </table>
         </div>
         {/* Pagination */}
-        <div className="flex justify-center items-center gap-2 mt-4 flex-wrap">
-          <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} className="p-2 rounded-full"><FaArrowLeft /></button>
+        <div className="flex justify-center items-center gap-2 mt-6 mb-4 flex-wrap">
+          <button 
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} 
+            className="p-2 rounded-full disabled:opacity-50"
+            disabled={currentPage === 1}
+          >
+            <FaArrowLeft />
+          </button>
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i + 1}
-              className={`px-3 py-1 rounded-full text-[12px] ${currentPage === i + 1 ? "bg-green-300" : ""}`}
+              className={`px-3 py-1 rounded-full text-[12px] ${currentPage === i + 1 ? "bg-green-500 text-white" : ""}`}
               onClick={() => setCurrentPage(i + 1)}
             >
               {i + 1}
             </button>
           ))}
-          <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} className="p-2 rounded-full"><FaArrowRight /></button>
+          <button 
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} 
+            className="p-2 rounded-full disabled:opacity-50"
+            disabled={currentPage === totalPages}
+          >
+            <FaArrowRight />
+          </button>
         </div>
       </div>
     </div>
