@@ -6,14 +6,14 @@ import { FaBitcoin, FaCopy, FaChartLine, FaHome, FaArrowRight } from "react-icon
 const products = [
   {
     icon: <FaBitcoin size={28} className="text-gray-800" />,
-    img: "/img/crypto.png",
+    img: "/img/bt.png",
     title: "Crypto",
     description:
       "Trade and Mine Bitcoin and Other Leading Crypto Currencies with Decentralized Finance",
   },
   {
     icon: <FaCopy size={28} className="text-gray-800" />,
-    img: "/img/copy.png",
+    img: "/img/copy1.png",
     title: "Copy",
     description:
       "Copy trading allows you to directly copy the positions taken by another trader. You simply copy everything",
@@ -34,12 +34,12 @@ const products = [
   },
 ];
 
-const ProductsSection = () => {
+const ProductsSection = () => { 
   return (
     <div className="text-white py-16 px-4 sm:px-6 mt-[70px] w-full">
       {/* Title & Description */}
       <div className="text-center max-w-3xl mx-auto">
-        <h2 className="text-3xl font-semibold">1 Account 200+ Products</h2>
+        <h2 className="text-2xl sm:text-4xl font-medium">1 Account 200+ Products</h2>
         <p className="text-gray-400 mt-4">
           Diversify your portfolio with access to over 15,000 products across 7 asset classes.
           Trade CFDs on Forex, Futures, Indices, Metals, Energies, and Shares.

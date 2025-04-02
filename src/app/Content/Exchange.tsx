@@ -58,7 +58,7 @@ const Exchange = () => {
         </div>
         
         {/* FROM CURRENCY */}
-        <div className="relative flex items-center mb-2 border border-gray-200/10 bg-transparent p-3 rounded-lg">
+        <div className="relative flex items-center -mb-2 border border-gray-200/10 bg-transparent p-3 rounded-lg">
           <span className="absolute left-4 text-xl">{currencySymbols[fromCurrency]}</span>
           <input
             type="number"

@@ -18,9 +18,9 @@ const FAQPage = () => {
     const [openQuestion, setOpenQuestion] = useState<number | null>(null);
 
     return (
-        <div className="text-white px-6 md:px-20 w-full max-w-7xl mx-auto mt-32">
+        <div className="text-white px-6 md:px-20 w-full max-w-7xl mx-auto mt-42">
             <div className='flex flex-col items-center justify-center mb-16 text-center'>
-                <h2 className='text-white text-[30px] sm:text-[45px] md:text-[60px] font-medium'>Frequently Asked Questions</h2>
+                <h2 className='text-white text-2xl md:text-4xl  font-medium'>Frequently Asked Questions</h2>
                 <p className='text-[#7D8491] text-[14px] sm:text-[18px] font-medium max-w-2xl mx-auto mt-4'>
                     Everything you need to know—clear answers for a seamless trading experience
                 </p>

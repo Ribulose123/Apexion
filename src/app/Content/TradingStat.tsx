@@ -1,5 +1,5 @@
 import React from "react";
-import { GoArrowUpRight } from "react-icons/go";
+import { LuArrowUpRight } from "react-icons/lu";
 import Image from 'next/image';
 
 const TradingStats = () => {
@@ -8,17 +8,19 @@ const TradingStats = () => {
       <div className="flex flex-col justify-start items-start">
         <div className="flex items-center text-[35px] sm:text-[60px] font-normal text-[#E8E8E8]">
           68.2%
-          <GoArrowUpRight className="ml-2 text-gray-400" size={20} />
+          <LuArrowUpRight className="ml-2 text-gray-400" size={20} />
         </div>
 
-        <p className="text-base sm:text-lg mt-2">
+        <div className="">
+        <p className="text-base sm:text-lg mt-4">
           Spots · <span className="text-yellow-400">Worldwide</span>
         </p>
 
-        <p className="text-[#E8E8E8] text-[14px] sm:text-[15px] mt-1 w-full sm:w-[68%] text-start">
+        <p className="text-[#E8E8E8] font-medium text-[11px] sm:text-[13px] mt-8 sm:mt-3  w-[68%] text-start">
           Join Apexion Trades to enjoy the benefits of trading with a regulated, 
           secure broker designed to execute your transactions in seconds.
         </p>
+        </div>
       </div>
 
       <Image

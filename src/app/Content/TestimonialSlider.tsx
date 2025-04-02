@@ -82,7 +82,7 @@ const TestimonialSlider: React.FC = () => {
   return (
     <div className="w-full flex justify-center py-12 px-4 sm:px-6">
       <div className="w-full max-w-7xl text-white text-center">
-        <h2 className="text-2xl md:text-3xl font-semibold">What People Say About Us</h2>
+        <h2 className="text-2xl md:text-4xl font-medium">What People Say About Us</h2>
         <p className="text-gray-400 mt-2 text-sm md:text-base">
           Trusted by millions of customers worldwide.
         </p>

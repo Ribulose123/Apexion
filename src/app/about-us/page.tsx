@@ -7,8 +7,8 @@ import LogoCarousel from "../Component/LogoCarousel";
 
 export default function About() {
   return (
-    <main className="min-h-screen -mt-30">
-      <section className="relative w-full min-h-screen md:min-h-[70vh] flex items-center justify-center sm:-top-0">
+    <main className="min-h-screen -mt-30 sm:mt-25">
+      <section className="relative w-full min-h-screen md:min-h-[70vh] flex items-center justify-center sm:top-0">
         {/* Background Image */}
         <div className="absolute inset-1">
           <Image 
@@ -37,19 +37,19 @@ export default function About() {
         <Mission/>
       </section>
       
-      <section className="-mt-80 sm:mt-24">
+      <section className="-mt-50 sm:mt-24">
         <Founded/>
       </section>
       
-      <section className="-mt-26 sm:mt-24">
+      <section className="-mt-16 sm:mt-24">
         <GoalAndTechnology/>
       </section>
       
-      <section className="mt-16 sm:mt-24">
+      <section className="mt-2 sm:mt-24">
         <ExecutionSection/>
       </section>
       
-      <section className="mt-16 sm:mt-24 text-center px-4">
+      <section className="mt-16 sm:mt-24 text-start px-4">
         <div>
           <p className="font-medium sm:text-[30px] text-[20px] text-[#E8E8E8]">The world&apos;s most innovative enterprises are working with us</p>
         </div>

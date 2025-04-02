@@ -13,7 +13,7 @@ const logos = [
 
 const LogoCarousel = () => {
   return (
-    <div className="w-full overflow-hidden mt-[70px] py-4">
+    <div className="w-full  mt-[70px] py-4">
       <motion.div
         className="flex items-center whitespace-nowrap"
         animate={{ 

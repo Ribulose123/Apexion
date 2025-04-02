@@ -10,16 +10,16 @@ const BillManagementCard = () => {
 
       <div className="flex-grow p-4 rounded-xl shadow-lg flex flex-col justify-between">
         {/* Description */}
-        <p className="text-[#797A80] text-center text-sm sm:text-base flex-grow flex items-center justify-center">
+        <p className="text-[#797A80] text-center text-[11px] sm:text-[13px] font-medium flex-grow flex items-center justify-center">
           Easily manage, pay and reconcile business bills
         </p>
 
         {/* Buttons */}
         <div className="flex justify-center gap-4 mt-4">
-          <button className="border border-gray-600 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm text-gray-300 hover:bg-gray-800 transition">
+          <button className="border border-gray-600 px-3 sm:px-4 py-2 rounded-full text-[11px] sm:text-[13px] font-medium  text-gray-300 hover:bg-gray-800 transition">
             Show as List
           </button>
-          <button className="border border-gray-600 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm flex items-center gap-1 text-gray-300 hover:bg-gray-800 transition">
+          <button className="border border-gray-600 px-3 sm:px-4 py-2 rounded-full text-[11px] sm:text-[13px] flex  font-medium items-center gap-1 text-gray-300 hover:bg-gray-800 transition">
             Download zip <GoDownload size={16} />
           </button>
         </div>

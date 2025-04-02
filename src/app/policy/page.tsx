@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function PrivacyPolicy() {
   return (
-    <div className="text-white min-h-screen w-full overflow-x-hidden px-4 sm:px-6 lg:px-8">
+    <div className="text-white min-h-screen w-full overflow-x-hidden px-4 sm:px-6 lg:px-8 mt-20">
       <div className="max-w-xl sm:max-w-7xl mx-auto py-12 w-"> {/* Increased max-width */}
         <h1 className="text-3xl md:text-5xl font-bold text-center mb-12">
           Privacy Policy
