@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from "react";
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaDiscord, FaYoutube, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaDiscord, FaYoutube} from "react-icons/fa";
 import { BiSolidDownArrow  , BiSolidUpArrow} from "react-icons/bi";
 import Link from "next/link";
 import Image from "next/image"
