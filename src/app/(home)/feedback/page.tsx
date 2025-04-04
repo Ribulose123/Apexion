@@ -1,4 +1,4 @@
-import FeedBack from "../Content/FeedBack";
+import FeedBack from "../../Content/FeedBack";
 
 export default function Feedback() {
     return(

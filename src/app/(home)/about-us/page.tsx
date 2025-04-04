@@ -1,9 +1,9 @@
 import Image from "next/image";
-import Mission from "../Content/Mission";
-import Founded from "../Content/Founded";
-import GoalAndTechnology from "../Content/GoalAndTechnology";
-import ExecutionSection from "../Component/ExecutionSection";
-import LogoCarousel from "../Component/LogoCarousel";
+import Mission from "../../Content/Mission";
+import Founded from "../../Content/Founded";
+import GoalAndTechnology from "../../Content/GoalAndTechnology";
+import ExecutionSection from "../../Component/ExecutionSection";
+import LogoCarousel from "../../Component/LogoCarousel";
 
 export default function About() {
   return (

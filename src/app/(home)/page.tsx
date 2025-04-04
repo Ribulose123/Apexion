@@ -1,12 +1,12 @@
 import { FaArrowRight } from "react-icons/fa";
-import Card from "./Component/Card";
-import ProductsSection from "./Component/ProductsSection";
-import ExecutionSection from "./Component/ExecutionSection";
-import ProductCard from "./Component/ProductCard";
-import Testimony from "./Component/Testimony";
-import FAQSection from "./Component/FAQSection";
-import ConTab from "./Component/ConTab";
-import LogoCarousel from "./Component/LogoCarousel";
+import Card from "../Component/Card";
+import ProductsSection from "../Component/ProductsSection";
+import ExecutionSection from "../Component/ExecutionSection";
+import ProductCard from "../Component/ProductCard";
+import Testimony from "../Component/Testimony";
+import FAQSection from "../Component/FAQSection";
+import ConTab from "../Component/ConTab";
+import LogoCarousel from "../Component/LogoCarousel";
 
 export default function Home() {
   return (
@@ -57,7 +57,7 @@ export default function Home() {
         <FAQSection />
       </div>
 
-      <div className="w-full mt-0">
+      <div className="w-full max-w-7xl mt-0">
         <ConTab />
       </div>
 

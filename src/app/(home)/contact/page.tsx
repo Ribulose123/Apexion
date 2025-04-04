@@ -1,4 +1,4 @@
-import { contactData } from "../data/data";
+import { contactData } from "../../data/data";
 
 export default function Contact() {
     const colors = ['bg-[#2C0E37]', 'bg-[#104F55]', 'bg-[#10131F]'];

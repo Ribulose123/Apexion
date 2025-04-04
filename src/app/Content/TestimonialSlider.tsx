@@ -81,7 +81,7 @@ const TestimonialSlider: React.FC = () => {
 
   return (
     <div className="w-full flex justify-center py-12 px-4 sm:px-6">
-      <div className="w-full max-w-7xl text-white text-center">
+      <div className="w-full max-w-[1600px] text-white text-center">
         <h2 className="text-2xl md:text-4xl font-medium">What People Say About Us</h2>
         <p className="text-gray-400 mt-2 text-sm md:text-base">
           Trusted by millions of customers worldwide.
@@ -90,7 +90,7 @@ const TestimonialSlider: React.FC = () => {
         <div className="relative mt-8">
           <Slider {...settings} ref={sliderRef} className="flex justify-center">
             {testimonials.map((testimonial) => (
-              <div key={testimonial.id} className="px-2 md:px-4">
+              <div key={testimonial.id} className="px-2 md:px-1 testimonial-item">
                 <div className="bg-[#0A0E17] rounded-xl p-4 md:p-6 shadow-lg border-2 border-[#141E32] 
                   w-full max-w-[450px] sm:max-w-[380px] md:max-w-[400px] mx-auto 
                   h-[240px] sm:h-[260px] flex flex-col justify-between">

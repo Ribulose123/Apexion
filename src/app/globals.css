@@ -154,3 +154,35 @@ body {
     height: auto;
   }
 }
+
+/* Add these styles to your globe.css file */
+
+/* Fix slider edge spacing */
+.testimonial-slider {
+  margin: 0 -15px;
+}
+
+.testimonial-slider .slick-list {
+  margin: 0 ;
+  padding: 0 !important;
+}
+
+.testimonial-slider .slick-slide > div {
+  padding: 0 ;
+  margin: 0;
+}
+
+.testimonial-slider .testimonial-item {
+  padding: 0 ;
+  margin: 0;
+}
+
+/* Optional: Improve the slider's overall appearance */
+.testimonial-slider .slick-track {
+  display: flex !important;
+  align-items: stretch;
+}
+
+.testimonial-slider .slick-slide {
+  height: auto;
+}
