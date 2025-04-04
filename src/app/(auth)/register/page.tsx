@@ -25,7 +25,7 @@ export default function Register() {
           case 3:
             return <PhoneVerification onNext={finalizeSignUp} />;
           default:
-            return <SignupForm />;
+            return <SignupForm onNext={() => {}} />;
         }
       };
    
