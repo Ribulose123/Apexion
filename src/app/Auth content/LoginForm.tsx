@@ -32,7 +32,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-12">
+    <div className="flex items-center justify-center  px-4 py-6">
       <div className="bg-white rounded-lg -mt-10 sm:mt-0 sm:shadow-md w-full max-w-md p-6 md:p-8">
 
       <h1 className="text-2xl text-black font-semibold text-start sm:text-center mb-8">Welcome back</h1>

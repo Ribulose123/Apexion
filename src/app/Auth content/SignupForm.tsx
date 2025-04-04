@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation'; 
+ 
 import { useForm } from 'react-hook-form';
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface FormData {
     email: string;
@@ -13,8 +14,12 @@ interface FormData {
     agreeToTerms: boolean;
 }
 
-const SignupForm = () => {
-  const router = useRouter();
+interface SignupFormProps {
+  onNext: (data: FormData) => void;
+}
+
+const SignupForm: React.FC<SignupFormProps> = ({ onNext }) => {
+  
   const [showPassword, setShowPassword] = useState(false);
   
   const { 
@@ -32,12 +37,12 @@ const SignupForm = () => {
 
   const onSubmit = (data: FormData) => {
     console.log('Form submitted:', data);
-    router.push('/dashboard'); 
+    onNext(data); 
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 sm:py-12 py-1 ">
-      <div className="bg-white rounded-lg sm:shadow-md w-full max-w-md p-6 md:p-8  -mt-36 sm:mt-0">
+    <div className="flex items-center justify-center px-4 py-6 ">
+      <div className="bg-white rounded-lg sm:shadow-md w-full max-w-md p-6 md:p-8">
         <h1 className="text-2xl text-black font-semibold text-start sm:text-center mb-8">Sign up with</h1>
         
         {/* Social Sign-up Options */}
@@ -105,7 +110,7 @@ const SignupForm = () => {
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="Password"
-              className={`w-full px-4 py-2 border ${errors.password ? 'border-red-500' : 'border-[#E2E6F9]'} rounded focus:outline-none placeholder:text-[#797A80] placeholder:text-[15px]`}
+              className={`w-full px-4 py-2 border ${errors.password ? 'border-red-500' : 'border-[#E2E6F9]'} rounded focus:outline-none placeholder:text-[#797A80] placeholder:text-[15px] text-black`}
               {...register('password', { 
                 required: 'Password is required',
                 minLength: {
@@ -119,7 +124,7 @@ const SignupForm = () => {
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <IoMdEyeOff size={18} /> : <IoMdEye size={18} />}
+              {showPassword ? <IoMdEye size={18} /> : <IoMdEyeOff size={18} />}
             </button>
             {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
           </div>
@@ -160,7 +165,7 @@ const SignupForm = () => {
         
         {/* Login Link */}
         <div className="mt-6 text-center text-sm text-gray-600">
-          Already have an account? <a href="/login" className="text-blue-600 hover:underline">Log in</a>
+          Already have an account? <Link href="/login" className="text-blue-600 hover:underline">Log in</Link>
         </div>
       </div>
     </div>
