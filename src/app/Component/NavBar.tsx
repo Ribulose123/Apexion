@@ -36,7 +36,7 @@ const Navbar = () => {
           : "bg-transparent"
       } text-white py-2 w-full fixed top-0 z-50 transition-all duration-300`}
     >
-      <div className="container mx-auto max-w-6xl flex justify-between items-center px-4 md:px-6 h-20">
+      <div className="container mx-auto max-w-7xl flex justify-between items-center  h-20">
         {/* Logo */}
         <Image src='/img/logo2.jpg' alt="logo" width={50} height={50}/>
 
