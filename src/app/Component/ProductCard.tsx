@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const ProductCard = () => {
   return (
-    <div className="mt-[70px] text-white py-12 px-4 sm:px-6">
+    <div className="mt-[70px] text-white py-12  max-w-[90rem]">
       {/* Title */}
       <div className="text-center">
         <h2 className="text-2xl md:text-4xl font-medium">Discover More Products</h2>
@@ -11,8 +11,8 @@ const ProductCard = () => {
         </p>
       </div>
 
-      {/* Card Container */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 w-full max-w-6xl mx-auto">
+      {/* Card Container - Reduced gap from 6 to 4 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10 w-full max-w-[90rem] mx-auto">
         
         {/* Card 1 */}
         <div className="relative w-full h-[250px] p-6 rounded-xl border-t-[3px] border-l-[2px] border-r-[2px] border-b-0 

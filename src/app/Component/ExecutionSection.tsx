@@ -3,7 +3,7 @@ import { FaCheck } from "react-icons/fa6";
 
 const ExecutionSection = () => {
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row  justify-between py-12 text-white mt-[40px]">
+    <div className="w-full max-w-7xl mx-auto px-0  flex flex-col md:flex-row  justify-between py-12 text-white mt-[40px]">
       {/* Left Content */}
       <div className="w-full md:w-1/2 md:pr-12 text-center md:text-left">
   <h2 className="text-2xl md:text-4xl font-medium leading-tight">
@@ -27,8 +27,8 @@ const ExecutionSection = () => {
 
 
       {/* Right Image */}
-      <div className="w-full md:w-[90%] flex justify-center mt-8 md:mt-0">
-        <div className="w-full max-w-2xl ">
+      <div className="w-full md:w-full  flex justify-center mt-8 md:mt-0">
+        <div className="w-full max-w-6xl ">
           <Image
             src='/img/image 1.png'
             alt="Pricing Engine"

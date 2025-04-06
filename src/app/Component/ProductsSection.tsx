@@ -36,7 +36,7 @@ const products = [
 
 const ProductsSection = () => { 
   return (
-    <div className="text-white py-16 px-4 sm:px-6 mt-[70px] w-full">
+    <div className="text-white py-16  mt-[70px] w-full px-0">
       {/* Title & Description */}
       <div className="text-center max-w-3xl mx-auto">
         <h2 className="text-2xl sm:text-4xl font-medium">1 Account 200+ Products</h2>
@@ -51,7 +51,7 @@ const ProductsSection = () => {
         {products.map((product, index) => (
           <div
             key={index}
-            className="bg-white text-black rounded-2xl shadow-lg p-6 flex flex-col items-center text-center h-full gap-4"
+            className="bg-white text-black rounded-2xl shadow-lg p-8 flex flex-col items-center text-center h-full gap-4"
           >
             <Image
               src={product.img}

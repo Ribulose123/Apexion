@@ -3,7 +3,7 @@ import { HiOutlineArrowRight } from "react-icons/hi";
 
 const ConTab = () => {
   return (
-    <div className="mt-12 sm:mt-[40px] w-full max-w-7xl px-4 sm:px-6 lg:px-10">
+    <div className="mt-12 sm:mt-[40px] w-full max-w-7xl  ">
       <div className="relative w-full max-w-7xl p-6 sm:p-12 lg:p-26 rounded-2xl bg-cn text-center flex flex-col items-center justify-center mx-auto">
         {/* Text */}
         <h1 className="text-white text-2xl sm:text-4xl lg:text-[48px] font-medium leading-normal sm:leading-tight max-w-5xl mx-auto">

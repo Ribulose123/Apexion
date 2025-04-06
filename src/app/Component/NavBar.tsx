@@ -32,7 +32,7 @@ const Navbar = () => {
     <nav 
       className={`${
         scrolled 
-          ? "bg-[#01040F]/90 shadow-lg" 
+          ? "bg-[#01040F] shadow-lg" 
           : "bg-transparent"
       } text-white py-2 w-full fixed top-0 z-50 transition-all duration-300`}
     >
