@@ -21,7 +21,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="text-white py-8 px-6 md:px-20 w-full sm:mt-[120px]">
+    <footer className="text-white py-8 px-6 md:px-15 w-full sm:mt-[120px]">
       {/* Top Border with more space */}
       <div className="relative my-12 w-full">
         <div className="absolute inset-0 h-[3px] bg-gradient-to-r from-gray-700/10 via-gray-700/30 to-gray-700/10"></div>

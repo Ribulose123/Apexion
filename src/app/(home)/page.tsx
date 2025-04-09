@@ -10,7 +10,7 @@ import LogoCarousel from "../Component/LogoCarousel";
 
 export default function Home() {
   return (
-    <main className="max-w-7xl mx-auto ">
+    <main className="max-w-7xl mx-auto px-2 sm:px-0">
       {/* Hero Section with Cards Integrated */}
       <section className="py-20 mt-10">
         <div className="text-center flex flex-col items-center">

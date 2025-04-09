@@ -34,7 +34,7 @@ const Navbar = () => {
         scrolled 
           ? "bg-[#01040F] shadow-lg" 
           : "bg-transparent"
-      } text-white py-2 w-full fixed top-0 z-50 transition-all duration-300`}
+      } text-white py-2 px-6 sm:px-0 w-full fixed top-0 z-50 transition-all duration-300`}
     >
       <div className="container mx-auto max-w-7xl flex justify-between items-center  h-20">
         {/* Logo */}

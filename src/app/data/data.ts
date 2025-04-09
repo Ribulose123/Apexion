@@ -185,3 +185,138 @@ export const contactData = [
   ];
   
 
+import { CircleMinus, CirclePlus, House, Link, Radio, User, WalletMinimal } from "lucide-react";
+
+import { IoCopy, IoSettingsOutline } from "react-icons/io5";
+import { MdOutlineShowChart } from "react-icons/md";
+  export const menuItems = [
+    { name: 'Dashboard', icon: House, href: '/dashboard' },
+    { name: 'Asset', icon: WalletMinimal, href: '#' },
+    { name: 'Deposit', icon: CirclePlus, href: '#' },
+    { name: 'Withdraw', icon: CircleMinus, href: '#' },
+    { name: 'Trade', icon: MdOutlineShowChart, href: '#' },
+    { name: 'Signal', icon: Radio, href: '#' },
+    { name: 'Referrals', icon: User, href: '#' },
+    { name: 'connect Wallet', icon:Link, href: '#' },
+    { name: 'Copy', icon: IoCopy, href: '#' },
+    { name: 'Settings', icon: IoSettingsOutline, href: '#' },
+  ];
+
+
+  // src/data/coins.ts
+export const dummyCoins = [
+    {
+      id: 1,
+      name: "Bitcoin",
+      symbol: "BTC",
+      icon: "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
+      trend: "up",
+      quantity: "0.012BTC",
+      quantityUsd: "3142.45USD",
+      type: "Crypto",
+      price: "$63,142.90"
+    },
+    {
+      id: 2,
+      name: "Binance",
+      symbol: "BNB",
+      icon: "https://cryptologos.cc/logos/binance-coin-bnb-logo.png",
+      trend: "down",
+      quantity: "0.078BNB",
+      quantityUsd: "3182.05USD",
+      type: "Crypto",
+      price: "$88,142.90"
+    },
+    {
+      id: 3,
+      name: "Litecoin",
+      symbol: "LTC",
+      icon: "https://cryptologos.cc/logos/litecoin-ltc-logo.png",
+      trend: "down",
+      quantity: "0.045LTC",
+      quantityUsd: "1423.88USD",
+      type: "Crypto",
+      price: "$71.25"
+    },
+    {
+      id: 4,
+      name: "Avalanche",
+      symbol: "AVAX",
+      icon: "https://cryptologos.cc/logos/avalanche-avax-logo.png",
+      trend: "up",
+      quantity: "0.192AVAX",
+      quantityUsd: "2945.23USD",
+      type: "Crypto",
+      price: "$35.70"
+    },
+    {
+      id: 5,
+      name: "Ethereum",
+      symbol: "ETH",
+      icon: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+      trend: "up",
+      quantity: "0.056ETH",
+      quantityUsd: "8420.18USD",
+      type: "Crypto",
+      price: "$3,123.56"
+    },
+    {
+      id: 6,
+      name: "Solana",
+      symbol: "SOL",
+      icon: "https://cryptologos.cc/logos/solana-sol-logo.png",
+      trend: "down",
+      quantity: "0.183SOL",
+      quantityUsd: "1720.67USD",
+      type: "Crypto",
+      price: "$142.30"
+    },
+    {
+      id: 7,
+      name: "Cardano",
+      symbol: "ADA",
+      icon: "https://cryptologos.cc/logos/cardano-ada-logo.png",
+      trend: "up",
+      quantity: "0.561ADA",
+      quantityUsd: "905.22USD",
+      type: "Crypto",
+      price: "$0.92"
+    },
+    {
+      id: 8,
+      name: "Polkadot",
+      symbol: "DOT",
+      icon: "https://cryptologos.cc/logos/polkadot-new-dot-logo.png",
+      trend: "down",
+      quantity: "0.231DOT",
+      quantityUsd: "1004.45USD",
+      type: "Crypto",
+      price: "$6.82"
+    },
+    {
+      id: 9,
+      name: "Dogecoin",
+      symbol: "DOGE",
+      icon: "https://cryptologos.cc/logos/dogecoin-doge-logo.png",
+      trend: "up",
+      quantity: "15.22DOGE",
+      quantityUsd: "232.15USD",
+      type: "Crypto",
+      price: "$0.153"
+    },
+    {
+      id: 10,
+      name: "XRP",
+      symbol: "XRP",
+      icon: "https://cryptologos.cc/logos/xrp-xrp-logo.png",
+      trend: "down",
+      quantity: "2.42XRP",
+      quantityUsd: "502.33USD",
+      type: "Crypto",
+      price: "$0.83"
+    }
+  ];
+  
+
+
+  

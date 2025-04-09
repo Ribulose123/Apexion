@@ -28,7 +28,7 @@ const LoginForm = () => {
 
   const onSubmit = (data: LoginFormData) => {
     console.log('Login Data:', data);
-    router.push('/dashboard'); // Redirect after login
+    router.push('/dashboard'); 
   };
 
   return (
