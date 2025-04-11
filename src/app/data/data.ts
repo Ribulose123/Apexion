@@ -191,7 +191,7 @@ import { IoCopy, IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineShowChart } from "react-icons/md";
   export const menuItems = [
     { name: 'Dashboard', icon: House, href: '/dashboard' },
-    { name: 'Asset', icon: WalletMinimal, href: '#' },
+    { name: 'Asset', icon: WalletMinimal, href: 'asset' },
     { name: 'Deposit', icon: CirclePlus, href: '#' },
     { name: 'Withdraw', icon: CircleMinus, href: '#' },
     { name: 'Trade', icon: MdOutlineShowChart, href: '#' },
@@ -317,6 +317,22 @@ export const dummyCoins = [
     }
   ];
   
-
+  export const dummyData = [
+    { id: 1, name: 'Bitcoin', symbol: 'BTC', price: 55140.50, change24h: 0.39, marketCap: 1.22, trend: 'up', image: '/img/bitcoin.png' },
+    { id: 2, name: 'Binance', symbol: 'BNB', price: 545.90, change24h: -2.32, marketCap: 1.22, trend: 'down', image: '/img/binance-smart-chain.png' },
+    { id: 3, name: 'Litecoin', symbol: 'LTC', price: 87.45, change24h: -2.32, marketCap: 1.22, trend: 'down', image: '/img/litecoin.png' },
+    { id: 4, name: 'Avalanche', symbol: 'AVAX', price: 34.12, change24h: 0.39, marketCap: 1.22, trend: 'up', image: '/img/avalanche.png' },
+    { id: 5, name: 'Bitcoin', symbol: 'BTC', price: 55140.50, change24h: 0.39, marketCap: 1.22, trend: 'up', image: '/img/bitcoin.png' },
+    { id: 6, name: 'Binance', symbol: 'BNB', price: 545.90, change24h: -2.32, marketCap: 1.22, trend: 'down', image: '/img/binance-smart-chain.png' },
+    { id: 7, name: 'Litecoin', symbol: 'LTC', price: 87.45, change24h: -2.32, marketCap: 1.22, trend: 'down', image: '/img/litecoin.png' },
+    { id: 8, name: 'Avalanche', symbol: 'AVAX', price: 34.12, change24h: -2.32, marketCap: 1.22, trend: 'down', image: '/img/avalanche.png' },
+    { id: 9, name: 'Litecoin', symbol: 'LTC', price: 87.45, change24h: 0.39, marketCap: 1.22, trend: 'up', image: '/img/litecoin.png' },
+    { id: 10, name: 'Bitcoin', symbol: 'BTC', price: 55140.50, change24h: -2.32, marketCap: 1.22, trend: 'down', image: '/img/bitcoin.png' },
+    { id: 11, name: 'Litecoin', symbol: 'LTC', price: 87.45, change24h: 0.39, marketCap: 1.22, trend: 'up', image: '/img/litecoin.png' },
+    { id: 12, name: 'Bitcoin', symbol: 'BTC', price: 55140.50, change24h: 0.39, marketCap: 1.22, trend: 'up', image: '/img/bitcoin.png' },
+    { id: 13, name: 'Litecoin', symbol: 'LTC', price: 87.45, change24h: 0.39, marketCap: 1.22, trend: 'up', image: '/img/litecoin.png' },
+    { id: 14, name: 'Bitcoin', symbol: 'BTC', price: 55140.50, change24h: -2.32, marketCap: 1.22, trend: 'down', image: '/img/bitcoin.png' },
+    { id: 15, name: 'Litecoin', symbol: 'LTC', price: 87.45, change24h: -2.32, marketCap: 1.22, trend: 'down', image: '/img/litecoin.png' }
+  ]
 
   

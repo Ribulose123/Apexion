@@ -55,7 +55,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6">
+        <div className="flex-1 px-6">
           <nav className="flex flex-col space-y-4 relative">
             {/* Dropdown Item: Buy Crypto */}
             <div className="text-white py-2 border-b border-gray-800">

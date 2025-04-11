@@ -17,14 +17,13 @@ const countryOptions = [
   { code: "pt", name: "Português (International)" },
 ];
 
-
-
 const Navbar = () => {
   const [activeDropdown, setActiveDropdown] = useState<DropdownMenuType | null>(null);
   const [country, setCountry] = useState("gb");
   const [showModal, setShowModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showCopyDetails, setShowCopyDetails] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   const toggleModal = () => setShowModal(!showModal);
 
@@ -277,26 +276,107 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu Button - Only visible on mobile */}
-      <button
-        className="md:hidden flex-1 text-right text-gray-300 hover:text-white"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Toggle Menu"
-      >
-        {isOpen ? (
-          <FaTimes className="h-6 w-6 ml-auto" />
-        ) : (
-          <Image
-            src="/img/bx_menu-alt-right.png"
-            alt="Menu Toggle"
-            width={30}
-            height={30}
-            className="h-6 w-6 ml-auto"
-          />
-        )}
-      </button>
+      {/* Mobile User Controls - Visible on small screens */}
+      <div className="md:hidden flex-1 flex items-center justify-end space-x-4">
+        {/* Mobile Search Toggle */}
+        <button 
+          className="text-gray-300 hover:text-white"
+          onClick={() => setShowMobileSearch(!showMobileSearch)}
+        >
+          <Search size={20} />
+        </button>
 
-      {/* Right Side - Search, Language, Notifications, User */}
+        {/* Mobile User Profile */}
+        <div className="relative">
+          <button
+            className="flex items-center"
+            onClick={() => toggleDropdown("user")}
+          >
+            <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center overflow-hidden">
+              <Image
+                src="/img/Avatar DP.png"
+                alt="Profile"
+                width={32}
+                height={32}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </button>
+
+          {activeDropdown === "user" && (
+            <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
+              <div className="py-1">
+                <Link
+                  href="/profile"
+                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                >
+                  My Profile
+                </Link>
+                <Link
+                  href="/security"
+                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                >
+                  Security
+                </Link>
+                <Link
+                  href="/settings"
+                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                >
+                  Settings
+                </Link>
+                <div className="border-t border-gray-700 my-1"></div>
+                <button className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700">
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="text-gray-300 hover:text-white"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-label="Toggle Menu"
+        >
+          {isOpen ? (
+            <FaTimes className="h-6 w-6" />
+          ) : (
+            <Image
+              src="/img/bx_menu-alt-right.png"
+              alt="Menu Toggle"
+              width={30}
+              height={30}
+              className="h-6 w-6"
+            />
+          )}
+        </button>
+      </div>
+
+      {/* Mobile Search Bar - Shows when toggled */}
+      {showMobileSearch && (
+        <div className="fixed top-16 left-0 right-0 bg-gray-900 p-4 z-30 md:hidden">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search size={16} className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search..."
+              className="bg-gray-800 rounded-lg py-2 pl-9 pr-3 text-sm w-full text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+              autoFocus
+            />
+            <button 
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400"
+              onClick={() => setShowMobileSearch(false)}
+            >
+              <FaTimes size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Right Side - Search, Language, Notifications, User - Only visible on desktop */}
       <div className="hidden md:flex items-center space-x-4 flex-none">
         {/* Search */}
         <div className="relative">
@@ -344,7 +424,7 @@ const Navbar = () => {
           >
             <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center overflow-hidden">
               <Image
-                src="/api/placeholder/32/32"
+                src="/img/Avatar DP.png"
                 alt="Profile"
                 width={32}
                 height={32}

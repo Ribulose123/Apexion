@@ -186,3 +186,26 @@ body {
 .testimonial-slider .slick-slide {
   height: auto;
 }
+
+
+.Table {
+  position: relative;
+  border-radius: 5rem;
+}
+
+.Table::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 5rem;
+  border: 1px solid transparent;
+  border-image-source: linear-gradient(180deg, #6967AE 0%, rgba(105, 103, 174, 0) 50%, #6967AE 100%);
+  border-image-slice: 1;
+  z-index: 10;
+}
+
+/* Remove individual cell borders for odd rows that have the gradient border */
+.Table:nth-child(odd) td {
+  border: none !important;
+}
