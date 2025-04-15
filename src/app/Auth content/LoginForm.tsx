@@ -18,7 +18,7 @@ const categories = ['Email/Mobile', 'Sub-Account', 'QR Account'];
 
 const LoginForm = () => {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('Email/Mobile'); // Default active tab
+  const [activeTab, setActiveTab] = useState('Email/Mobile');
   const [showPassword, setShowPassword] = useState({
     email: false,
     subAccount: false,
@@ -79,7 +79,7 @@ const LoginForm = () => {
                 <input
                   type={showPassword.email ? 'text' : 'password'}
                   placeholder="Password"
-                  className={`w-full px-4 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded focus:outline-none placeholder-gray-500`}
+                  className={`w-full px-4 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded focus:outline-none placeholder-gray-500 text-black`}
                   {...register('password', { required: 'Password is required', minLength: { value: 8, message: 'Minimum 8 characters' } })}
                 />
                 <button type="button" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" 

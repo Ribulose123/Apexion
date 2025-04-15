@@ -16,11 +16,10 @@ const MarketInfo = () => {
     const totalPages = Math.ceil(dummyData.length / itemsPerPage);
 
     useEffect(() => {
-        // In a real implementation, this would be your API fetch
+        
         setCryptoData(dummyData);
       }, []);
-      
-      // Filter data based on search term and active tab
+     
       const filteredData = cryptoData
         .filter(crypto => 
           crypto.name.toLowerCase().includes(searchTerm.toLowerCase()) || 

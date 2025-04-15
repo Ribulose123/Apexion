@@ -195,7 +195,7 @@ import { MdOutlineShowChart } from "react-icons/md";
     { name: 'Deposit', icon: CirclePlus, href: '#' },
     { name: 'Withdraw', icon: CircleMinus, href: '#' },
     { name: 'Trade', icon: MdOutlineShowChart, href: '#' },
-    { name: 'Signal', icon: Radio, href: '#' },
+    { name: 'Signal', icon: Radio, href: 'signal' },
     { name: 'Referrals', icon: User, href: '#' },
     { name: 'connect Wallet', icon:Link, href: '#' },
     { name: 'Copy', icon: IoCopy, href: '#' },
@@ -334,5 +334,147 @@ export const dummyCoins = [
     { id: 14, name: 'Bitcoin', symbol: 'BTC', price: 55140.50, change24h: -2.32, marketCap: 1.22, trend: 'down', image: '/img/bitcoin.png' },
     { id: 15, name: 'Litecoin', symbol: 'LTC', price: 87.45, change24h: -2.32, marketCap: 1.22, trend: 'down', image: '/img/litecoin.png' }
   ]
+
+
+
+  export const mockSignals = [
+    {
+      id: '1',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 75,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '2',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 65,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '3',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 90,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '4',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 80,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '5',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 85,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '6',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 70,
+      amount: '1,000,000',
+      currency: 'USD'
+    }
+  ];
+  
+  export const mockUserStats = {
+    totalBalance: '32,500.00',
+    rating: 5,
+    signalStrength: 80
+  };
+
+
+ export const signals = [
+    {
+      id: '1',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 10,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '2',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 10,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '3',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 10,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '4',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 10,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '5',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 10,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '6',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 10,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '7',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 10,
+      amount: '1,000,000',
+      currency: 'USD'
+    },
+    {
+      id: '8',
+      status: 'active',
+      pair: 'CD VS',
+      minimum: '16 ETH',
+      signalStrength: 10,
+      amount: '1,000,000',
+      currency: 'USD'
+    }
+  ];
+
 
   

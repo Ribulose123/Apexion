@@ -44,9 +44,9 @@ const TopSection: React.FC = () => {
                     <h2 className="text-gray-400 font-medium sm:text-lg">Total Balance</h2>
                     <button
                       onClick={handleBalance}
-                      className="text-gray-400 hover:text-white transition"
+                      className="text-gray-400 hover:text-white transition ml-2"
                     >
-                      {showBalance ? <EyeOff size={15} /> : <Eye size={15} />}
+                      {showBalance ? <Eye size={15} /> : <EyeOff size={15} />}
                     </button>
                   </div>
                   <div className="flex items-center mt-1">
