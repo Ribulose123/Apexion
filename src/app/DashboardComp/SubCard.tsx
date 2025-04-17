@@ -23,8 +23,8 @@ const SubCard: React.FC<SubProps> = ({
   currency
 }) => {
   return (
-    <div className="rounded-2xl p-[1px] bg-gradient-to-br from-[#6967AE] via-transparent to-[#6967AE] shadow-lg sm:w-[365px] h-[330px]">
-      <div className="bg-[#12122b] rounded-2xl p-5 h-full flex flex-col justify-between text-white">
+    <div className="rounded-2xl p-[1px] bg-gradient-to-b from-[#06023daf] from-25%   via-[#240a6b] to-[#644ca1] shadow-lg sm:w-[365px] h-[330px]">
+      <div className=" rounded-2xl p-5  h-full flex flex-col justify-between text-white">
         
         {/* Header */}
         <h2 className="text-lg font-semibold text-[#D2D1EE] mb-4">{pair}</h2>

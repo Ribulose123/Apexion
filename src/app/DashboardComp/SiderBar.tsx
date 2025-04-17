@@ -5,8 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const SideBar = () => {
-  const pathname = usePathname(); // Get current path to determine active link
-
+  const pathname = usePathname(); 
   return (
     <div className="w-16 lg:w-48 bg-linear-to-b from-[#141E323D] to-[#141E32]  hidden flex-col pt-10 mt-3  sm:flex">
       <nav className="flex-1">

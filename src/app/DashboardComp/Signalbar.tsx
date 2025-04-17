@@ -12,7 +12,7 @@ const Signalbar = () => {
   const stats = mockSignals;
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2  sm:gap-4 mb-6">
-      <div className="bg-[#141E323D] backdrop-blur-[24px] p-4 sm:rounded-lg h-[150px] gap-10">
+      <div className="bg-linear-to-b from-[#141E323D]  to-[#141E32] p-4 sm:rounded-lg h-[150px] gap-10">
         <div className="flex justify-between items-center">
           <div>
             <div className="flex items-center">

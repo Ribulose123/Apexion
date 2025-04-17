@@ -185,17 +185,18 @@ export const contactData = [
   ];
   
 
-import { CircleMinus, CirclePlus, House, Link, Radio, User, WalletMinimal } from "lucide-react";
+import { CircleMinus, CirclePlus, House, Link, Radio, User, WalletMinimal, Radiation, Coins } from "lucide-react";
 
 import { IoCopy, IoSettingsOutline } from "react-icons/io5";
-import { MdOutlineShowChart } from "react-icons/md";
+
   export const menuItems = [
     { name: 'Dashboard', icon: House, href: '/dashboard' },
     { name: 'Asset', icon: WalletMinimal, href: 'asset' },
     { name: 'Deposit', icon: CirclePlus, href: '#' },
     { name: 'Withdraw', icon: CircleMinus, href: '#' },
-    { name: 'Trade', icon: MdOutlineShowChart, href: '#' },
+    { name: 'Subscribe', icon: Radiation, href: 'subscription' },
     { name: 'Signal', icon: Radio, href: 'signal' },
+    { name: 'Staking', icon: Coins, href: 'stake' },
     { name: 'Referrals', icon: User, href: '#' },
     { name: 'connect Wallet', icon:Link, href: '#' },
     { name: 'Copy', icon: IoCopy, href: '#' },

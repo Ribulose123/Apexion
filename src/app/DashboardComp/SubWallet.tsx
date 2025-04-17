@@ -9,7 +9,7 @@ const SubWallet = () => {
         setShowBalance(!showBalance);
       };
   return (
-    <div className='bg-[#141E323D] backdrop-blur-[24px] p-4 sm:rounded-lg h-[170px] w-full'>
+    <div className='bg-linear-to-b from-[#141E323D]  to-[#141E32] p-4 sm:rounded-lg h-[170px] w-full'>
        <div className="flex justify-between items-center">
           <div>
             <div className="flex items-center">
