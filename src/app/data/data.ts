@@ -477,5 +477,26 @@ export const dummyCoins = [
     }
   ];
 
+  export const featuredCoins = [
+    { id:1,symbol: 'BTC', price: '$60548.63', change: '+0.56%', positive: true },
+    { id:2,symbol: 'BTC', price: '$60548.63', change: '-0.22%', positive: false },
+    { id:3,symbol: 'BTC', price: '$60548.63', change: '+0.49%', positive: true },
+    { id:4, symbol: 'BTC', price: '$60548.63', change: '-0.38%', positive: false },
+    { id:5,symbol: 'BTC', price: '$60548.63', change: '+0.51%', positive: true },
+  ]
+  
+  export const newlyListedCoins = [
+    { id:1, symbol: 'BTC', price: '$60548.63', change: '+0.51%', positive: true },
+    { id:2, symbol: 'BTC', price: '$60548.63', change: '+0.51%', positive: true },
+    { id:3, symbol: 'BTC', price: '$60548.63', change: '-0.51%', positive: false },
+    { id:4,symbol: 'BTC', price: '$60548.63', change: '+0.51%', positive: true },
+    { id:5, symbol: 'BTC', price: '$60548.63', change: '-0.51%', positive: false },
+  ]
+
+
+
+
+  
+
 
   

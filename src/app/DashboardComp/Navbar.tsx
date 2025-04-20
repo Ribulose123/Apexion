@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Search, Bell, ChevronDown } from "lucide-react";
 import { FaTimes } from "react-icons/fa";
 import Flag from "react-world-flags";
-import MenuBar, { DropdownMenuType } from "./MenuBar"; // Import the type from MenuBar
+import MenuBar, { DropdownMenuType } from "./MenuBar"; 
 
 const countryOptions = [
   { code: "gb", name: "English" },
