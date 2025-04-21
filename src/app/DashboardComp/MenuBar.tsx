@@ -24,7 +24,6 @@ const socialIcons = [
   { id: 'discord', icon: <FaDiscord />, alt: 'Discord' },
 ];
 
-// Updated the type definition to match the one used in Navbar
 export type DropdownMenuType = "buy" | "tools" | "more" | "user" | null;
 
 type MenuBarProps = {
@@ -40,6 +39,11 @@ const MenuBar: React.FC<MenuBarProps> = ({
   activeDropdown,
   toggleDropdown,
 }) => {
+  // Handler to close the menu when a link is clicked
+  const handleLinkClick = () => {
+    setIsOpen(false);
+  };
+
   return (
     <div className="fixed inset-0 bg-gray-900 z-50">
       <div className="flex flex-col h-full">
@@ -68,19 +72,19 @@ const MenuBar: React.FC<MenuBarProps> = ({
               </button>
               {activeDropdown === 'buy' && (
                 <div className="mt-2 ml-4 text-sm text-gray-300 space-y-3">
-                  <Link href="/buy/credit-card" className="block py-2 hover:text-white">
+                  <Link href="/buy/credit-card" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">Credit/Debit Card</p>
                     <p className="text-xs text-gray-400">Buy crypto via Visa or Mastercard</p>
                   </Link>
-                  <Link href="/buy/deposit" className="block py-2 hover:text-white">
+                  <Link href="/buy/deposit" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">Bank Deposit</p>
                     <p className="text-xs text-gray-400">Fiat to crypto and crypto to fiat bank transfer</p>
                   </Link>
-                  <Link href="/buy/p2p" className="block py-2 hover:text-white">
+                  <Link href="/buy/p2p" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">P2P Trading</p>
                     <p className="text-xs text-gray-400">Buy crypto from verified merchants</p>
                   </Link>
-                  <Link href="/buy/quick" className="block py-2 hover:text-white">
+                  <Link href="/buy/quick" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">Quick Buy</p>
                     <p className="text-xs text-gray-400">Buy with card, e-wallet and third-party</p>
                   </Link>
@@ -89,11 +93,11 @@ const MenuBar: React.FC<MenuBarProps> = ({
             </div>
 
             <div className="text-white py-2 border-b border-gray-800">
-              <Link href="/market" className="block font-medium">Market</Link>
+              <Link href="/market" onClick={handleLinkClick} className="block font-medium">Market</Link>
             </div>
 
             <div className="text-white py-2 border-b border-gray-800">
-              <Link href="/trade" className="block font-medium">Trade</Link>
+              <Link href="/trade" onClick={handleLinkClick} className="block font-medium">Trade</Link>
             </div>
 
             {/* Dropdown Item: Tools */}
@@ -124,7 +128,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
                     </div>
                   </div>
                   
-                  <Link href="/tools/leaderboard" className="block py-2 hover:text-white">
+                  <Link href="/tools/leaderboard" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">📊 Leaderboard</p>
                     <p className="text-xs text-gray-400">Fiat to crypto and crypto to fiat block trades</p>
                   </Link>
@@ -143,13 +147,13 @@ const MenuBar: React.FC<MenuBarProps> = ({
               </button>
               {activeDropdown === 'more' && (
                 <div className="mt-2 ml-4 text-sm text-gray-300 space-y-1">
-                  <Link href="/about" className="block py-2 hover:text-white">
+                  <Link href="/about" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     About Us
                   </Link>
-                  <Link href="/support" className="block py-2 hover:text-white">
+                  <Link href="/support" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     Support
                   </Link>
-                  <Link href="/blog" className="block py-2 hover:text-white">
+                  <Link href="/blog" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     Blog
                   </Link>
                 </div>
@@ -167,16 +171,19 @@ const MenuBar: React.FC<MenuBarProps> = ({
               </button>
               {activeDropdown === 'user' && (
                 <div className="mt-2 ml-4 text-sm text-gray-300 space-y-1">
-                  <Link href="/profile" className="block py-2 hover:text-white">
+                  <Link href="/profile" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     My Profile
                   </Link>
-                  <Link href="/security" className="block py-2 hover:text-white">
+                  <Link href="/security" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     Security
                   </Link>
-                  <Link href="/settings" className="block py-2 hover:text-white">
+                  <Link href="/settings" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     Settings
                   </Link>
-                  <button className="block py-2 text-red-400 hover:text-red-300">
+                  <button 
+                    className="block py-2 text-red-400 hover:text-red-300"
+                    onClick={handleLinkClick} // Close the menu when signing out
+                  >
                     Sign Out
                   </button>
                 </div>
@@ -223,15 +230,15 @@ const MenuBar: React.FC<MenuBarProps> = ({
         {/* Footer */}
         <div className="px-6 py-4 mt-auto">
           <div className="flex flex-col space-y-3">
-            <a href="/privacy" className="text-white text-sm">
+            <Link href="/privacy" onClick={handleLinkClick} className="text-white text-sm">
               Privacy
-            </a>
-            <a href="/terms" className="text-white text-sm">
+            </Link>
+            <Link href="/terms" onClick={handleLinkClick} className="text-white text-sm">
               Terms
-            </a>
-            <a href="/risk" className="text-white text-sm">
+            </Link>
+            <Link href="/risk" onClick={handleLinkClick} className="text-white text-sm">
               Risk
-            </a>
+            </Link>
           </div>
         </div>
       </div>
