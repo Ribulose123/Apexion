@@ -5,7 +5,7 @@ import SignalCard from "@/app/DashboardComp/SignalCard";
 export default function signal(){
     return(
         <div className="flex flex-1 flex-col p-2 sm:p-4">
-            <div>
+            <div className="mt-14">
                 <Signalbar/>
                 <SignalCard/>
             </div>

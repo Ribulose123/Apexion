@@ -1,0 +1,116 @@
+'use client'
+import React, { useState } from 'react'
+import { ArrowLeft, Copy, Check } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
+const Settings = () => {
+    const [copied, setCopied] = useState(false)
+    const secretKey = "F7YN2LYHY7DLEUSX0";
+    const router = useRouter()
+
+    const copyKeyToClipboard =()=>{
+        navigator.clipboard.writeText(secretKey)
+            setCopied(true)
+            setTimeout(()=>setCopied(false), 2000)
+    }
+  return (
+    <div className="min-h-screen  text-white flex flex-col">
+      {/* Header */}
+      <div className="p-4 flex items-center">
+         <button onClick={() => router.back()} className="mb-4 text-gray-400 hover:text-white  items-center md:block hidden">
+                <ArrowLeft className="w-5 h-5 mr-1 " /> Back
+              </button>
+        <h1 className="text-2xl sm:text-4xl font-semibold text-[#E8E8E8]">Google Authentication</h1>
+      </div>
+      
+      {/* Description */}
+      <div className="px-4 mb-6">
+        <p className="text-xs md:text-[14px] text-[#A4A4A4] font-medium">
+          Google Authenticator Adds An Extra Layer Of Protection To Your Account By Generating Time-Based Verification Codes That Refresh Every 30 Seconds. Once Enabled, It Helps Secure Critical Account Actions Like Login, Withdrawals, And Changes To Your Security Settings—Ensuring Only You Can Authorize Sensitive Operations.
+        </p>
+      </div>
+      
+      {/* Step 1 */}
+      <div className="px-4 mb-6 flex">
+        <div className="w-8 h-8 bg-[#439A86] rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+          <span className="font-medium">1</span>
+        </div>
+        <div>
+          <h2 className="font-medium mb-2">Download the Google Authenticator app</h2>
+          <ul className="text-xs text-gray-400 list-disc pl-5 space-y-1">
+            <li className="text-xs md:text-[14px] text-[#A4A4A4] font-medium">iOS Users: Log In To The App Store To Search For &quot;Authenticator&quot;</li>
+            <li className="text-xs md:text-[14px] text-[#A4A4A4] font-medium">Android Users: Log In To The App Store Or Use The Mobile Browser To Search For &quot;Google Authenticator&quot;</li>
+          </ul>
+          <div className="flex mt-3 space-x-2">
+            <button className="bg-white border border-[#141E32] rounded-full text-black px-3 py-1 flex items-center text-sm gap-2">
+              <Image src='/img/logos_apple.png' alt='apple' width={15} height={15}/>
+              App Store
+            </button>
+            <button className="bg-white border border-[#141E32] rounded-full text-black px-3 py-1 flex items-center text-sm gap-2">
+              <Image src='/img/logos_google-play-icon.png' alt='google-play-store' width={15 } height={15}/>
+              Google Play
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Step 2 */}
+      <div className="px-4 mb-6 flex">
+        <div className="w-8 h-8 bg-[#439A86] rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+          <span className="font-medium">2</span>
+        </div>
+        <div>
+          <h2 className="font-medium mb-2">Add a key and back up in Google Authenticator</h2>
+          <ul className="text-xs text-gray-400 list-disc pl-5 space-y-1">
+            <li className="text-xs md:text-[14px] text-[#A4A4A4] font-medium">Open Google Authenticator From The QR Code Button Or Manually Enter The Following Key To Add A Verification Token</li>
+            <li className="text-xs md:text-[14px] text-[#A4A4A4] font-medium">Scan The QR Code Or Enter The Verification Key Manually When The Phone Is Recognized Or Look Below To Save The Following Key Before (When Backing)</li>
+          </ul>
+          
+          {/* QR Code and Key */}
+          <div className="flex items-start mt-4 bg-[#060A17] w-full md:w-[40%] p-3">
+            <div className="w-24 h-24 bg-white p-1 mr-4">
+             <Image src='/img/vaadin_qrcode.png' alt='qr-code' width={200} height={200}/>
+            </div>
+            <div>
+              <div className="font-mono text-lg mb-1 text-[#E8E8E8]">{secretKey}</div>
+              <button 
+                onClick={copyKeyToClipboard}
+                className="flex items-center text-xs text-[#E8E8E8] border border-[#141E32] p-3 rounded-full  justify-center"
+              >
+                {copied ? <Check size={14} className="mr-1 text-green-500" /> : <Copy size={14} className="mr-1" />}
+                Copy Key
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Step 3 */}
+      <div className="px-4 mb-8 flex">
+        <div className="w-8 h-8 bg-[#439A86] rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+          <span className="font-medium">3</span>
+        </div>
+        <div className="w-full">
+          <h2 className="font-medium mb-2">Enter the 6-digit verification code generated by Google Authenticator</h2>
+          <p className="text-xs text-gray-400 mb-2">Google Authenticator</p>
+          <input 
+            type="text" 
+            maxLength={6}
+            className="w-full md:w-[47%]   border border-[#141E32] rounded p-2 mb-4 text-center"
+            placeholder=""
+          />
+        </div>
+      </div>
+      
+      {/* Submit Button */}
+      <div className="px-4 mt-auto mb-6">
+        <button className="w-full md:w-1/2 bg-[#439A86] text-white py-3 rounded font-medium">
+          Submit
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export default Settings

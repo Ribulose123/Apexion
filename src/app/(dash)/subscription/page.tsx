@@ -5,7 +5,7 @@ import SubWallet from "@/app/DashboardComp/SubWallet";
 export default function Subcription (){
     return(
         <div className="flex flex-1 flex-col p-2 sm:p-">
-            <div>
+            <div className="mt-16">
                 <SubWallet/>
                 <SubGrid/>
             </div>

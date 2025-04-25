@@ -4,7 +4,7 @@ import StakingWallet from "@/app/DashboardComp/StakingWallet"
 export default function Staking (){
     return(
         <div className="flex flex-1 flex-col p-2 sm:p-">
-            <div>
+            <div className="mt-17">
                 <StakingWallet/>
                 <PoolGrid/>
             </div>

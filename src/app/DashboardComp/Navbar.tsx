@@ -33,7 +33,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="bg-gray-900 border-b border-gray-800 py-3 px-6 flex items-center w-full">
+    <header className="bg-gray-900 border-b border-gray-800 py-3 px-6 flex items-center w-full fixed top-0 z-50">
       {/* Logo - Left aligned */}
       <div className="flex-none">
         <Link

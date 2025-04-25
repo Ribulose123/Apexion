@@ -19,7 +19,7 @@ const BuyNav = () => {
     }, [pathname])
     
     return (
-        <nav className="mb-8">
+        <nav className="mt-8">
             <div className="flex justify-evenly items-center mb-6 md:-ml-10">
                 <div className="flex space-x-6">
                     <Link href="/buy/credit-card"

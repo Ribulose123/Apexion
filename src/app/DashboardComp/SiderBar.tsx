@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 const SideBar = () => {
   const pathname = usePathname(); 
   return (
-    <div className="w-16 lg:w-48 bg-linear-to-b from-[#141E323D] to-[#141E32]  hidden flex-col pt-10 mt-3  sm:flex">
+    <div className="w-16 lg:w-48 bg-linear-to-b from-[#141E323D] to-[#141E32]  hidden flex-col pt-10 mt-18  sm:flex">
       <nav className="flex-1">
         <ul className="space-y-1 flex flex-col items-center lg:items-start">
           {menuItems.map((item) => {

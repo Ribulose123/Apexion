@@ -185,7 +185,7 @@ export const contactData = [
   ];
   
 
-import { CircleMinus, CirclePlus, House, Link, Radio, User, WalletMinimal, Radiation, Coins } from "lucide-react";
+import { CircleMinus, CirclePlus, House, Link, Radio, User, WalletMinimal, Radiation, Coins , GlobeLock} from "lucide-react";
 
 import { IoCopy, IoSettingsOutline } from "react-icons/io5";
 
@@ -200,7 +200,8 @@ import { IoCopy, IoSettingsOutline } from "react-icons/io5";
     { name: 'Referrals', icon: User, href: '#' },
     { name: 'connect Wallet', icon:Link, href: '#' },
     { name: 'Copy', icon: IoCopy, href: '#' },
-    { name: 'Settings', icon: IoSettingsOutline, href: '#' },
+    { name: 'Security', icon: GlobeLock, href: 'security' },
+    { name: 'Settings', icon: IoSettingsOutline, href: 'settings' },
   ];
 
 
@@ -496,7 +497,105 @@ export const dummyCoins = [
 
 
 
-  
+ export const sellers = [
+    {
+      id: 1,
+      name: 'Alex_Top',
+      completedOrders: 188,
+      completionRate: '99.1%',
+      price: 0.9989,
+      availableUSDT: 10000.0,
+      minAmount: 100,
+      maxAmount: 10000.0,
+      paymentMethods: ['Bank Transfer'],
+    },
+    {
+      id: 2,
+      name: 'Max_Tjx',
+      completedOrders: 347,
+      completionRate: '98.7%',
+      price: 0.9981,
+      availableUSDT: 15000.0,
+      minAmount: 100,
+      maxAmount: 15000.0,
+      paymentMethods: ['Bank Transfer'],
+    },
+    {
+      id: 3,
+      name: 'Sam_Tjx',
+      completedOrders: 2154,
+      completionRate: '100%',
+      price: 0.9980,
+      availableUSDT: 25000.0,
+      minAmount: 100,
+      maxAmount: 20000.0,
+      paymentMethods: ['Bank Transfer'],
+    },
+    {
+      id: 4,
+      name: 'Steve_Voy',
+      completedOrders: 1074,
+      completionRate: '99.5%',
+      price: 0.9978,
+      availableUSDT: 8000.0,
+      minAmount: 100,
+      maxAmount: 8000.0,
+      paymentMethods: ['Bank Transfer'],
+    },
+    {
+      id: 5,
+      name: 'Steve_Voy',
+      completedOrders: 1074,
+      completionRate: '99.5%',
+      price: 0.9978,
+      availableUSDT: 8000.0,
+      minAmount: 100,
+      maxAmount: 8000.0,
+      paymentMethods: ['Bank Transfer'],
+    },
+    {
+      id: 6,
+      name: 'Steve_Voy',
+      completedOrders: 1074,
+      completionRate: '99.5%',
+      price: 0.9978,
+      availableUSDT: 8000.0,
+      minAmount: 100,
+      maxAmount: 8000.0,
+      paymentMethods: ['Bank Transfer'],
+    },
+    {
+      id: 7,
+      name: 'Steve_Voy',
+      completedOrders: 1074,
+      completionRate: '99.5%',
+      price: 0.9978,
+      availableUSDT: 8000.0,
+      minAmount: 100,
+      maxAmount: 8000.0,
+      paymentMethods: ['Bank Transfer'],
+    },
+  ];
 
 
   
+// types.ts - Define shared types
+export interface SecurityOptionProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  status: 'enabled' | 'disabled' | '';
+  email?: string;
+  action: 'edit' | 'settings' | 'enable' | 'disable' | 'manage' | 'more';
+  onActionClick: () => void;
+}
+
+export interface SecurityState {
+  loginPassword: { enabled: boolean; email: string | null };
+  emailAuth: { enabled: boolean; email: string | null };
+  smsAuth: { enabled: boolean; phone: string | null };
+  googleAuth: { enabled: boolean; email: string | null };
+  fundPassword: { enabled: boolean };
+  antiPhishing: { enabled: boolean };
+  passKeys: { enabled: boolean };
+}
