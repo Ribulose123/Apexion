@@ -24,7 +24,7 @@ const socialIcons = [
   { id: 'discord', icon: <FaDiscord />, alt: 'Discord' },
 ];
 
-export type DropdownMenuType = "buy" | "tools" | "more" | "user" | null;
+export type DropdownMenuType = "buy" | "tools" | "more" | "user" | "assest" | null;
 
 type MenuBarProps = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;

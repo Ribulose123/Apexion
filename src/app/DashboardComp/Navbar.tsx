@@ -6,6 +6,7 @@ import { Search, Bell, ChevronDown } from "lucide-react";
 import { FaTimes } from "react-icons/fa";
 import Flag from "react-world-flags";
 import MenuBar, { DropdownMenuType } from "./MenuBar"; 
+import Overview from "./Overview";
 
 const countryOptions = [
   { code: "gb", name: "English" },
@@ -155,6 +156,19 @@ const Navbar = () => {
           <Link href="/market" className="text-gray-300 hover:text-white">
             Market
           </Link>
+
+          <div className="relative">
+          <button
+              className="text-gray-300 hover:text-white flex items-center"
+              onClick={() => toggleDropdown("assest")}
+            >
+              Assets
+              <ChevronDown size={16} className="ml-1" />
+            </button>
+            {activeDropdown === "assest" && (
+              <Overview/>
+            )}
+          </div>
 
           {/* Trade Link */}
           <Link href="/trade" className="text-gray-300 hover:text-white">

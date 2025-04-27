@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { ArrowLeft, LockKeyhole, ShieldCheck, Smartphone } from 'lucide-react';
 
 const PasskeyPage = () => {
@@ -12,20 +13,19 @@ const PasskeyPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0e0f1a] text-white px-6 py-8 md:px-16">
+    <div className="min-h-screen px-6 py-8 md:px-16 text-white">
       <button
         onClick={() => router.back()}
         className="mb-6 text-gray-400 hover:text-white flex items-center"
       >
-        <ArrowLeft className="w-5 h-5 mr-1" />
-        Back
+        <ArrowLeft className=" mr-1 " size={30} /> <h2 className="text-2xl sm:text-4xl font-semibold text-[#E8E8E8]">Passkey</h2>
       </button>
 
-      <div className="flex flex-col items-center justify-center text-center max-w-md mx-auto">
+      <div className="max-w-md">
         <div className="mb-4">
           {/* Lock icon (you can replace with an actual lock image or SVG) */}
-          <div className="text-4xl bg-gray-800 rounded-full p-4 inline-block">
-            <LockKeyhole className="w-8 h-8 text-white" />
+          <div className="p-4 inline-block">
+            <Image src='/img/Glass padlock 1.png' alt='padlock' width={200} height={200}/>
           </div>
         </div>
 
@@ -33,21 +33,21 @@ const PasskeyPage = () => {
 
         <ul className="text-sm text-gray-400 space-y-5 mt-6 mb-8 text-left">
           <li className="flex items-start gap-3">
-            <ShieldCheck className="text-green-500 w-5 h-5 mt-1" />
+            <ShieldCheck className="text-white w-5 h-5 mt-1" />
             <span>
               <strong className="text-white">No password or verification code required</strong><br />
               Add a passkey to sign in with ease using fingerprints or facial recognition.
             </span>
           </li>
           <li className="flex items-start gap-3">
-            <LockKeyhole className="text-green-500 w-5 h-5 mt-1" />
+            <LockKeyhole className="text-white w-5 h-5 mt-1" />
             <span>
               <strong className="text-white">More secure than passwords</strong><br />
               Enhanced security based on your hardware device.
             </span>
           </li>
           <li className="flex items-start gap-3">
-            <Smartphone className="text-green-500 w-5 h-5 mt-1" />
+            <Smartphone className="text-white w-5 h-5 mt-1" />
             <span>
               <strong className="text-white">Cross-device use and verification</strong><br />
               Passkeys will automatically be available on your synced devices.
@@ -57,7 +57,7 @@ const PasskeyPage = () => {
 
         <button
           onClick={handleAddPasskey}
-          className="bg-green-500 hover:bg-green-600 transition w-full text-white py-2 rounded text-sm font-medium"
+          className="bg-[#439A86] transition w-full text-white py-2 rounded text-sm font-medium"
         >
           Add
         </button>

@@ -24,6 +24,7 @@ const AdvancedProtectionSection: React.FC<AdvancedProtectionSectionProps> = ({
         status={securityOptions.fundPassword.enabled ? 'enabled' : 'disabled'}
         action="enable"
         onActionClick={() => onActionClick('fundPassword')}
+        link='/settings/passkey'
       />
       
       <SecurityOption
@@ -42,6 +43,7 @@ const AdvancedProtectionSection: React.FC<AdvancedProtectionSectionProps> = ({
         status={securityOptions.passKeys.enabled ? 'enabled' : 'disabled'}
         action="enable"
         onActionClick={() => onActionClick('passKeys')}
+        link='/settings/passkey'
       />
     </div>
   );

@@ -107,7 +107,7 @@ export default function ApeaxonP2P() {
     <div className="min-h-screen text-white ">
       {/* Header Section - Full Width Background */}
       <div className="w-full bg-[#060A17]">
-        <div className="max-w-7xl w-full mx-auto px-1 py-6">
+        <div className="max-w-7xl  w-full mx-auto  py-6">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center ">
             <div className=" hidden md:block">
               <h1 className="text-2xl font-bold mb-2">

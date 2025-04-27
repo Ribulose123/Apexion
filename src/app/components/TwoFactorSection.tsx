@@ -21,7 +21,7 @@ const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({ securityOptions, on
         status={securityOptions.loginPassword.enabled ? 'enabled' : 'disabled'}
         action="edit"
         onActionClick={() => onActionClick('loginPassword')}
-        link="/settings" // Optional direct link
+        link="/settings/newpassword" 
       />
       
       <SecurityOption
@@ -32,7 +32,7 @@ const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({ securityOptions, on
         email={securityOptions.emailAuth.email || undefined}
         action="edit"
         onActionClick={() => onActionClick('emailAuth')}
-        link="/security/email-auth" 
+        link="/settings/emailauth" 
       />
       
       <SecurityOption

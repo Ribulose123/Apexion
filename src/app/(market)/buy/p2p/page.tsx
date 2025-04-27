@@ -5,7 +5,7 @@ export default function P2p(){
     return(
         <div className="">
             <div>
-               <div className="md:-ml-35 ml-0 mt-20">
+               <div className="md:-ml-50 ml-0 mt-20">
                <BuyNav/>
                </div >
                 <ApeaxonP2P/>

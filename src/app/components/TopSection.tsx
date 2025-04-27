@@ -30,7 +30,7 @@ const TopSection: React.FC = () => {
   ];
   
   return (
-    <div className="bg-gradient-to-r from-[rgba(20,30,50,0.0576)] to-[rgba(1,4,15,0.24)] rounded-xl p-6 mb-6 sm:border sm:border-[#141E32]">
+    <div className="bg-gradient-to-r from-[rgba(20,30,50,0.0576)] to-[rgba(61,70,104,0.24)] rounded-xl p-6 mb-6 border border-[#141E32]">
       <div className="flex flex-col lg:flex-row w-full gap-10">
         {/* Left Section - Balance */}
         <div className="w-full lg:w-1/2">

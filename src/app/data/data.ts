@@ -192,7 +192,7 @@ import { IoCopy, IoSettingsOutline } from "react-icons/io5";
   export const menuItems = [
     { name: 'Dashboard', icon: House, href: '/dashboard' },
     { name: 'Asset', icon: WalletMinimal, href: 'asset' },
-    { name: 'Deposit', icon: CirclePlus, href: '#' },
+    { name: 'Deposit', icon: CirclePlus, href: 'deposit' },
     { name: 'Withdraw', icon: CircleMinus, href: '#' },
     { name: 'Subscribe', icon: Radiation, href: 'subscription' },
     { name: 'Signal', icon: Radio, href: 'signal' },
@@ -598,4 +598,36 @@ export interface SecurityState {
   fundPassword: { enabled: boolean };
   antiPhishing: { enabled: boolean };
   passKeys: { enabled: boolean };
+}
+
+
+export interface CoinDepost {
+  id: string;
+  name: string;
+  symbol: string;
+  networks: string[];
+}
+
+export interface Network {
+  id: string;
+  name: string;
+  chain: string;
+}
+
+export interface DepositHistory {
+  id:string;
+  orderNumber: string;
+  time: string;
+  pair: string;
+  type: string;
+  amount: string;
+  fees: string;
+  transactionFees: string;
+  fiat:string;
+  status: 'Completed' | 'Pending' | 'Failed';
+}
+
+export interface DateRange {
+  startDate: string;
+  endDate: string;
 }

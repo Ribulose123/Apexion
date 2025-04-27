@@ -1,4 +1,4 @@
-import Footer from "@/app/Component/Footer";
+
 import BuyNav from "@/app/DashboardComp/BuyNav";
 import CryptoInterface from "@/app/DashboardComp/Credit";
 export default function CreditCard(){
@@ -8,7 +8,7 @@ export default function CreditCard(){
         <BuyNav/>
         <CryptoInterface/>
         </div>
-        <Footer/>
+
     </div>
     )
 }
