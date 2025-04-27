@@ -19,7 +19,7 @@ const DeviceActivitiesSection: React.FC<DeviceActivitiesSectionProps> = ({ onAct
         status=""
         action="manage"
         onActionClick={() => onActionClick('deviceManagement')}
-        link='settings/verification'
+        link='settings/verfication'
       />
       
       <SecurityOption
