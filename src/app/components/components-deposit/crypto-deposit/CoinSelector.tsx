@@ -1,6 +1,6 @@
 import React from 'react'
 import { CoinDepost } from '@/app/data/data'
-import { Loader } from '@/app/ui/Loader'
+
 import { Dropdown } from '@/app/ui/Dropdown'
 
 interface CoinSelectorProps{

@@ -41,7 +41,7 @@ const NewPassword1 = () => {
         </h1>
       </div>
 
-      <form action="" className="space-y-5 max-w-md">
+      <form action="" className="space-y-5 max-w-md" onSubmit={handleSubmit(onSubmit)}>
         <div >
           <label className="text-sm mb-1 block">New password</label>
           <div className="relative w-full max-w-4xl">

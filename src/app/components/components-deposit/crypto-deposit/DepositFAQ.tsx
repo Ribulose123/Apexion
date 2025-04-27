@@ -1,6 +1,6 @@
 // src/components/crypto-deposit/DepositFAQ.tsx
 import React, { useState } from 'react';
-import { ChevronDown, FileText } from 'lucide-react';
+import {  FileText } from 'lucide-react';
 
 
 const faqItems = [
