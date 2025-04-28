@@ -33,6 +33,15 @@ type MenuBarProps = {
   toggleDropdown: (menu: DropdownMenuType) => void;
 };
 
+const sidebarMenuItems = [
+  { name: 'Assest', href: '/asset',  },
+  { name: 'Analytics', href: '/analytics' },
+  { name: 'Trading', href: '/trading' },
+  { name: 'Payments', href: '/payments' },
+  { name: 'Settings', href: '/settings' },
+  { name: 'Profile', href: '/profile' },
+];
+
 const MenuBar: React.FC<MenuBarProps> = ({
   setIsOpen,
   country,
@@ -60,7 +69,16 @@ const MenuBar: React.FC<MenuBarProps> = ({
 
         {/* Content */}
         <div className="flex-1 px-6">
-          <nav className="flex flex-col space-y-4 relative">
+          <nav className="flex flex-col space-y-4 relative overflow-auto max-h-[70vh]">
+
+            {/*sidebar menu items */}
+            {sidebarMenuItems.map((item)=>(
+              <div key={item.name } className='text-white py-2 border-b border-gray-800'>
+                <Link href={item.href} onClick={handleLinkClick}>
+                <span>{item.name}</span>
+                </Link>
+              </div>
+            ))}
             {/* Dropdown Item: Buy Crypto */}
             <div className="text-white py-2 border-b border-gray-800">
               <button
@@ -180,12 +198,6 @@ const MenuBar: React.FC<MenuBarProps> = ({
                   <Link href="/settings" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     Settings
                   </Link>
-                  <button 
-                    className="block py-2 text-red-400 hover:text-red-300"
-                    onClick={handleLinkClick} // Close the menu when signing out
-                  >
-                    Sign Out
-                  </button>
                 </div>
               )}
             </div>
@@ -210,21 +222,23 @@ const MenuBar: React.FC<MenuBarProps> = ({
               <DollarSign size={18} className="mr-3" />
               <span className="font-medium">USD</span>
             </div>
-          </nav>
 
-          {/* Social Icons */}
-          <div className="flex justify-center space-x-6 py-6">
-            {socialIcons.map((icon) => (
-              <a
-                key={icon.id}
-                href={`#${icon.id}`}
-                className="text-gray-400 hover:text-white"
-                aria-label={icon.alt}
-              >
-                <span>{icon.icon}</span>
-              </a>
-            ))}
-          </div>
+           
+          </nav>
+        </div>
+
+        {/* Social Icons */}
+        <div className="flex justify-center space-x-6 py-6">
+          {socialIcons.map((icon) => (
+            <a
+              key={icon.id}
+              href={`#${icon.id}`}
+              className="text-gray-400 hover:text-white"
+              aria-label={icon.alt}
+            >
+              <span>{icon.icon}</span>
+            </a>
+          ))}
         </div>
 
         {/* Footer */}

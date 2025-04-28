@@ -514,13 +514,17 @@ const Navbar = () => {
           </div>
         </div>
       )}
+      
+      {/* Mobile Menu - Only show on mobile devices */}
       {isOpen && (
-        <MenuBar
-          setIsOpen={setIsOpen}
-          country={country}
-          activeDropdown={activeDropdown}
-          toggleDropdown={toggleDropdown}
-        />
+        <div className="md:hidden">
+          <MenuBar
+            setIsOpen={setIsOpen}
+            country={country}
+            activeDropdown={activeDropdown}
+            toggleDropdown={toggleDropdown}
+          />
+        </div>
       )}
     </header>
   );

@@ -6,7 +6,7 @@ import WalletConnect from "@/app/DashboardComp/WalletConnect"
 
 export default function Dashboard(){
   return(
-    <main className="flex flex-1 flex-col p-2 sm:p-6">
+    <main className="flex flex-1 flex-col p-2 sm:p-6 mt-14">
     <div className="flex w-full gap-3">
       <Chart />
       <WalletConnect />
