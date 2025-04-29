@@ -127,7 +127,7 @@ const TopSection: React.FC = () => {
 
         {/* Right Section - Chart */}
         <div className="w-full lg:w-1/2">
-          <div className="flex space-x-4 mb-4 border boder-[#141E32] sm:w-[58%] w-[70%] rounded-lg p-2">
+          <div className="flex space-x-4 mb-4 border boder-[#141E32] sm:w-[58%] w-[80%] rounded-lg p-2">
             {timePeriods.map((period) => (
               <button
                 key={period}

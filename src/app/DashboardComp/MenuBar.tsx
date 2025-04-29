@@ -34,12 +34,17 @@ type MenuBarProps = {
 };
 
 const sidebarMenuItems = [
-  { name: 'Assest', href: '/asset',  },
-  { name: 'Analytics', href: '/analytics' },
-  { name: 'Trading', href: '/trading' },
-  { name: 'Payments', href: '/payments' },
-  { name: 'Settings', href: '/settings' },
-  { name: 'Profile', href: '/profile' },
+  { name: 'Dashboard',  href: '/dashboard' },
+      { name: 'Asset',  href: 'asset' },
+      { name: 'Deposit',  href: 'deposit' },
+      { name: 'Withdraw',  href: '#' },
+      { name: 'Subscribe',  href: 'subscription' },
+      { name: 'Signal',  href: 'signal' },
+      { name: 'Staking',  href: 'stake' },
+      { name: 'Referrals',  href: '#' },
+      { name: 'connect Wallet',  href: '#' },
+      { name: 'Copy',  href: '#' },
+      { name: 'Settings',  href: 'settings' },
 ];
 
 const MenuBar: React.FC<MenuBarProps> = ({
