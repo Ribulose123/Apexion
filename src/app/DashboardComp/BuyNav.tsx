@@ -20,10 +20,10 @@ const BuyNav = () => {
     
     return (
         <nav className="mt-8">
-            <div className="flex justify-evenly items-center mb-6 md:-ml-10">
-                <div className="flex space-x-6">
+            <div className="flex md:justify-evenly gap-3 items-center mb-6 md:-ml-10">
+                <div className="flex space-x-3 md:space-x-6">
                     <Link href="/buy/credit-card"
-                        className={`pb-2 ${activeNavTab === 'credit-debit' ? 'border-b-2 border-blue-500 text-white' : 'text-gray-400'} hover:text-white transition-colors  text-[13px] sm:text-[18px]`}
+                        className={`pb-2  ${activeNavTab === 'credit-debit' ? 'border-b-2 border-blue-500 text-white' : 'text-gray-400'} hover:text-white transition-colors  text-[13px] sm:text-[18px]`}
                         onClick={() => setActiveNavTab('credit-debit')}
                     >
                         Credit/Debit card

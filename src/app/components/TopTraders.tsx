@@ -316,7 +316,7 @@ const TopTraders = ({ params }: TopTradersProps) => {
                       </td>
                       <td className="py-4">Bank Transfer</td>
                       <td className="py-4">
-                        <button className="bg-teal-700 hover:bg-teal-600 text-white px-4 py-1 rounded">
+                        <button className="currency-display text-white px-4 py-1 rounded">
                           Buy
                         </button>
                       </td>
@@ -363,7 +363,7 @@ const TopTraders = ({ params }: TopTradersProps) => {
                       </td>
                       <td className="py-4">Bank Transfer</td>
                       <td className="py-4">
-                        <button className="bg-teal-700 hover:bg-teal-600 text-white px-4 py-1 rounded">
+                        <button className="currency-display text-white px-4 py-1 rounded">
                           Sell
                         </button>
                       </td>
@@ -417,7 +417,7 @@ const TopTraders = ({ params }: TopTradersProps) => {
                         <span className="text-xs text-green-500">92.4%</span>
                       </div>
                       <div className="text-base font-bold text-right mt-1">$1,003.80 USD</div>
-                      <button className="mt-2 bg-teal-700 hover:bg-teal-600 text-white text-xs px-3 py-1 rounded">
+                      <button className="mt-2 currency-display text-white text-xs px-3 py-1 rounded">
                         Buy
                       </button>
                     </div>
@@ -467,7 +467,7 @@ const TopTraders = ({ params }: TopTradersProps) => {
                         <span className="text-xs text-green-500">92.4%</span>
                       </div>
                       <div className="text-base font-bold text-right mt-1">$1,003.80 USD</div>
-                      <button className="mt-2 bg-teal-700 hover:bg-teal-600 text-white text-xs px-3 py-1 rounded">
+                      <button className="mt-2 currency-display text-white text-xs px-3 py-1 rounded">
                         Sell
                       </button>
                     </div>
