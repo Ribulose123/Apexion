@@ -1,4 +1,5 @@
-import TradingChart from "@/app/DashboardComp/TradingChart";
+import TradingChart from "@/app/components/Trading/TradingChart";
+
 
 export default function TradePage(){
     return(
