@@ -1,7 +1,7 @@
 "use client";
 import React, { useCallback, useState, useEffect, useMemo } from "react";
 import CandlestickChart from "./CandlestickChart";
-import TimeframeSelector from "./TimeframeSelector "; // Adjusted path to match the correct location
+import TimeframeSelector from "./TimeframeSelector "; 
 
 interface Candle {
   time: string;
