@@ -255,7 +255,7 @@ const TradingPlatform = () => {
   );
   return (
     <div className="flex gap-2">
-      <div className="mt-10 -ml-5 border-2 border-[#1E1E2F] rounded-lg bg-[#01040F] flex flex-col  h-full max-w-6xl p-2">
+      <div className=" -ml-5 border-2 border-[#1E1E2F] rounded-lg bg-[#01040F] flex flex-col  h-full w-[70%] p-2">
         <div className="flex flex-col">
           <div className="ml-5">
             <TimeframeSelector />

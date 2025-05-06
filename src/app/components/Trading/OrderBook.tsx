@@ -17,11 +17,11 @@ const OrderBook: React.FC<OrderBookProps> = ({ orderBook, currentPrice, priceCha
     const [activeTab, setActiveTab] = useState('orderbook');
 
   return (
-    <div className="flex flex-col bg-[#01040F] border p-2 px-4 border-[#1E1E2F] rounded-lg h-full overflow-hidden mt-6 max-w-3xl">
+    <div className="flex flex-col bg-[#01040F] border py-1 px-2.5  border-[#1E1E2F] rounded-lg h-full overflow-hidden -mt-4 ">
       {/* Tabs */}
       <div className="flex border-b border-[#1E1E2F] p-1">
         <button
-          className={`px-4 py-2 text-sm transition-colors rounded-full ${
+          className={`px-4 py-2 text-[18px] transition-colors rounded-full ${
             activeTab === 'orderbook'
               ? "text-white bg-[#10131F]" : "text-gray-400"
           }`}
@@ -69,7 +69,7 @@ const OrderBook: React.FC<OrderBookProps> = ({ orderBook, currentPrice, priceCha
               {/* Ask orders (sell) */}
               <div className="flex flex-col-reverse">
                 {orderBook.asks.slice(0, 7).map((ask, index) => (
-                  <div key={`ask-${index}`} className="grid grid-cols-3 text-xs px-4 py-2 relative">
+                  <div key={`ask-${index}`} className="grid grid-cols-3 text-xs px-4 py-[7px] relative">
                     <div className="text-red-500 z-10">{formatCurrency(ask.price)}</div>
                     <div className="text-right text-gray-300 z-10">{formatAmount(ask.amount)}</div>
                     <div className="text-right text-gray-300 z-10">{formatAmount(ask.total)}</div>
@@ -98,7 +98,7 @@ const OrderBook: React.FC<OrderBookProps> = ({ orderBook, currentPrice, priceCha
               {/* Bid orders (buy) */}
               <div>
                 {orderBook.bids.slice(0, 7).map((bid, index) => (
-                  <div key={`bid-${index}`} className="grid grid-cols-3 text-xs px-6 py-1 relative">
+                  <div key={`bid-${index}`} className="grid grid-cols-3 text-xs px-6 py-[3.7px] relative">
                     <div className="text-green-500 z-10">{formatCurrency(bid.price)}</div>
                     <div className="text-right text-gray-300 z-10">{formatAmount(bid.amount)}</div>
                     <div className="text-right text-gray-300 z-10">{formatAmount(bid.total)}</div>
@@ -128,7 +128,7 @@ const OrderBook: React.FC<OrderBookProps> = ({ orderBook, currentPrice, priceCha
             {/* Trades content */}
             <div className="overflow-auto flex-1 h-full">
               {trades.map((trade, index) => (
-                <div key={`${trade.id}-${index}`} className="grid grid-cols-3 text-xs px-5 py-[3.5px]">
+                <div key={`${trade.id}-${index}`} className="grid grid-cols-3 text-xs px-5 py-[3px]">
                   <div className={trade.side === "buy" ? "text-green-500" : "text-red-500"}>
                     {formatCurrency(trade.price)}
                   </div>

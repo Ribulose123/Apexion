@@ -4,7 +4,7 @@ import { Info } from "lucide-react";
 const Header = () => {
   return (
     <div>
-      <div className="flex items-center space-x-2 p-2">
+      <div className="md:flex hidden items-center space-x-2 p-2">
         <div className="flex items-center space-x-3 border-r border-[#141E32] px-2">
           <div className="w-3 h-3 bg-amber-300 rounded-full"></div>
           <h3 className="text-[#E8E8E8] text-[14px]">BTCUSTD</h3>

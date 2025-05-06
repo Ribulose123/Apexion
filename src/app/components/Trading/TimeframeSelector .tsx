@@ -32,9 +32,9 @@ const TimeframeSelector = () => {
   };
 
   return (
-    <div className="flex space-x-7 items-cente text-gray-300 w-full px-4 py-2">
+    <div className="flex md:space-x-7 space-x-3 items-center text-gray-300 w-full px-4 py-2 md:ml-0 -ml-10">
       {/* Timeframe Options */}
-      <div className="flex items-center space-x-4 mr-6">
+      <div className="flex items-center md:space-x-4 mr-6">
         <div className="text-gray-400 font-medium text-sm px-2">1m</div>
         <div className="text-gray-400 font-medium text-sm px-2">30m</div>
 
@@ -76,24 +76,24 @@ const TimeframeSelector = () => {
       {/* Chart Type Buttons */}
       <div className="flex space-x-1 md:ml-5">
         <button className="text-green-500 hover:text-green-400">
-          <BarChart2 size={20} />
+          <BarChart2 size={15} />
         </button>
         <button className="text-gray-500 hover:text-gray-400">
-          <LineChart size={20} />
+          <LineChart size={15} />
         </button>
         <button className="text-gray-500 hover:text-gray-400">
-          <TrendingUp size={20} />
+          <TrendingUp size={15} />
         </button>
       </div>
 
       <div className="flex items-center space-x-1 cursor-pointer">
        <div className="flex items-center space-x-1">
-       <TrendingUp size={20} className="text-gray-400" />
-       <span className="text-gray-400 text-sm">Indicators</span>
+       <TrendingUp size={15} className="text-gray-400" />
+       <span className="text-gray-400 md:text-sm text-[12px]">Indicators</span>
        </div>
        <div className="flex items-center space-x-1">
        <CiCirclePlus size={20} className="text-gray-400" />
-       <span className="text-gray-400 text-sm">Compare</span>
+       <span className="text-gray-400  md:text-sm text-[12px]">Compare</span>
        </div>
       </div>
       <div className="flex items-center space-x-4">
