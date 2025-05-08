@@ -15,13 +15,13 @@ const LogoCarousel = () => {
   return (
     <div className="w-full  mt-[70px] py-4">
       <motion.div
-        className="flex items-center whitespace-nowrap"
+        className="flex items-center "
         animate={{ 
           x: ["0%", "-100%"] 
         }} 
         transition={{ 
           repeat: Infinity, 
-          duration: 20, 
+          duration: 50, 
           ease: "linear",
           repeatType: "loop"
         }} 
@@ -38,7 +38,7 @@ const LogoCarousel = () => {
     alt="Brand Logo" 
     width={1200}  // Large base width
     height={400}  // Proportional height
-    className="w-full sm:w-full md:w-full  lg:w-full h-auto object-cover" 
+    className="w-full sm:w-[50%] md:w-[50%]  lg:w-[50%] h-auto object-cover" 
   />
 </div>
         ))}

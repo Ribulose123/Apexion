@@ -28,7 +28,7 @@ const LoginForm = () => {
 
   const onSubmit = (data: LoginFormData) => {
     console.log('Login Data:', data);
-    router.push('/dashboard'); 
+    router.push('/landingpage'); 
   };
 
   return (

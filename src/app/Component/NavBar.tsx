@@ -38,7 +38,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto max-w-7xl flex justify-between items-center  h-20">
         {/* Logo */}
-        <Image src='/img/logo2.jpg' alt="logo" width={50} height={50}/>
+        <Image src='/img/logo4.jpg' alt="logo" width={50} height={50}/>
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-6">

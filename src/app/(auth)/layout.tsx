@@ -2,8 +2,13 @@ import NavbarAuth from "../Content/NavbarAuth";
 import "../globals.css"; // Import the global CSS file
 
 export const metadata = {
-  title: "Authentication | Your Platform",
+  title: "Apexion",
   description: "Authentication pages for login and signup",
+  icons: [
+    { rel: "icon", url: "/img/logo3.jpg" },
+    { rel: "apple-touch-icon", url: "/img/logo3.jpg" },
+    { rel: "shortcut icon", url: "/img/logo3.jpg" }
+  ]
 };
 
 export default function AuthLayout({

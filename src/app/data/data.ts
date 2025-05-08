@@ -673,3 +673,108 @@ export interface DateRange {
   startDate: string;
   endDate: string;
 }
+
+export  const tabData = {
+  popular: [
+    {
+      name: 'Bitcoin',
+      symbol: 'BTC',
+      price: '87,678.7',
+      change: '+0.02%',
+      volume: '603.97M',
+      icon: '🟠'
+    },
+    {
+      name: 'Binance',
+      symbol: 'BNB',
+      price: '177.3',
+      change: '-0.15%',
+      volume: '503.12M',
+      icon: '🟡'
+    },
+    {
+      name: 'Bitcoin',
+      symbol: 'BTC',
+      price: '87,678.7',
+      change: '+0.02%',
+      volume: '603.97M',
+      icon: '🟠'
+    },
+    {
+      name: 'Binance',
+      symbol: 'BNB',
+      price: '177.3',
+      change: '-0.15%',
+      volume: '503.12M',
+      icon: '🟡'
+    }
+  ],
+  topGainers: [
+    {
+      name: 'Ethereum',
+      symbol: 'ETH',
+      price: '3,542.1',
+      change: '+3.75%',
+      volume: '892.46M',
+      icon: '🟣'
+    },
+    {
+      name: 'Solana',
+      symbol: 'SOL',
+      price: '129.8',
+      change: '+2.84%',
+      volume: '412.38M',
+      icon: '🟢'
+    },
+    {
+      name: 'Cardano',
+      symbol: 'ADA',
+      price: '0.489',
+      change: '+1.92%',
+      volume: '235.71M',
+      icon: '🔵'
+    },
+    {
+      name: 'Polygon',
+      symbol: 'MATIC',
+      price: '0.678',
+      change: '+1.56%',
+      volume: '183.24M',
+      icon: '🟣'
+    }
+  ],
+  newListings: [
+    {
+      name: 'Aptos',
+      symbol: 'APT',
+      price: '8.36',
+      change: '+0.78%',
+      volume: '102.15M',
+      icon: '⚪'
+    },
+    {
+      name: 'Internet Computer',
+      symbol: 'ICP',
+      price: '11.23',
+      change: '-0.42%',
+      volume: '87.93M',
+      icon: '⚫'
+    },
+    {
+      name: 'Sui',
+      symbol: 'SUI',
+      price: '1.24',
+      change: '+0.18%',
+      volume: '65.37M',
+      icon: '🔵'
+    },
+    {
+      name: 'Injective',
+      symbol: 'INJ',
+      price: '22.86',
+      change: '-1.23%',
+      volume: '45.62M',
+      icon: '🟠'
+    }
+  ]
+};

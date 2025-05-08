@@ -38,14 +38,14 @@ const Navbar = () => {
       {/* Logo - Left aligned */}
       <div className="flex-none">
         <Link
-          href="/"
+          href="/landingpage"
           className="text-white font-bold text-xl flex items-center"
         >
           <Image
-            src="/img/logo2.jpg"
+            src="/img/logo4.jpg"
             alt="logo"
-            width={32}
-            height={32}
+            width={50}
+            height={50}
             className="mr-2"
           />
         </Link>

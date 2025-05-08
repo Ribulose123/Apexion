@@ -4,7 +4,7 @@ import { Copy , WalletMinimal} from 'lucide-react';
 
 const WalletConnect = () => {
   return (
-    <div className="w-90 h-100 flex-col gap-6 hidden sm:block">
+    <div className="md:w-90 h-100 flex-col gap-6 w-full mt-3 md:mt-0">
       {/* Connect wallet card */}
       <div 
         className="bg-gradient-to-br from-black to-purple-900 text-white rounded-xl p-4 flex-1 h-1/2 flex flex-col"

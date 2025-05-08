@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-
+import SiderBar from "../DashboardComp/SiderBar";
 import Navbar from "../DashboardComp/Navbar";
-import Footer from "../Component/Footer";
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +24,7 @@ export const metadata: Metadata = {
   ]
 };
 
-export default function market({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -36,16 +34,14 @@ export default function market({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-          
-          <div className=" min-h-screen ">
-      <Navbar />
-      <div >
-       
-        
-        {children}
-      </div>
-      <Footer/>
-    </div>
+        <div className="flex flex-col min-h-screen ">
+          <Navbar />
+          <div className="mt-3 ">
+           
+
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   );

@@ -9,7 +9,7 @@ const StakingWallet = () => {
     setShowBalance(!showBalance);
   };
   return (
-    <div className=" bg-linear-to-b from-[#141E323D]  to-[#141E32]   p-6 w-full h-40">
+    <div className=" bg-linear-to-b from-[#141E323D]  to-[#141E32]   p-6 w-full h-40 rounded-lg">
       <div className="flex justify-between items-center">
         <div className="flex flex-col sm:flex-row space-x-24">
           <div className="">
@@ -44,7 +44,7 @@ const StakingWallet = () => {
 
           <div className="flex gap-3  sm:gap-0 items-center sm:flex-col sm:items-start">
             <h2 className="text-gray-400 text-sm font-medium">
-              Active Stakings
+              Close Stakings
             </h2>
             <div className="mt-2">
               <p className="text-white text-2xl">
@@ -54,7 +54,7 @@ const StakingWallet = () => {
           </div>
         </div>
 
-        <button className="bg-transparent currency-display text-gray-400 text-xs py-1 px-3 rounded -mt-28 gap-3 sm:mt-0 ">
+        <button className="bg-transparent currency-display text-gray-400 md:text-xs text-[11px] py-1 px-5 rounded -mt-28 gap-3 sm:mt-0 ">
             <File size={14}/>
           View Stakings
         </button>

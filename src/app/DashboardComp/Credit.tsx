@@ -13,7 +13,7 @@ const CryptoInterface = () => {
   return (
     <div className="text-white w-full">
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto py-8 px-4">
+      <div className=" mx-auto max-w-7xl w-full py-8 ">
         <div className="mb-8 md:ml-28">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 text-center md:text-left">
             Buy Crypto Instantly In
@@ -31,20 +31,29 @@ const CryptoInterface = () => {
         <div className="flex flex-col md:flex-row md:items-start md:space-x-8">
           {/* Featured/Newly Listed Section - First on desktop, Second on mobile */}
           <div className="w-full md:w-1/2 order-2 md:order-1 mb-8 md:mb-0 md md:-mt-5 md:ml-28">
-            <div className="flex flex-col border border-[#141E32] text-white rounded-lg overflow-hidden w-full max-w-md mx-auto md:mx-0 shadow-lg">
-              <div className="flex">
+            <div className="flex flex-col  border border-[#141E32] text-white rounded-lg overflow-hidden w-full max-w-md mx-auto md:mx-0 shadow-lg">
+              <div className="flex flex-col md:flex-row">
                 {/* Featured Column */}
-                <div className="w-1/2 border-r border-gray-800 p-4">
-                  <h3 className="text-gray-400 mb-4 text-sm font-medium">Featured</h3>
+                <div className="md:w-1/2 w-full border-r border-gray-800 p-4">
+                  <h3 className="text-gray-400 mb-4 text-sm font-medium">
+                    Featured
+                  </h3>
                   <div className="space-y-1">
                     {featuredCoins.map((coin) => (
-                      <div key={coin.id} className="flex items-center justify-between">
+                      <div
+                        key={coin.id}
+                        className="flex items-center justify-between"
+                      >
                         <div className="flex items-center space-x-2">
                           <div className="w-4 h-4 rounded-full bg-yellow-500"></div>
                           <span className="text-sm">{coin.symbol}</span>
                         </div>
                         <span className="text-sm">{coin.price}</span>
-                        <span className={`text-sm ${coin.positive ? 'text-green-500' : 'text-red-500'}`}>
+                        <span
+                          className={`text-sm ${
+                            coin.positive ? "text-green-500" : "text-red-500"
+                          }`}
+                        >
                           {coin.change}
                         </span>
                       </div>
@@ -53,17 +62,26 @@ const CryptoInterface = () => {
                 </div>
 
                 {/* Newly Listed Column */}
-                <div className="w-1/2 p-4 ">
-                  <h3 className="text-gray-400 mb-4 text-sm font-medium">Newly Listed</h3>
+                <div className="md:w-1/2 w-full p-4 ">
+                  <h3 className="text-gray-400 mb-4 text-sm font-medium">
+                    Newly Listed
+                  </h3>
                   <div className="space-y-1">
                     {newlyListedCoins.map((coin) => (
-                      <div key={coin.id} className="flex items-center justify-between">
+                      <div
+                        key={coin.id}
+                        className="flex items-center justify-between"
+                      >
                         <div className="flex items-center space-x-2">
                           <div className="w-4 h-4 rounded-full bg-orange-500"></div>
                           <span className="text-sm">{coin.symbol}</span>
                         </div>
                         <span className="text-sm">{coin.price}</span>
-                        <span className={`text-sm ${coin.positive ? 'text-green-500' : 'text-red-500'}`}>
+                        <span
+                          className={`text-sm ${
+                            coin.positive ? "text-green-500" : "text-red-500"
+                          }`}
+                        >
                           {coin.change}
                         </span>
                       </div>
@@ -73,7 +91,7 @@ const CryptoInterface = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Buy/Sell Form - Second on desktop, First on mobile */}
           <div className="w-full md:w-1/2 order-1 md:order-2 mb-8 md:mb-0 md:-mt-42">
             <div className="bg-linear-to-b from-[#141E323D] to-[#141E32] text-white w-full max-w-md mx-auto md:mx-0 p-6 rounded-lg shadow-lg">
@@ -172,49 +190,51 @@ const CryptoInterface = () => {
           <h2 className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-center md:text-left md:ml-28">
             How To Buy Crypto Instantly?
           </h2>
-          <div className="flex flex-col md:flex-row justify-evenly gap-6 md:gap-8">
-    {/* Step 1 */}
-    <div className="text-center mb-6 md:mb-0 flex flex-col items-center">
-      <div className="mb-4 flex justify-center">
-        <Image 
-          src="/img/step1.png" 
-          alt="Step 1" 
-          width={130}
-          height={130}
-        />
-      </div>
-      <h3 className="font-medium mb-2">Enter the amount</h3>
-      <p className="text-[#7D8491] text-sm">to create an order.</p>
-    </div>
-    
-    {/* Step 2 */}
-    <div className="text-center mb-6 md:mb-0 flex flex-col items-center">
-      <div className="mb-4 flex justify-center">
-        <Image 
-          src="/img/Group.png" 
-          alt="Choose payment method" 
-          width={90}
-          height={90}
-        />
-      </div>
-      <h3 className="font-medium mb-2">Choose your preferred</h3>
-      <p className="text-[#7D8491] text-sm">payment method.</p>
-    </div>
-    
-    {/* Step 3 */}
-    <div className="text-center flex flex-col items-center">
-      <div className="mb-4 flex justify-center">
-        <Image 
-          src="/img/Group (1).png" 
-          alt="Confirm payment" 
-          width={90}
-          height={90}
-        />
-      </div>
-      <h3 className="font-medium mb-2">Confirm the payment and</h3>
-      <p className="text-[#7D8491] text-sm">follow the steps to complete the purchase.</p>
-    </div>
-  </div>
+          <div className="flex flex-col md:flex-row justify-evenly gap-6 md:gap-8 border  md:border-0 border-[#439A8633] py-3 rounded-lg">
+            {/* Step 1 */}
+            <div className="text-center mb-6 md:mb-0 flex flex-col items-center ">
+              <div className="mb-4 flex justify-center">
+                <Image
+                  src="/img/step1.png"
+                  alt="Step 1"
+                  width={130}
+                  height={130}
+                />
+              </div>
+              <h3 className="font-medium mb-2">Enter the amount</h3>
+              <p className="text-[#7D8491] text-sm">to create an order.</p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="text-center mb-6 md:mb-0 flex flex-col items-center">
+              <div className="mb-4 flex justify-center">
+                <Image
+                  src="/img/Group.png"
+                  alt="Choose payment method"
+                  width={90}
+                  height={90}
+                />
+              </div>
+              <h3 className="font-medium mb-2">Choose your preferred</h3>
+              <p className="text-[#7D8491] text-sm">payment method.</p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="text-center flex flex-col items-center">
+              <div className="mb-4 flex justify-center">
+                <Image
+                  src="/img/Group (1).png"
+                  alt="Confirm payment"
+                  width={90}
+                  height={90}
+                />
+              </div>
+              <h3 className="font-medium mb-2">Confirm the payment and</h3>
+              <p className="text-[#7D8491] text-sm">
+                follow the steps to complete the purchase.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
