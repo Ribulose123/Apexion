@@ -31,7 +31,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row md:justify-between md:gap-0 lg:gap-0 md:items-start items-start">
           {/* Logo Section */}
           <div className="mb-6 md:mb-0 md:mr-4">
-            <Image src='/img/logo5.jpg' alt="logo" width={100} height={100}/>
+            <Image src='/img/logo1.png' alt="logo" width={100} height={100}/>
           </div>
           
           {/* Footer Links */}

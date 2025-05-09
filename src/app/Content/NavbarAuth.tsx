@@ -25,7 +25,7 @@ const NavbarAuth = () => {
     <nav className="w-full bg-[#10131F] shadow-md py-4 px-6 relative">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
-        <Image src="/img/logo2.jpg" alt="logo" width={50} height={50} />
+        <Image src="/img/logo1.png" alt="logo" width={100} height={100} />
 
         {/* Flag Dropdown */}
         <div className="relative">
