@@ -48,7 +48,7 @@ const Footer = () => {
               </div>
               <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#797A80] text-[13px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.company ? 'block' : 'hidden md:block'}`}>
                 <li><Link href="/contact">Career</Link></li>
-                <li><Link href="/about">About Bidvest</Link></li>
+                <li><Link href="/about-us">About Bidvest</Link></li>
                 <li><Link href="faq">FAQs</Link></li>
               </ul>
             </div>

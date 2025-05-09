@@ -26,7 +26,7 @@ const DepositAddress: React.FC<DepositAddressProps> = ({
   };
 
   return (
-    <div className=" text-white p-4 rounded-lg">
+    <div className=" text-white p-4 rounded-lg -ml-3">
       <div className="flex items-center mb-4">
         <div className="bg-[#439A86] text-white rounded-full w-7 h-7 flex items-center justify-center text-xs mr-2">
           3
@@ -43,7 +43,7 @@ const DepositAddress: React.FC<DepositAddressProps> = ({
          
 
           <div className="flex flex-col space-x-4">
-            <div className='flex justfity-between md:flex-row flex-col md:items-center gap-10'>
+            <div className='flex justfity-between md:flex-row flex-col md:items-center gap-6'>
             <div className="">
               <div className="w-24 h-24">
                 {/* QR code would go here */}

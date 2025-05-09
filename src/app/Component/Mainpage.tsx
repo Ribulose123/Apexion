@@ -209,7 +209,7 @@ const Mainpage = () => {
               <p className="text-[#01040F] text-center text-sm mb-4 flex-grow">
                 Fund your account easily on the Bybit Web or App.
               </p>
-              <Link href='#' className="w-full bg-[#6967AE] text-white py-2 rounded-md font-medium transition-colors text-sm text-center">
+              <Link href='/deposit' className="w-full bg-[#6967AE] text-white py-2 rounded-md font-medium transition-colors text-sm text-center">
                 Deposit Now
               </Link>
             </div>
