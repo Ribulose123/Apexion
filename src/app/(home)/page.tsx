@@ -18,7 +18,7 @@ export default function Home() {
             Step into a new chapter of online trading.
           </h1>
           <p className="mt-4 text-[#797A80] max-w-5xl mx-auto sm:text-[16px] text-[14px] font-medium">
-            Join Apexion Trades to enjoy the benefits of trading with a regulated,
+            Join Bidvest Trades to enjoy the benefits of trading with a regulated,
             secure broker designed to execute your transactions in seconds. Open a
             Live Account to access an optimised set of trading features
           </p>

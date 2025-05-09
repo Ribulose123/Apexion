@@ -31,7 +31,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row md:justify-between md:gap-0 lg:gap-0 md:items-start items-start">
           {/* Logo Section */}
           <div className="mb-6 md:mb-0 md:mr-4">
-            <Image src='/img/logo2.jpg' alt="logo" width={50} height={50}/>
+            <Image src='/img/logo5.jpg' alt="logo" width={100} height={100}/>
           </div>
           
           {/* Footer Links */}
@@ -48,7 +48,7 @@ const Footer = () => {
               </div>
               <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#797A80] text-[13px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.company ? 'block' : 'hidden md:block'}`}>
                 <li><Link href="/contact">Career</Link></li>
-                <li><Link href="/about">About Apexion</Link></li>
+                <li><Link href="/about">About Bidvest</Link></li>
                 <li><Link href="faq">FAQs</Link></li>
               </ul>
             </div>
@@ -115,7 +115,7 @@ const Footer = () => {
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-start sm:items-center text-xs opacity-70 pt-4">
-          <p className="text-[12px] sm:text-[15px] font-semibold text-[#A4A4A4]">Copyright &copy; 2025 Apexion. All rights reserved.</p>
+          <p className="text-[12px] sm:text-[15px] font-semibold text-[#A4A4A4]">Copyright &copy; 2025 Bidvest. All rights reserved.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a href="#" className="hover:opacity-100 opacity-70"><FaFacebookF /></a>
             <a href="#" className="hover:opacity-100 opacity-70"><FaTwitter /></a>

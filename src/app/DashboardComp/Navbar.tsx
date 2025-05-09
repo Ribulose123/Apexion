@@ -42,10 +42,10 @@ const Navbar = () => {
           className="text-white font-bold text-xl flex items-center"
         >
           <Image
-            src="/img/logo4.jpg"
+            src="/img/logo5.jpg"
             alt="logo"
-            width={50}
-            height={50}
+            width={100}
+            height={100}
             className="mr-2"
           />
         </Link>

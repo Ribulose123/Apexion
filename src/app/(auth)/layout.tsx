@@ -2,7 +2,7 @@ import NavbarAuth from "../Content/NavbarAuth";
 import "../globals.css"; // Import the global CSS file
 
 export const metadata = {
-  title: "Apexion",
+  title: "Bidvest",
   description: "Authentication pages for login and signup",
   icons: [
     { rel: "icon", url: "/img/logo3.jpg" },

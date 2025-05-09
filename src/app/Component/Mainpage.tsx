@@ -17,10 +17,10 @@ const Mainpage = () => {
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between">
           <div className="md:w-1/2 mb-6 md:mb-0 flex flex-col md:block md:items-center ">
             <h1 className="text-3xl md:text-6xl text-[#E8E8E8] md:text-start text-center font-bold mb-2">
-              Apexion NFT Marketplace: Trade, Collect & Earn!
+              Bidvest NFT Marketplace: Trade, Collect & Earn!
             </h1>
             <p className="text-[#F4F5F7] mb-6 md:text-start text-center">
-              Buy, sell and trade exclusive NFTs—coming soon to Apexion!
+              Buy, sell and trade exclusive NFTs—coming soon to Bidvest!
             </p>
             <button className="bg-[#F2AF29] text-white font-bold py-2 px-6 rounded">
               Get Started
@@ -57,11 +57,11 @@ const Mainpage = () => {
 
       {/* link */}
       <div className="block md:hidden py-8 px-4">
-  <div className="grid grid-cols-3 gap-6 max-w-md mx-auto">
+  <div className="grid grid-cols-3 gap-2 max-w-md mx-auto">
     {/* Deposit */}
     <div className="flex flex-col items-center">
       <Link href='#' className="flex flex-col items-center">
-      <div className="bg-gray-800 rounded-lg p-4 mb-2 w-16 h-16 flex items-center justify-center">
+      <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
        <Image src='/img/Group 1010.png' alt="lock" width={200} height={200}/>
       </div>
       <span className="text-[#F4F5F7] text-xs font-medium">Deposit</span>
@@ -71,8 +71,8 @@ const Mainpage = () => {
     {/* Copy trade */}
     <div className="flex flex-col items-center">
       <Link href='#' className="flex flex-col items-center">
-      <div className="bg-gray-800 rounded-lg p-4 mb-2 w-16 h-16 flex items-center justify-center">
-      <Image src='/img/Group 11712.png' alt="lock" width={200} height={200}/>
+      <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
+      <Image src='/img/Group 11712.png' alt="lock" width={100} height={100}/>
       </div>
       <span className="text-[#F4F5F7] text-xs font-medium">Copy trade</span>
       </Link>
@@ -81,7 +81,7 @@ const Mainpage = () => {
     {/* Referral */}
     <div className="flex flex-col items-center">
       <Link href='#' className="flex flex-col items-center">
-      <div className="bg-gray-800 rounded-lg p-4 mb-2 w-16 h-16 flex items-center justify-center">
+      <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
       <Image src='/img/refral.png' alt="lock" width={200} height={200}/>
 
       </div>
@@ -89,21 +89,21 @@ const Mainpage = () => {
       </Link>
     </div>
 
-    {/* apexion card */}
+    {/* Bidvest card */}
     <div className="flex flex-col items-center">
      <Link href='#' className="flex flex-col items-center">
-     <div className="bg-gray-800 rounded-lg p-4 mb-2 w-16 h-16 flex items-center justify-center">
+     <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
       <Image src='/img/Group 1011.png' alt="lock" width={200} height={200}/>
 
       </div>
-      <span className="text-white text-xs font-medium">Apexion card</span>
+      <span className="text-white text-xs font-medium">Bidvest card</span>
      </Link>
     </div>
 
     {/* Quick buy */}
     <div className="flex flex-col items-center">
       <Link href='/buy/credit-card'  className="flex flex-col items-center">
-      <div className="bg-gray-800 rounded-lg p-4 mb-2 w-16 h-16 flex items-center justify-center">
+      <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
       <Image src='/img/Group 1012.png' alt="lock" width={200} height={200}/>
       </div>
       <span className="text-[#F4F5F7] text-xs font-medium">Quick buy</span>
@@ -113,7 +113,7 @@ const Mainpage = () => {
     {/* Market */}
     <div className="flex flex-col items-center">
      <Link href='#' className="flex flex-col items-center">
-     <div className="bg-gray-800 rounded-lg p-4 mb-2 w-16 h-16 flex items-center justify-center">
+     <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
       <Image src='/img/Group 1012.png' alt="lock" width={200} height={200}/>
       </div>
       <span className="text-[#F4F5F7] text-xs font-medium text-center">Market</span>
@@ -127,19 +127,19 @@ const Mainpage = () => {
         <div className="flex items-center space-x-2 max-w-[300px]">
           <Image src="/img/Bank 1.png" alt="Token" width={70} height={70} />
           <p className="text-[16px] text-[#E8E8E8]">
-            Apexion Earn & Refer: Get Rewarded for Every Friend You Bring!
+            Bidvest Earn & Refer: Get Rewarded for Every Friend You Bring!
           </p>
         </div>
         <div className="flex items-center space-x-2 max-w-[300px]">
           <Image src="/img/Bank 1.png" alt="Token" width={60} height={60} />
           <p className="text-[16px] text-[#E8E8E8]">
-            Apexion Earn & Refer: Get Rewarded for Every Friend You Bring!
+            Bidvest Earn & Refer: Get Rewarded for Every Friend You Bring!
           </p>
         </div>
         <div className="flex items-center space-x-2 max-w-[300px]">
           <Image src="/img/Bank 1.png" alt="Token" width={60} height={60} />
           <p className="text-[16px] text-[#E8E8E8]">
-            Apexion Earn & Refer: Get Rewarded for Every Friend You Bring!
+            Bidvest Earn & Refer: Get Rewarded for Every Friend You Bring!
           </p>
         </div>
       </div>
