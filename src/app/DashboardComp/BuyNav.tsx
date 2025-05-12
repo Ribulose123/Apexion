@@ -30,7 +30,7 @@ const BuyNav = () => {
                     </Link>
                     
                     <Link href="/buy/p2p"
-                        className={`pb-2 ${activeNavTab === 'p2p' ? 'border-b-2 border-blue-500 text-white' : 'text-gray-400'} hover:text-white transition-color  text-[13px] sm:text-[18px]s`}
+                        className={`pb-2 ${activeNavTab === 'p2p' ? 'border-b-2 border-blue-500 text-white' : 'text-gray-400'} hover:text-white transition-color  text-[13px] sm:text-[18px]`}
                         onClick={() => setActiveNavTab('p2p')}
                     >
                         P2P trading

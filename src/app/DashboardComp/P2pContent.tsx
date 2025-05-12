@@ -204,7 +204,7 @@ export default function ApeaxonP2P() {
           <div className="flex justify-between md:items-center mb-6 flex-col md:flex-row">
            <div>
            <h2 className="md:text-2xl text-[20px] font-bold">
-              How To Get Started With Apeaxon P2P
+              How To Get Started With Bidvest P2P
             </h2>
             <p className="text-[#797A80] text-sm mb-4 mt-2">Ready to begin your P2P trading journey? Follow this step-by-step guide to complete your first <br /> P2P transaction on Bybit.
             </p>

@@ -11,7 +11,8 @@ const SideBar = () => {
       <nav className="flex-1">
         <ul className="space-y-1 flex flex-col items-center lg:items-start">
           {menuItems.map((item) => {
-            const isActive = pathname === item.href;
+             const isActive = pathname === item.href || 
+                           (item.href !== '/' && pathname.startsWith(item.href));
 
             return (
               <li

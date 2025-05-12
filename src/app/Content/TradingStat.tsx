@@ -17,7 +17,7 @@ const TradingStats = () => {
         </p>
 
         <p className="text-[#E8E8E8] font-medium text-[11px] sm:text-[13px] mt-8 sm:mt-3  w-[68%] text-start">
-          Join Apexion Trades to enjoy the benefits of trading with a regulated, 
+          Join Bidvest Trades to enjoy the benefits of trading with a regulated, 
           secure broker designed to execute your transactions in seconds.
         </p>
         </div>

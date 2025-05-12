@@ -154,7 +154,7 @@ export const faqData = [
 export const contactData = [
     {
       title: "Customer Services",
-      description: "For Assistance With Your Bitget Account Or General Inquiries About Our Services.",
+      description: "For Assistance With Your Bidvest Account Or General Inquiries About Our Services.",
       
     },
     {

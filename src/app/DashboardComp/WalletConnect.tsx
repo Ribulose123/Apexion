@@ -12,7 +12,7 @@ const WalletConnect = () => {
           background: 'linear-gradient(to bottom right, #000000, #4C1D95)'
         }}
       >
-        <h2 className="text-sm text-gray-400 mb-3">Aperson Wallet</h2>
+        <h2 className="text-sm text-gray-400 mb-3">Bidvest Wallet</h2>
         <h1 className="text-lg font-bold mb-3">Connect Your Wallet</h1>
         <p className="text-xs text-gray-400 mb-4">
           Securely Link Your Wallet To Start Trading, Managing Assets, And Accessing All Features Effortlessly.
