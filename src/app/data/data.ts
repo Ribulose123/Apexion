@@ -199,7 +199,7 @@ import { IoCopy, IoSettingsOutline } from "react-icons/io5";
     { name: 'Staking', icon: Coins, href: 'stake' },
     { name: 'Referrals', icon: User, href: '#' },
     { name: 'connect Wallet', icon:Link, href: '#' },
-    { name: 'Copy', icon: IoCopy, href: '#' },
+    { name: 'Copy', icon: IoCopy, href: 'copy' },
     { name: 'Settings', icon: IoSettingsOutline, href: 'settings' },
   ];
 
@@ -778,3 +778,199 @@ export  const tabData = {
     }
   ]
 };
+
+export const CopyProfiles = [
+  {
+    id: 1,
+    name: 'Mr_poFit',
+    completedOrders: "107/200",
+    completionRate: '98.5%',
+    profitPercentage: '+42.13%',
+    totalPnL: '$163,152.56',
+    closedPnL: '$36,542.36',
+    openPnL: '$33,942.76',
+    customers: {
+      all: 1728,
+      last30Days: 147
+    },
+    online: true,
+    verified: true,
+    eps: 3,
+    roe: 0,
+    pnl: 2
+  },
+  {
+    id: 2,
+    name: 'CryptoKing',
+    completedOrders: "86/104",
+    completionRate: '97.2%',
+    profitPercentage: '+38.57%',
+    totalPnL: '$142,931.45',
+    closedPnL: '$31,842.72',
+    openPnL: '$29,457.83',
+    customers: {
+      all: 1532,
+      last30Days: 132
+    },
+    online: true,
+    verified: true,
+    eps: 2,
+    roe: 1,
+    pnl: 3
+  },
+  {
+    id: 3,
+    name: 'BitWhale',
+    completedOrders: "125/130",
+    completionRate: '99.1%',
+    profitPercentage: '+45.89%',
+    totalPnL: '$187,423.68',
+    closedPnL: '$41,235.47',
+    openPnL: '$38,721.92',
+    customers: {
+      all: 1892,
+      last30Days: 163
+    },
+    online: true,
+    verified: true,
+    eps: 4,
+    roe: 0,
+    pnl: 3
+  },
+  {
+    id: 4,
+    name: 'TradeNinja',
+    completedOrders: "98/154",
+    completionRate: '96.8%',
+    profitPercentage: '+37.24%',
+    totalPnL: '$135,762.93',
+    closedPnL: '$30,124.56',
+    openPnL: '$27,984.21',
+    customers: {
+      all: 1478,
+      last30Days: 128
+    },
+    online: false,
+    lastSeen: '35 minutes ago',
+    verified: true,
+    eps: 2,
+    roe: 1,
+    pnl: 2
+  },
+  {
+    id: 5,
+    name: 'SatoshiFan',
+    completedOrders: "112/187",
+    completionRate: '98.9%',
+    profitPercentage: '+43.67%',
+    totalPnL: '$171,345.82',
+    closedPnL: '$38,234.65',
+    openPnL: '$35,872.41',
+    customers: {
+      all: 1805,
+      last30Days: 155
+    },
+    online: true,
+    verified: true,
+    eps: 3,
+    roe: 1,
+    pnl: 2
+  },
+  {
+    id: 6,
+    name: 'CoinMaster',
+    completedOrders: "79/102",
+    completionRate: '95.7%',
+    profitPercentage: '+36.42%',
+    totalPnL: '$128,456.74',
+    closedPnL: '$28,643.52',
+    openPnL: '$26,745.31',
+    customers: {
+      all: 1265,
+      last30Days: 109
+    },
+    online: false,
+    lastSeen: '2 hours ago',
+    verified: true,
+    eps: 2,
+    roe: 0,
+    pnl: 2
+  },
+  {
+    id: 7,
+    name: 'BlockchainPro',
+    completedOrders: "101/156",
+    completionRate: '97.6%',
+    profitPercentage: '+40.83%',
+    totalPnL: '$156,234.97',
+    closedPnL: '$34,876.23',
+    openPnL: '$32,145.68',
+    customers: {
+      all: 1623,
+      last30Days: 138
+    },
+    online: true,
+    verified: true,
+    eps: 3,
+    roe: 1,
+    pnl: 2
+  },
+  {
+    id: 8,
+    name: 'HashRaider',
+    completedOrders: "93/145",
+    completionRate: '96.5%',
+    profitPercentage: '+39.75%',
+    totalPnL: '$149,872.36',
+    closedPnL: '$33,426.58',
+    openPnL: '$30,875.42',
+    customers: {
+      all: 1498,
+      last30Days: 129
+    },
+    online: true,
+    verified: true,
+    eps: 2,
+    roe: 1,
+    pnl: 3
+  },
+  {
+    id: 9,
+    name: 'TokenTycoon',
+    completedOrders: "87/105",
+    completionRate: '97.3%',
+    profitPercentage: '+38.92%',
+    totalPnL: '$145,326.48',
+    closedPnL: '$32,456.87',
+    openPnL: '$30,123.45',
+    customers: {
+      all: 1402,
+      last30Days: 120
+    },
+    online: false,
+    lastSeen: '15 minutes ago',
+    verified: true,
+    eps: 3,
+    roe: 0,
+    pnl: 2
+  },
+  {
+    id: 10,
+    name: 'CryptoVenture',
+    completedOrders: "104/132",
+    completionRate: '98.2%',
+    profitPercentage: '+41.58%',
+    totalPnL: '$159,743.26',
+    closedPnL: '$35,632.41',
+    openPnL: '$32,987.65',
+    customers: {
+      all: 1674,
+      last30Days: 143
+    },
+    online: true,
+    verified: true,
+    eps: 3,
+    roe: 1,
+    pnl: 2
+  }
+];

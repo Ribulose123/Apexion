@@ -121,8 +121,7 @@ export default function ApeaxonP2P() {
             </div>
             <div className="bg-[#01040F] p-3 rounded-lg flex items-center mx-auto md:mx-0 ">
               <p className="text-[20px]">
-                Customer Support <br /> Will Never Ask You <br /> To Password or
-                SMS
+               customer support <br /> will never ask you <br /> to realease funds
               </p>
               <Image
                 src="/img/Caution.png"

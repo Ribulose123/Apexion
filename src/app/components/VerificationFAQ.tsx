@@ -14,7 +14,7 @@ const VerificationFAQ = () => {
     {
       id: 'country',
       question: 'Why can\'t I select my country/region?',
-      answer: 'Biget does not provide services to users in the following countries/regions: Canada (Alberta), Crimea, Cuba, Hong Kong, Iran, North Korea, Singapore, Sudan, Syria, the United...'
+      answer: 'Bidvest does not provide services to users in the following countries/regions: Canada (Alberta), Crimea, Cuba, Hong Kong, Iran, North Korea, Singapore, Sudan, Syria, the United...'
     },
     {
       id: 'documents',
