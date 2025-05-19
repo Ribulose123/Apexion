@@ -43,7 +43,7 @@ const sidebarMenuItems = [
       { name: 'Staking',  href: 'stake' },
       { name: 'Referrals',  href: '#' },
       { name: 'connect Wallet',  href: '#' },
-      { name: 'Copy',  href: '#' },
+      { name: 'Copy',  href: 'copy' },
       { name: 'Settings',  href: 'settings' },
 ];
 

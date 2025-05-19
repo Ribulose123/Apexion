@@ -60,7 +60,7 @@ const Mainpage = () => {
   <div className="grid grid-cols-3 gap-2 max-w-md mx-auto">
     {/* Deposit */}
     <div className="flex flex-col items-center">
-      <Link href='#' className="flex flex-col items-center">
+      <Link href='#' className="flex flex-col items-center hover:rotate-5">
       <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
        <Image src='/img/Group 1010.png' alt="lock" width={200} height={200}/>
       </div>
@@ -70,7 +70,7 @@ const Mainpage = () => {
 
     {/* Copy trade */}
     <div className="flex flex-col items-center">
-      <Link href='#' className="flex flex-col items-center">
+      <Link href='copy' className="flex flex-col items-center hover:rotate-5">
       <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
       <Image src='/img/Group 11712.png' alt="lock" width={100} height={100}/>
       </div>
@@ -80,7 +80,7 @@ const Mainpage = () => {
 
     {/* Referral */}
     <div className="flex flex-col items-center">
-      <Link href='#' className="flex flex-col items-center">
+      <Link href='#' className="flex flex-col items-center hover:rotate-5">
       <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
       <Image src='/img/refral.png' alt="lock" width={200} height={200}/>
 
@@ -91,7 +91,7 @@ const Mainpage = () => {
 
     {/* Bidvest card */}
     <div className="flex flex-col items-center">
-     <Link href='#' className="flex flex-col items-center">
+     <Link href='#' className="flex flex-col items-center hover:rotate-5">
      <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
       <Image src='/img/Group 1011.png' alt="lock" width={200} height={200}/>
 
@@ -102,7 +102,7 @@ const Mainpage = () => {
 
     {/* Quick buy */}
     <div className="flex flex-col items-center">
-      <Link href='/buy/credit-card'  className="flex flex-col items-center">
+      <Link href='/buy/credit-card'  className="flex flex-col items-center hover:rotate-5">
       <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
       <Image src='/img/Group 1012.png' alt="lock" width={200} height={200}/>
       </div>
@@ -112,8 +112,8 @@ const Mainpage = () => {
 
     {/* Market */}
     <div className="flex flex-col items-center">
-     <Link href='#' className="flex flex-col items-center">
-     <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center">
+     <Link href='#' className="flex flex-col items-center hover:rotate-5">
+     <div className="bg-gray-800 rounded-lg p-4 mb-2 w-13 h-13 flex items-center justify-center ">
       <Image src='/img/Group 1012.png' alt="lock" width={200} height={200}/>
       </div>
       <span className="text-[#F4F5F7] text-xs font-medium text-center">Market</span>
