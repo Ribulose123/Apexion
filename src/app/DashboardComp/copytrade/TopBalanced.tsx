@@ -5,6 +5,7 @@ import { ArrowRight, Star } from "lucide-react";
 import { PiUsersThree } from "react-icons/pi";
 import { BiSolidUpArrow } from "react-icons/bi";
 import { CopyProfiles } from "@/app/data/data";
+import { useRouter } from 'next/navigation'; 
 
 interface ChartData {
   minValue: number;
@@ -29,6 +30,12 @@ const generateChartData: GenerateChartDataFn = (id, currentValue) => {
 };
 
 const TopBalanced = () => {
+  const router = useRouter();
+
+  const handleNavigation = (copyId: number) => {
+    router.push(`/copy/${copyId}`);
+  };
+
   return (
     <div className="mt-6">
       <div className="md:flex justify-between items-center hidden">
@@ -37,14 +44,14 @@ const TopBalanced = () => {
         </p>
         <Link
           href="#"
-          className="flex items-center text-16px text-[#F2AF29] gap-2"
+          className="flex items-center text-16px text-[#F2AF29] gap-2 hover:text-[#f8c966] transition-colors"
         >
           view more <ArrowRight size={18} />
         </Link>
       </div>
 
       <div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {CopyProfiles.map((copy) => {
             const currentValue = parseFloat(
               copy.profitPercentage.replace("+", "")
@@ -57,10 +64,10 @@ const TopBalanced = () => {
             return (
               <div
                 key={copy.id}
-                className="bg-[#141E323D] border-2 border-[#141E32] rounded-lg overflow-hidden p-2"
+                className="bg-[#141E323D] border-2 border-[#141E32] rounded-lg overflow-hidden p-2 hover:border-[#1e2a4a] transition-colors duration-300"
               >
                 {/* Header profile */}
-                <div className="p-4 flex items-center justify-between ">
+                <div className="p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="relative flex-shrink-0">
                       <div className="w-10 h-10 bg-blue-700 rounded-full overflow-hidden">
@@ -79,7 +86,7 @@ const TopBalanced = () => {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-center gap-2">
-                        <h3 className="text-white text-sm font-medium truncate">
+                        <h3 className="text-white text-sm font-medium truncate hover:text-[#F2AF29] transition-colors">
                           {copy.name}
                         </h3>
                         <button className="text-gray-400 hover:text-yellow-400 transition-colors flex-shrink-0">
@@ -103,7 +110,8 @@ const TopBalanced = () => {
                     </div>
                   </div>
                 </div>
-                      {/* Rio assest */}
+
+                {/* ROI section */}
                 <div className="p-2 flex justify-between items-center gap-2 border-b border-gray-800">
                   <div>
                     <div className="bg-gray-800 text-white text-xs px-2 py-1 rounded inline-block mb-2">
@@ -127,8 +135,13 @@ const TopBalanced = () => {
                           <stop offset="0%" stopColor="#10B981" stopOpacity="0.2" />
                           <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
                         </linearGradient>
-                        <pattern id={`grid-dots-${copy.id}`} width="4" height="4" patternUnits="userSpaceOnUse">
-                          <circle cx="2" cy="2" r="0.5" fill="#2D3748" />
+                        <pattern 
+                          id={`grid-dots-${copy.id}`} 
+                          width="4" 
+                          height="4" 
+                          patternUnits="userSpaceOnUse"
+                        >
+                          <circle cx="2" cy="2" r="1" fill="#2D3748" />
                         </pattern>
                       </defs>
                       
@@ -139,15 +152,16 @@ const TopBalanced = () => {
                         x2="100"
                         y2="35"
                         stroke={`url(#grid-dots-${copy.id})`}
-                        strokeWidth="4"
+                        strokeWidth="1"
                       />
                       <text
                         x="2"
                         y="35"
                         fill="#7D8491"
-                        fontSize="6"
+                        fontSize="4"
                         dy="3.5"
                         textAnchor="start"
+                        className="font-sans"
                       >
                         {minValue.toFixed(1)}
                       </text>
@@ -159,15 +173,16 @@ const TopBalanced = () => {
                         x2="100"
                         y2="5"
                         stroke={`url(#grid-dots-${copy.id})`}
-                        strokeWidth="4"
+                        strokeWidth="1"
                       />
                       <text
-                        x="0"
-                        y="9"
+                        x="2"
+                        y="5"
                         fill="#7D8491"
-                        fontSize="6"
+                        fontSize="4"
                         dy="-1"
                         textAnchor="start"
+                        className="font-sans"
                       >
                         {maxValue.toFixed(1)}
                       </text>
@@ -197,6 +212,7 @@ const TopBalanced = () => {
                   </div>
                 </div>
 
+                {/* Financial details */}
                 <div className="p-4 text-xs space-y-2">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Total PnL</span>
@@ -212,7 +228,11 @@ const TopBalanced = () => {
                   </div>
                 </div>
 
-                <button className="w-full py-3 bg-[#439A86] text-white font-medium transition-colors rounded-md mt-4">
+                {/* Copy button */}
+                <button
+                  className="w-full py-3 bg-[#439A86] hover:bg-[#3a8a77] text-white font-medium transition-colors rounded-md mt-4 cursor-pointer"
+                  onClick={() => handleNavigation(copy.id)}
+                >
                   Copy
                 </button>
               </div>

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import { LuMegaphone } from "react-icons/lu";
-import { ArrowRight, EyeOff, Eye } from "lucide-react";
+import { ArrowRight, EyeOff, Eye, Info } from "lucide-react";
 
 const Topheader = () => {
   const [showBalance, setShowBalanced] = useState<boolean>(false);
@@ -55,7 +55,11 @@ const Topheader = () => {
               </div>
             </div>
             <div className="flex items-center gap-2 text-[] -mt-5">
-              <span className="text-sm font-medium">Insufficient balance</span>
+             <div className="flex items-center bg-[#6967AE29] px-2 py-1 rounded-md gap-2 text-[#6967AE]">
+              <Info size={13}/>
+               <span className="text-[12px] font-medium">Insufficient balance</span>
+
+             </div>
               <ArrowRight size={16} className="shrink-0" />
             </div>
           </div>

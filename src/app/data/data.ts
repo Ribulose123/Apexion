@@ -797,7 +797,9 @@ export const CopyProfiles = [
     verified: true,
     eps: 3,
     roe: 0,
-    pnl: 2
+    pnl: 2,
+    win:12,
+    lose:4
   },
   {
     id: 2,
@@ -816,7 +818,9 @@ export const CopyProfiles = [
     verified: true,
     eps: 2,
     roe: 1,
-    pnl: 3
+    pnl: 3,
+    win:16,
+    lose:2
   },
   {
     id: 3,
@@ -835,7 +839,9 @@ export const CopyProfiles = [
     verified: true,
     eps: 4,
     roe: 0,
-    pnl: 3
+    pnl: 3,
+    win:10,
+    lose:3
   },
   {
     id: 4,
@@ -855,7 +861,9 @@ export const CopyProfiles = [
     verified: true,
     eps: 2,
     roe: 1,
-    pnl: 2
+    pnl: 2,
+    win:12,
+    lose:4
   },
   {
     id: 5,
@@ -874,7 +882,9 @@ export const CopyProfiles = [
     verified: true,
     eps: 3,
     roe: 1,
-    pnl: 2
+    pnl: 2,
+    win:16,
+    lose:3
   },
   {
     id: 6,
@@ -894,7 +904,9 @@ export const CopyProfiles = [
     verified: true,
     eps: 2,
     roe: 0,
-    pnl: 2
+    pnl: 2,
+    win:10,
+    lose:2
   },
   {
     id: 7,
@@ -913,7 +925,9 @@ export const CopyProfiles = [
     verified: true,
     eps: 3,
     roe: 1,
-    pnl: 2
+    pnl: 2, 
+    win:12,
+    lose:4
   },
   {
     id: 8,
@@ -932,7 +946,9 @@ export const CopyProfiles = [
     verified: true,
     eps: 2,
     roe: 1,
-    pnl: 3
+    pnl: 3,
+    win:10,
+    lose:2
   },
   {
     id: 9,
@@ -952,7 +968,9 @@ export const CopyProfiles = [
     verified: true,
     eps: 3,
     roe: 0,
-    pnl: 2
+    pnl: 2,
+    win:12,
+    lose:4
   },
   {
     id: 10,
@@ -971,6 +989,8 @@ export const CopyProfiles = [
     verified: true,
     eps: 3,
     roe: 1,
-    pnl: 2
+    pnl: 2,
+    win:14,
+    lose:4
   }
 ];
