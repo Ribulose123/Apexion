@@ -1,12 +1,22 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
+import { API_ENDPOINTS } from "../config/api";
 
 interface FormData {
   email: string;
 }
 
+interface ApiResponse {
+  success: boolean;
+  message?: string;
+}
+
 const ForgotPasswordForm = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -17,18 +27,11 @@ const ForgotPasswordForm = () => {
     },
   });
 
-  const [verificationCode, setVerificationCode] = useState([
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-  ]);
+  const [verificationCode, setVerificationCode] = useState<string[]>(["", "", "", "", "", ""]);
   const [showResend, setShowResend] = useState(false);
   const [timerCount, setTimerCount] = useState(0);
-  const [timerActive, setTimerActive] = useState(false);
   const [codeSent, setCodeSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Format seconds into mm:ss
   const formatTime = (seconds: number) => {
@@ -41,24 +44,59 @@ const ForgotPasswordForm = () => {
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
-    if (timerActive && timerCount > 0) {
+    if (timerCount > 0 && codeSent) {
       interval = setInterval(() => {
         setTimerCount((prevCount) => prevCount - 1);
       }, 1000);
     } else if (timerCount === 0 && codeSent) {
       setShowResend(true);
-      setTimerActive(false);
     }
 
     return () => clearInterval(interval);
-  }, [timerActive, timerCount, codeSent]);
+  }, [timerCount, codeSent]);
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     const fullCode = verificationCode.join("");
-    console.log("Form submitted:", { ...data, verificationCode: fullCode });
+    if (fullCode.length !== 6) {
+      toast.error("Please enter a complete 6-digit verification code");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          verificationCode: fullCode,
+        }),
+      });
+
+      const result: ApiResponse = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Password reset failed");
+      }
+
+      toast.success("Password reset successful! Redirecting to login...");
+      setTimeout(() => router.push("/login"), 2000);
+    } catch (error: unknown) {
+      let errorMessage = "An error occurred during password reset";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (index: number, value: string) => {
+    if (!/^[0-9]*$/.test(value)) return; // Only allow numbers
+
     const newCode = [...verificationCode];
     newCode[index] = value.slice(0, 1);
     setVerificationCode(newCode);
@@ -71,21 +109,62 @@ const ForgotPasswordForm = () => {
     }
   };
 
-  const regenerateCode = () => {
-    setVerificationCode(["", "", "", "", "", ""]);
-    setTimerCount(60);
-    setShowResend(false);
-    setTimerActive(true);
-    setCodeSent(true);
-    console.log("Resending verification code");
+  const resendVerificationCode = async (email: string) => {
+    try {
+      const response = await fetch("https://new-bidvest-backend-production.up.railway.app/api/auth/resend-verification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const result: ApiResponse = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to resend verification code");
+      }
+
+      setVerificationCode(["", "", "", "", "", ""]);
+      setTimerCount(60);
+      setShowResend(false);
+      setCodeSent(true);
+      toast.success("Verification code resent!");
+    } catch (error: unknown) {
+      let errorMessage = "Failed to resend verification code";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+    }
   };
 
-  const sendVerificationCode = () => {
-    setCodeSent(true);
-    setShowResend(false);
-    setTimerCount(60);
-    setTimerActive(true);
-    console.log("Sending verification code");
+  const sendVerificationCode = async (data: FormData) => {
+    try {
+      const response = await fetch("https://new-bidvest-backend-production.up.railway.app/api/auth/user/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: data.email }),
+      });
+
+      const result: ApiResponse = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to send verification code");
+      }
+
+      setCodeSent(true);
+      setTimerCount(60);
+      toast.success("Verification code sent to your email!");
+    } catch (error: unknown) {
+      let errorMessage = "Failed to send verification code";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
+    }
   };
 
   return (
@@ -124,70 +203,66 @@ const ForgotPasswordForm = () => {
           </div>
 
           {/* Verification Code input */}
-          <div className="mb-6">
-            <label className="block text-[16px] font-medium text-[#01040F] mb-1">
-              Verification code:
-            </label>
-            <div className="flex space-x-2 mb-2">
-              {verificationCode.map((digit, index) => (
-                <input
-                  type="text"
-                  key={`code-${index}`}
-                  id={`code-${index}`}
-                  value={digit}
-                  onChange={(e) => handleInputChange(index, e.target.value)}
-                  className="sm:w-[60px] sm:h-[60px] w-13 h-13 text-center border border-gray-300 rounded font-bold outline-0 text-black bg-[#f4fcfa]"
-                  pattern="[0-9]*"
-                  inputMode="numeric"
-                />
-              ))}
+          {codeSent && (
+            <div className="mb-6">
+              <label className="block text-[16px] font-medium text-[#01040F] mb-1">
+                Verification code:
+              </label>
+              <div className="flex space-x-2 mb-2">
+                {verificationCode.map((digit, index) => (
+                  <input
+                    type="text"
+                    key={`code-${index}`}
+                    id={`code-${index}`}
+                    value={digit}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                    className="sm:w-[60px] sm:h-[60px] w-13 h-13 text-center border border-gray-300 rounded font-bold outline-0 text-black bg-[#f4fcfa]"
+                    pattern="[0-9]*"
+                    inputMode="numeric"
+                    disabled={isSubmitting}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-
-          {!codeSent && (
-           <div className="flex justify-end items-center -mt-5">
-                 <button
-              type="button"
-              onClick={sendVerificationCode}
-              className=" text-teal-600 rounded hover:bg-gray-200 transition-colors mb-4 text-[13px] "
-            >
-              Send Code
-            </button>
-           </div>
           )}
 
-          {codeSent && (
+          {!codeSent ? (
+            <button
+              type="button"
+              onClick={handleSubmit(sendVerificationCode)}
+              className="w-full py-3 bg-teal-500 text-white rounded hover:bg-teal-600 transition-colors mb-4"
+            >
+              Send Verification Code
+            </button>
+          ) : (
             <>
               {!showResend ? (
                 <p className="text-sm text-gray-600 mb-4 text-end">
-                  Resend {formatTime(timerCount)}
+                  Resend code in {formatTime(timerCount)}
                 </p>
               ) : (
                 <div className="flex justify-between items-center text-sm mb-6">
                   <span className="text-gray-600">
-                    Didn&apos;t receive verification code?
+                    Didn&#39;t receive verification code?
                   </span>
                   <button
                     type="button"
                     className="text-teal-600 hover:text-teal-800"
-                    onClick={regenerateCode}
+                    onClick={() => handleSubmit((data) => resendVerificationCode(data.email))}
                   >
                     Resend Code
                   </button>
                 </div>
               )}
+              <button
+                type="submit"
+                className="w-full py-3 bg-teal-500 text-white rounded hover:bg-teal-600 transition-colors mb-4"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Processing..." : "Reset Password"}
+              </button>
             </>
           )}
-
-          {/* Next Button */}
-          <button
-            type="submit"
-            className="w-full py-3 bg-teal-500 text-white rounded hover:bg-teal-600 transition-colors mb-4"
-          >
-            Next
-          </button>
-
-          {/* Send code button (only show initially) */}
         </form>
       </div>
     </div>

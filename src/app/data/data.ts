@@ -191,16 +191,16 @@ import { IoCopy, IoSettingsOutline } from "react-icons/io5";
 
   export const menuItems = [
     { name: 'Dashboard', icon: House, href: '/dashboard' },
-    { name: 'Asset', icon: WalletMinimal, href: 'asset' },
-    { name: 'Deposit', icon: CirclePlus, href: 'deposit' },
+    { name: 'Asset', icon: WalletMinimal, href: '/asset' },
+    { name: 'Deposit', icon: CirclePlus, href: '/deposit' },
     { name: 'Withdraw', icon: CircleMinus, href: '#' },
-    { name: 'Subscribe', icon: Radiation, href: 'subscription' },
-    { name: 'Signal', icon: Radio, href: 'signal' },
-    { name: 'Staking', icon: Coins, href: 'stake' },
+    { name: 'Subscribe', icon: Radiation, href: '/subscription' },
+    { name: 'Signal', icon: Radio, href: '/signal' },
+    { name: 'Staking', icon: Coins, href: '/stake' },
     { name: 'Referrals', icon: User, href: '#' },
     { name: 'connect Wallet', icon:Link, href: '#' },
-    { name: 'Copy', icon: IoCopy, href: 'copy' },
-    { name: 'Settings', icon: IoSettingsOutline, href: 'settings' },
+    { name: 'Copy', icon: IoCopy, href: '/copy' },
+    { name: 'Settings', icon: IoSettingsOutline, href: '/settings' },
   ];
 
 

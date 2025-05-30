@@ -43,7 +43,7 @@ const TopBalanced = () => {
           Traders that balance profit and risk.
         </p>
         <Link
-          href="#"
+          href="/copymore"
           className="flex items-center text-16px text-[#F2AF29] gap-2 hover:text-[#f8c966] transition-colors"
         >
           view more <ArrowRight size={18} />
@@ -65,6 +65,7 @@ const TopBalanced = () => {
               <div
                 key={copy.id}
                 className="bg-[#141E323D] border-2 border-[#141E32] rounded-lg overflow-hidden p-2 hover:border-[#1e2a4a] transition-colors duration-300"
+                onClick={() => handleNavigation(copy.id)}
               >
                 {/* Header profile */}
                 <div className="p-4 flex items-center justify-between">
@@ -231,7 +232,7 @@ const TopBalanced = () => {
                 {/* Copy button */}
                 <button
                   className="w-full py-3 bg-[#439A86] hover:bg-[#3a8a77] text-white font-medium transition-colors rounded-md mt-4 cursor-pointer"
-                  onClick={() => handleNavigation(copy.id)}
+                  
                 >
                   Copy
                 </button>

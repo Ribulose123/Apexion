@@ -16,7 +16,7 @@ const initialSecurityState: SecurityState = {
   fundPassword: { enabled: false },
   antiPhishing: { enabled: false },
   passKeys: { enabled: false },
-  // Add other security options as needed based on your SecurityState interface
+  
 };
 
 const SecurityPage: React.FC = () => {

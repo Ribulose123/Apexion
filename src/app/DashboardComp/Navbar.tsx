@@ -1,12 +1,24 @@
-"use client";
-import React, { useState } from "react";
+'use client';
+
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, Bell, ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Search, Bell, ChevronDown, CreditCard } from "lucide-react";
 import { FaTimes } from "react-icons/fa";
 import Flag from "react-world-flags";
-import MenuBar, { DropdownMenuType } from "./MenuBar"; 
+import { toast } from "react-toastify";
+import MenuBar, { DropdownMenuType } from "./MenuBar";
 import Overview from "./Overview";
+import { API_ENDPOINTS } from "../config/api";
+
+interface UserData {
+  id: string;
+  fullName: string;
+  email: string;
+  avatar: string;
+  verificationStatus: string;
+}
 
 const countryOptions = [
   { code: "gb", name: "English" },
@@ -23,14 +35,89 @@ const Navbar = () => {
   const [country, setCountry] = useState("gb");
   const [showModal, setShowModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [showCopyDetails, setShowCopyDetails] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+ /*  const [firstName, setFirstName] = useState<string | null>(null) */
+  const router = useRouter();
+
+
+
+  const fetchUserData = async (): Promise<void> => {
+    try {
+      setLoading(true);
+      
+      const token = localStorage.getItem('authToken'); 
+     
+      if (!token) {
+        throw new Error('No authentication token found in localStorage');
+      }
+
+      const response = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+      });
+
+      if (response.status === 401) {
+       
+        throw new Error('Session expired');
+      }
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+
+      const data = await response.json();
+      console.log(data.data);
+      
+      setUserData(data.data);
+
+      /* if(data.data && data.data.fullName){
+        const useFullName = data.data.fullName
+        const namePart = useFullName.slice('')
+        const first = namePart[namePart.length -1]
+        setFirstName(first)
+
+      } */
+    } catch (error) {
+      console.error('Navbar - Authentication error:', error);
+      if (error instanceof Error && error.message === 'Session expired') {
+        toast.error('Your session has expired. Please log in again.');
+      } else if (error instanceof Error && error.message === 'No authentication token found in localStorage') {
+         
+         console.log('Navbar: No token found, user is likely not logged in.');
+      } else {
+        toast.error(error instanceof Error ? error.message : 'Failed to load user data.');
+      }
+      /* handleSignOut(); */ // Force logout if an error occurs
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignOut = (): void => {
+    
+    localStorage.removeItem('authToken'); 
+    
+    document.cookie = 'authToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'; 
+    setUserData(null);
+    router.push('/login');
+    toast.success('Logged out successfully');
+  };
+
+  // Fetch user data once when the component mounts
+  useEffect(() => {
+    fetchUserData();
+  }, []); // Empty dependency array means it runs once on mount
 
   const toggleModal = () => setShowModal(!showModal);
 
   const toggleDropdown = (menu: DropdownMenuType) => {
     setActiveDropdown((prev) => (prev === menu ? null : menu));
-    setShowCopyDetails(false);
   };
 
   return (
@@ -74,7 +161,7 @@ const Navbar = () => {
                       alt="pay"
                       width={17}
                       height={17}
-                    />
+                    />{" "}
                     <span>USD</span>
                   </span>
                 </div>
@@ -97,20 +184,15 @@ const Navbar = () => {
                     </p>
                   </Link>
 
-                  <Link href="/buy/deposit" className="block">
+                  <Link href="/Apexion" className="block">
                     <div>
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
-                        <Image
-                          src="/img/game-icons_cube.png"
-                          alt="tit"
-                          width={17}
-                          height={17}
-                        />{" "}
-                        Fiat Deposit
+                       <CreditCard size={14}/> {" "}
+                        Bidvest Card
                       </p>
                     </div>
                     <p className="text-gray-400 text-xs ml-6">
-                      Fiat to crypto and crypto to fiat bank transfer
+                      Spend globally with your card.
                     </p>
                   </Link>
 
@@ -157,17 +239,16 @@ const Navbar = () => {
             Market
           </Link>
 
+          {/* Assets Dropdown */}
           <div className="relative">
-          <button
+            <button
               className="text-gray-300 hover:text-white flex items-center"
               onClick={() => toggleDropdown("assest")}
             >
               Assets
               <ChevronDown size={16} className="ml-1" />
             </button>
-            {activeDropdown === "assest" && (
-              <Overview/>
-            )}
+            {activeDropdown === "assest" && <Overview/>}
           </div>
 
           {/* Trade Link */}
@@ -184,20 +265,10 @@ const Navbar = () => {
               Tools
               <ChevronDown size={16} className="ml-1" />
             </button>
-
             {activeDropdown === "tools" && (
               <div className="absolute top-full left-0 mt-3 w-[500px] bg-[#0D1B2A] text-white rounded-xl shadow-xl z-50 p-4 flex gap-4">
-                {/* Left Panel */}
                 <div className="w-1/2 space-y-4">
-                  <div
-                    className={`p-4 rounded-lg transition cursor-pointer ${
-                      activeDropdown === "tools"
-                        ? "bg-[#152232]"
-                        : "hover:bg-[#1E2E41]"
-                    }`}
-                    onMouseEnter={() => setShowCopyDetails(true)}
-                    onMouseLeave={() => setShowCopyDetails(false)}
-                  >
+                  <div className="p-4 rounded-lg transition cursor-pointer bg-[#152232]">
                     <p className="font-semibold flex items-center gap-2">
                       🔥 Copy Trading
                     </p>
@@ -218,37 +289,6 @@ const Navbar = () => {
                     </p>
                   </Link>
                 </div>
-
-                {/* Right Panel (Only if Copy Trading is hovered) */}
-                {showCopyDetails && (
-                  <div className="w-1/2">
-                    <p className="text-sm text-gray-300 mb-2">Copy Trading</p>
-                    <p className="text-xs text-gray-500 mb-4">
-                      Let experts trade for you.
-                    </p>
-
-                    {[1, 2, 3].map((_, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center justify-between py-2"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Image
-                            src="/avatars/mrporfit.png" // replace with actual avatar path
-                            alt="Trader"
-                            className="w-6 h-6 rounded-full"
-                            width={16}
-                            height={16}
-                          />
-                          <p className="text-sm font-medium">Mr_porFit</p>
-                        </div>
-                        <p className="text-green-400 text-sm font-semibold">
-                          +129.7%
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             )}
           </div>
@@ -290,9 +330,8 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile User Controls - Visible on small screens */}
+      {/* Mobile User Controls */}
       <div className="md:hidden flex-1 flex items-center justify-end space-x-4">
-        {/* Mobile Search Toggle */}
         <button 
           className="text-gray-300 hover:text-white"
           onClick={() => setShowMobileSearch(!showMobileSearch)}
@@ -300,7 +339,6 @@ const Navbar = () => {
           <Search size={20} />
         </button>
 
-        {/* Mobile User Profile */}
         <div className="relative">
           <button
             className="flex items-center"
@@ -308,7 +346,7 @@ const Navbar = () => {
           >
             <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center overflow-hidden">
               <Image
-                src="/img/Avatar DP.png"
+                src={userData?.avatar || "/img/Avatar DP.png"}
                 alt="Profile"
                 width={32}
                 height={32}
@@ -339,7 +377,10 @@ const Navbar = () => {
                   Settings
                 </Link>
                 <div className="border-t border-gray-700 my-1"></div>
-                <button className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700">
+                <button 
+                  onClick={handleSignOut}
+                  className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
+                >
                   Sign Out
                 </button>
               </div>
@@ -347,7 +388,6 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
         <button
           className="text-gray-300 hover:text-white"
           onClick={() => setIsOpen(!isOpen)}
@@ -367,13 +407,10 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Search Bar - Shows when toggled */}
+      {/* Mobile Search Bar */}
       {showMobileSearch && (
         <div className="fixed top-16 left-0 right-0 bg-gray-900 p-4 z-30 md:hidden">
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search size={16} className="text-gray-400" />
-            </div>
             <input
               type="text"
               placeholder="Search..."
@@ -390,7 +427,7 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Right Side - Search, Language, Notifications, User - Only visible on desktop */}
+      {/* Desktop Right Side */}
       <div className="hidden md:flex items-center space-x-4 flex-none">
         {/* Search */}
         <div className="relative">
@@ -414,13 +451,7 @@ const Navbar = () => {
               code={country.toUpperCase()}
               style={{ width: 34, height: 18 }}
             />
-            <svg
-              className="w-4 h-4 ml-2 fill-current text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-            >
-              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-            </svg>
+            <ChevronDown size={16} className="ml-1 text-gray-400" />
           </div>
         </div>
 
@@ -431,56 +462,88 @@ const Navbar = () => {
         </button>
 
         {/* User Profile */}
-        <div className="relative">
-          <button
-            className="flex items-center space-x-2"
-            onClick={() => toggleDropdown("user")}
-          >
-            <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center overflow-hidden">
-              <Image
-                src="/img/Avatar DP.png"
-                alt="Profile"
-                width={32}
-                height={32}
-                className="w-full h-full object-cover"
-              />
-            </div>
+        {loading ? (
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 rounded-full bg-gray-700 animate-pulse"></div>
             <div className="hidden md:block text-left">
-              <p className="text-sm font-medium text-white">Jamie Johnson</p>
-              <p className="text-xs text-gray-400">Verified User</p>
+              <div className="h-4 w-20 bg-gray-700 rounded animate-pulse"></div>
+              <div className="h-3 w-16 bg-gray-700 rounded animate-pulse mt-1"></div>
             </div>
-            <ChevronDown size={16} className="text-gray-400" />
-          </button>
-
-          {activeDropdown === "user" && (
-            <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
-              <div className="py-1">
-                <Link
-                  href="/profile"
-                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                >
-                  My Profile
-                </Link>
-                <Link
-                  href="/security"
-                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                >
-                  Security
-                </Link>
-                <Link
-                  href="/settings"
-                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                >
-                  Settings
-                </Link>
-                <div className="border-t border-gray-700 my-1"></div>
-                <button className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700">
-                  Sign Out
-                </button>
+          </div>
+        ) : userData ? (
+          <div className="relative">
+            <button
+              className="flex items-center space-x-2"
+              onClick={() => toggleDropdown("user")}
+            >
+              <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center overflow-hidden">
+                <Image
+                  src={userData.avatar || "/img/Avatar DP.png"}
+                  alt="Profile"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-cover"
+                />
               </div>
-            </div>
-          )}
-        </div>
+              <div className="hidden md:block text-left">
+                <p className="text-sm font-medium text-white">
+                  {userData.fullName || "User"}
+                </p>
+                {/* <p className="text-xs text-gray-400 capitalize">
+                  {userData.verificationStatus || "Guest"}
+                </p> */}
+              </div>
+              <ChevronDown size={16} className="text-gray-400" />
+            </button>
+
+            {activeDropdown === "user" && (
+              <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
+                <div className="py-1">
+                  <Link
+                    href="/profile"
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                  >
+                    My Profile
+                  </Link>
+                  <Link
+                    href="/security"
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                  >
+                    Security
+                  </Link>
+                  <Link
+                    href="/settings"
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                  >
+                    Settings
+                  </Link>
+                  <div className="border-t border-gray-700 my-1"></div>
+                  <button 
+                    onClick={handleSignOut}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center space-x-4">
+            <Link
+              href="/login"
+              className="text-sm text-gray-300 hover:text-white"
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm"
+            >
+              Register
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Language Modal */}
@@ -514,8 +577,8 @@ const Navbar = () => {
           </div>
         </div>
       )}
-      
-      {/* Mobile Menu - Only show on mobile devices */}
+
+      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden">
           <MenuBar

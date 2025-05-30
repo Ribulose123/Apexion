@@ -6,6 +6,8 @@ import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { toast } from 'react-toastify';
+import { API_ENDPOINTS } from '../config/api';
 
 interface LoginFormData {
   email?: string;
@@ -24,21 +26,72 @@ const LoginForm = () => {
     subAccount: false,
   });
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const { register, handleSubmit, formState: { errors }, getValues } = useForm<LoginFormData>(); // Added getValues
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log('Login Data:', data);
-    router.push('/landingpage'); 
-  };
+ const onSubmit = async (data: LoginFormData) => {
+  try {
+    console.log("Attempting login with data:", data);
+    
+    const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password
+      }),
+      credentials: 'include',
+    });
+    
+    console.log("Login response status:", response.status);
+    console.log("Login response OK status:", response.ok);  
+    const result = await response.json();
+    console.log("Login response JSON result:", result);
+
+    if (!response.ok) {
+
+      // Check unverfired email
+      if (response.status === 400) {
+        const email = getValues('email');
+        router.push(`/emailverfi?email=${encodeURIComponent(email || '')}`);
+      }
+
+      // Check for Incorrect Password
+      if(response.status === 401){
+        throw new Error('Incorrect Password')
+      }
+      throw new Error(result.message || 'Login failed');
+    }
+
+    // Token Storage: localStorage AND document.cookie
+    if (result.data?.token) { 
+      localStorage.setItem('authToken', result.data.token);
+      document.cookie = `authToken=${result.data.token}; path=/; secure; SameSite=Lax`;
+      
+      toast.success('Login successful!');
+      router.push('/landingpage');
+    } else {
+      console.warn('Login successful but no token received');
+      toast.error('Login successful but session could not be established');
+    }
+  } catch (error) {
+    console.error('Login Error:', error);
+    if(error instanceof Error && error.message === 'Incorrect Password'){
+      toast.error('Incorrect Password')
+    }
+    toast.error(error instanceof Error ? error.message : 'Login failed');
+  }
+};
 
   return (
-    <div className="flex items-center justify-center  px-4 py-6">
+    <div className="flex items-center justify-center   px-4 py-6">
       <div className="bg-white rounded-lg -mt-10 sm:mt-0 sm:shadow-md w-full max-w-md p-6 md:p-8">
 
       <h1 className="text-2xl text-black font-semibold text-start sm:text-center mb-8">Welcome back</h1>
         
         {/* Tabs */}
-        <div className="relative flex justify-between border-b border-gray-300">
+        <div className="relative flex      border-b border-gray-300">
           {categories.map((category) => (
             <button
               key={category}
@@ -143,45 +196,45 @@ const LoginForm = () => {
 
           {/* Divider */}
         <div className="flex items-center mb-6 mt-6">
-          <div className="flex-1 border-t-2  border-[#E2E6F9]"></div>
+          <div className="flex-1 border-t-2   border-[#E2E6F9]"></div>
           <span className="px-4 text-sm text-[#01040F]">or login</span>
           <div className="flex-1 border-t-2 border-[#E2E6F9]"></div>
         </div>
 
         {/* Social Sign-up Options */}
-         <div className="flex gap-3 mb-6 w-full flex-col sm:flex-row items-center  justify-center">
-                  {/* Social Buttons */}
-                  <div className="flex gap-3 items-center justify-center ">
-                    <button type="button" className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50">
-                      <Image src="/img/facebook.png" alt="facebook" width={16} height={16} />
-                    </button>
+          <div className="flex gap-3 mb-6 w-full flex-col sm:flex-row items-center   justify-center">
+                {/* Social Buttons */}
+                <div className="flex gap-3 items-center justify-center ">
+                  <button type="button" className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50">
+                    <Image src="/img/facebook.png" alt="facebook" width={16} height={16} />
+                  </button>
         
-                    <button type="button" className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50">
-                      <Image src="/img/apple.png" alt="apple" width={16} height={16} />
-                    </button>
+                  <button type="button" className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50">
+                    <Image src="/img/apple.png" alt="apple" width={16} height={16} />
+                  </button>
         
-                    <button type="button" className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50">
-                      <Image src="/img/search.png" alt="Google" width={16} height={16} />
-                    </button>
-                  </div>
+                  <button type="button" className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50">
+                    <Image src="/img/search.png" alt="Google" width={16} height={16} />
+                  </button>
+                </div>
         
-                  {/* Wallet Connect */}
-                  <div className="p-3 rounded-full border border-gray-200 hover:bg-gray-50 flex sm:items-center gap-2 sm:gap-4 justify-between w-[70%]">
-                    <span className="text-xs text-gray-500">Connect wallet</span>
-                    <div className="flex space-x-1">
-                      <button type="button">
-                        <div className="w-6 h-6 flex items-center justify-center">
-                          <Image src='/img/meta.webp' alt='meta' width={15} height={10}/>
-                        </div>
-                      </button>
-                      <button type="button">
-                        <div className="w-6 h-6 flex items-center justify-center">
-                          <Image src='/img/tonkeeper.png' alt='tonkeeper' width={15} height={10}/>
-                        </div>
-                      </button>
-                    </div>
+                {/* Wallet Connect */}
+                <div className="p-3 rounded-full border border-gray-200 hover:bg-gray-50 flex sm:items-center gap-2 sm:gap-4 justify-between w-[70%]">
+                  <span className="text-xs text-gray-500">Connect wallet</span>
+                  <div className="flex space-x-1">
+                    <button type="button">
+                      <div className="w-6 h-6 flex items-center justify-center">
+                        <Image src='/img/meta.webp' alt='meta' width={15} height={10}/>
+                      </div>
+                    </button>
+                    <button type="button">
+                      <div className="w-6 h-6 flex items-center justify-center">
+                        <Image src='/img/tonkeeper.png' alt='tonkeeper' width={15} height={10}/>
+                      </div>
+                    </button>
                   </div>
                 </div>
+              </div>
 
         <div className="mt-2 text-center text-sm text-gray-600">
           Don’t have an account? <Link href="/register" className="text-[#439A86] hover:underline">Register</Link>

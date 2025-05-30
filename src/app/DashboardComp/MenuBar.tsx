@@ -35,16 +35,16 @@ type MenuBarProps = {
 
 const sidebarMenuItems = [
   { name: 'Dashboard',  href: '/dashboard' },
-      { name: 'Asset',  href: 'asset' },
+      { name: 'Asset',  href: '/asset' },
       { name: 'Deposit',  href: 'deposit' },
       { name: 'Withdraw',  href: '#' },
-      { name: 'Subscribe',  href: 'subscription' },
-      { name: 'Signal',  href: 'signal' },
-      { name: 'Staking',  href: 'stake' },
+      { name: 'Subscribe',  href: '/subscription' },
+      { name: 'Signal',  href: '/signal' },
+      { name: 'Staking',  href: '/stake' },
       { name: 'Referrals',  href: '#' },
       { name: 'connect Wallet',  href: '#' },
-      { name: 'Copy',  href: 'copy' },
-      { name: 'Settings',  href: 'settings' },
+      { name: 'Copy',  href: '/copy' },
+      { name: 'Settings',  href: '/settings' },
 ];
 
 const MenuBar: React.FC<MenuBarProps> = ({
@@ -99,9 +99,9 @@ const MenuBar: React.FC<MenuBarProps> = ({
                     <p className="font-medium">Credit/Debit Card</p>
                     <p className="text-xs text-gray-400">Buy crypto via Visa or Mastercard</p>
                   </Link>
-                  <Link href="/buy/deposit" onClick={handleLinkClick} className="block py-2 hover:text-white">
-                    <p className="font-medium">Bank Deposit</p>
-                    <p className="text-xs text-gray-400">Fiat to crypto and crypto to fiat bank transfer</p>
+                  <Link href="Apexion" onClick={handleLinkClick} className="block py-2 hover:text-white">
+                    <p className="font-medium">Bidvest Card</p>
+                    <p className="text-xs text-gray-400">Spend globally with your card.</p>
                   </Link>
                   <Link href="/buy/p2p" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">P2P Trading</p>

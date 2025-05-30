@@ -1,144 +1,122 @@
-'use client'
+'use client';
 import Image from 'next/image';
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { API_ENDPOINTS } from '../config/api';
 
-interface FormData {
-  email: string;
-}
 
-interface EmailVerificationProps {
-  onNext: (data: FormData) => void
-}
 
-const EmailVerification: React.FC<EmailVerificationProps> = ({ onNext }) => {
-  const [emailVerification, setEmailVerification] = useState(['', '', '', '', '', '']);
-  const [showResend, setShowResend] = useState(false);
-  const [timerCount, setTimerCount] = useState(0);
-  const [timerActive, setTimerActive] = useState(false);
-  const [codeSent, setCodeSent] = useState(false);
-
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
-  };
+const EmailVerification = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get('email') || '';
+  
+  const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
 
-    if (timerActive && timerCount > 0) {
-      interval = setInterval(() => {
-        setTimerCount((prevCount) => prevCount - 1);
-      }, 1000);
-    } else if (timerCount === 0 && codeSent) {
-      setShowResend(true);
-      setTimerActive(false);
+  const handleVerify = useCallback(async () => {
+    const otp = code.join('');
+    if (otp.length !== 6 || isVerifying) return;
+
+    setIsVerifying(true);
+    
+    try {
+      const response = await fetch(API_ENDPOINTS.AUTH.VERIFY_EMAIL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          otp
+        }),
+      });
+
+      const result = await response.json();
+      console.log('Response status:', response.status);
+console.log('Response body:', result);
+      if (!response.ok) {
+         throw new Error(result.message || `HTTP ${response.status}: Verification failed`);
+      }
+      
+      router.push('/dashboard');
+      toast.success('Verified successfully!');
+      
+      
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Verification failed');
+      setCode(['', '', '', '', '', '']);
+    } finally {
+      setIsVerifying(false);
     }
+  }, [code, email, isVerifying, router]);
 
-    return () => clearInterval(interval);
-  }, [timerActive, timerCount, codeSent]);
-
-  
+  // Auto-submit when all digits are entered
   useEffect(() => {
-    const isComplete = emailVerification.every((digit) => digit !== '');
-    if (isComplete) {
-      const fullCode = emailVerification.join('');
-      console.log("Auto-submitting code:", fullCode);
-      onNext({ email: "" }); // Replace with actual email if needed
+    if (code.every(digit => digit !== '')) {
+      handleVerify();
     }
-  }, [emailVerification, onNext]);
+  }, [code, handleVerify]);
 
   const handleInputChange = (index: number, value: string) => {
-    const newCode = [...emailVerification];
-    newCode[index] = value.slice(0, 1);
-    setEmailVerification(newCode);
+    if (!/^\d*$/.test(value)) return;
 
+    const newCode = [...code];
+    newCode[index] = value;
+    setCode(newCode);
+
+    // Auto-focus next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`code-${index + 1}`) as HTMLInputElement;
-      if (nextInput) nextInput.focus();
+      nextInput?.focus();
     }
+
+    
   };
 
-  const regenerateCode = () => {
-    setEmailVerification(["", "", "", "", "", ""]);
-    setTimerCount(90);
-    setShowResend(false);
-    setTimerActive(true);
-    setCodeSent(true);
-    console.log("Resending verification code");
-  };
-
-  const sendVerificationCode = () => {
-    setCodeSent(true);
-    setShowResend(false);
-    setTimerCount(90);
-    setTimerActive(true);
-    console.log("Sending verification code");
-  };
+ 
 
   return (
-    <div className='flex items-center justify-center px-4 py-6'>
-      <div className='bg-white rounded-lg sm:shadow-md w-full max-w-md p-6 md:p-8'>
-       <div className='flex justify-center items-center '>
-       <Image src='/img/Group 4.png' alt='mail' width={100} height={100} className='mb-6' />
-       </div>
-        <h1 className='text-2xl text-black font-semibold text-center mb-8'>Check your email</h1>
-        <p className='text-center text-[15px] font-medium text-[#797A80]'>
-          To complete your registration, enter the verification code we sent to jeanrenard32@gmail.com
-        </p>
-
-        <div className="mb-6">
-          <div className="flex space-x-2 mb-2 mt-4 justify-center">
-            {emailVerification.map((digit, index) => (
-              <input
-                type="text"
-                key={`code-${index}`}
-                id={`code-${index}`}
-                value={digit}
-                onChange={(e) => handleInputChange(index, e.target.value)}
-                className="sm:w-[60px] sm:h-[60px] w-12 h-12 text-center border border-gray-300 rounded font-bold outline-0 text-black bg-[#f4fcfa]"
-                pattern="[0-9]*"
-                inputMode="numeric"
-                maxLength={1}
-              />
-            ))}
-          </div>
+    <div className="flex items-center justify-center px-4 py-6">
+      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 md:p-8">
+        <div className="flex justify-center mb-6">
+          <Image 
+            src="/img/Group 4.png" 
+            alt="Email verification" 
+            width={100} 
+            height={100}
+          />
         </div>
 
-        {!codeSent && (
-          <div className="flex justify-end items-center -mt-5">
-            <button
-              type="button"
-              onClick={sendVerificationCode}
-              className="text-teal-600 rounded hover:bg-gray-200 transition-colors mb-4 text-[13px]"
-            >
-              Send Code
-            </button>
-          </div>
-        )}
+        <h1 className="text-2xl font-semibold text-center mb-4">Enter verification code</h1>
+        <p className="text-center text-gray-600 mb-8">
+          Sent to {email || 'your email'}
+        </p>
 
-        {codeSent && (
-          <>
-            {!showResend ? (
-              <p className="text-sm text-gray-600 mb-4 text-end">
-                Resend {formatTime(timerCount)}
-              </p>
-            ) : (
-              <div className="flex justify-between items-center text-sm mb-6">
-                <span className="text-gray-600">
-                  Didn&apos;t receive verification code?
-                </span>
-                <button
-                  type="button"
-                  className="text-teal-600 hover:text-teal-800"
-                  onClick={regenerateCode}
-                >
-                  Resend Code
-                </button>
-              </div>
-            )}
-          </>
+        <div className="flex justify-center gap-3 mb-6">
+          {code.map((digit, index) => (
+            <input
+              key={index}
+              id={`code-${index}`}
+              type="text"
+              value={digit}
+              onChange={(e) => handleInputChange(index, e.target.value)}
+              maxLength={1}
+              className="w-12 h-12 text-center text-black border-2 border-gray-300 rounded-lg text-xl focus:border-teal-500 focus:outline-none"
+              disabled={isVerifying}
+              inputMode="numeric"
+            />
+          ))}
+        </div>
+
+        {isVerifying && (
+          <div className="text-center">
+            <p className="text-gray-600">Verifying...</p>
+          </div>
         )}
       </div>
     </div>

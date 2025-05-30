@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { CoinDepost, DepositHistory, DateRange } from '@/app/data/data';
 import {  ArrowRight, Loader, Funnel } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface DepositHistoryProps {
   depositHistory: DepositHistory[];
@@ -49,9 +50,9 @@ const DepositHistoryComponent: React.FC<DepositHistoryProps> = ({
       <div className="bg-[#141E323D] rounded-lg p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-white font-medium text-lg">Deposit History</h2>
-          <button className="bg-[#6967AE] text-white text-sm px-4 py-2 rounded-lg flex items-center">
+          <Link href='/fund' className="bg-[#6967AE] text-white text-sm px-4 py-2 rounded-lg flex items-center">
             View All <ArrowRight size={14} className="ml-1" />
-          </button>
+          </Link>
         </div>
         
         <div className="mb-4 flex items-center gap-2">

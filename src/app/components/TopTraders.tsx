@@ -78,10 +78,8 @@ const TopTraders = ({ params }: TopTradersProps) => {
     setSeller(foundSeller);
     setLoading(false);
 
-    // Debug info
-    console.log(`Current URL: ${pathname}`);
-    console.log(`Loading seller with ID: ${id}`);
-  }, [params, pathname]); // Removed extractIdFromPath from dependency array
+
+  }, [params, pathname]); 
 
   if (loading) {
     return (
