@@ -53,6 +53,7 @@ const NewPassword1 = () => {
 
       toast.success("Password reset successfully!");
       router.push("/login"); 
+      return;
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "An error occurred"

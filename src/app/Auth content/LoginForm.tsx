@@ -55,11 +55,13 @@ const LoginForm = () => {
       if (response.status === 400) {
         const email = getValues('email');
         router.push(`/emailverfi?email=${encodeURIComponent(email || '')}`);
+        return
       }
 
       // Check for Incorrect Password
       if(response.status === 401){
         throw new Error('Incorrect Password')
+       
       }
       throw new Error(result.message || 'Login failed');
     }

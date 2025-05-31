@@ -1,55 +1,54 @@
-'use client';
-import Image from 'next/image';
-import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { API_ENDPOINTS } from '../config/api';
-
-
+"use client";
+import Image from "next/image";
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { API_ENDPOINTS } from "../config/api";
 
 const EmailVerification = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get('email') || '';
-  
-  const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
+  const email = searchParams.get("email") || "";
+
+  const [code, setCode] = useState<string[]>(["", "", "", "", "", ""]);
   const [isVerifying, setIsVerifying] = useState(false);
 
-  
-
   const handleVerify = useCallback(async () => {
-    const otp = code.join('');
+    const otp = code.join("");
     if (otp.length !== 6 || isVerifying) return;
 
     setIsVerifying(true);
-    
+
     try {
       const response = await fetch(API_ENDPOINTS.AUTH.VERIFY_EMAIL, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email,
-          otp
+          otp,
         }),
       });
 
       const result = await response.json();
-      console.log('Response status:', response.status);
-console.log('Response body:', result);
+      console.log("Response status:", response.status);
+      console.log("Response body:", result);
       if (!response.ok) {
-         throw new Error(result.message || `HTTP ${response.status}: Verification failed`);
+        throw new Error(
+          result.message || `HTTP ${response.status}: Verification failed`
+        );
       }
-      
-      router.push('/dashboard');
-      toast.success('Verified successfully!');
-      
-      
+
+      router.push("/dashboard");
+      toast.success("Verified successfully!");
+      return;
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Verification failed');
-      setCode(['', '', '', '', '', '']);
+      toast.error(
+        error instanceof Error ? error.message : "Verification failed"
+      );
+      setCode(["", "", "", "", "", ""]);
     } finally {
       setIsVerifying(false);
     }
@@ -57,7 +56,7 @@ console.log('Response body:', result);
 
   // Auto-submit when all digits are entered
   useEffect(() => {
-    if (code.every(digit => digit !== '')) {
+    if (code.every((digit) => digit !== "")) {
       handleVerify();
     }
   }, [code, handleVerify]);
@@ -71,30 +70,30 @@ console.log('Response body:', result);
 
     // Auto-focus next input
     if (value && index < 5) {
-      const nextInput = document.getElementById(`code-${index + 1}`) as HTMLInputElement;
+      const nextInput = document.getElementById(
+        `code-${index + 1}`
+      ) as HTMLInputElement;
       nextInput?.focus();
     }
-
-    
   };
-
- 
 
   return (
     <div className="flex items-center justify-center px-4 py-6">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 md:p-8">
         <div className="flex justify-center mb-6">
-          <Image 
-            src="/img/Group 4.png" 
-            alt="Email verification" 
-            width={100} 
+          <Image
+            src="/img/Group 4.png"
+            alt="Email verification"
+            width={100}
             height={100}
           />
         </div>
 
-        <h1 className="text-2xl font-semibold text-center mb-4">Enter verification code</h1>
+        <h1 className="text-2xl font-semibold text-center mb-4">
+          Enter verification code
+        </h1>
         <p className="text-center text-gray-600 mb-8">
-          Sent to {email || 'your email'}
+          Sent to {email || "your email"}
         </p>
 
         <div className="flex justify-center gap-3 mb-6">
