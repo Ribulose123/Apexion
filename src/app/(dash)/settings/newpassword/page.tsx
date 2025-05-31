@@ -1,3 +1,4 @@
+'use client'
 import NewPassword1 from "@/app/components/NewPassword"
 
 export default function NewPassword(){

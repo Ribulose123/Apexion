@@ -1,4 +1,4 @@
-
+'use client'
 import EmailVerification from "@/app/Auth content/EmailVerification";
 
 
