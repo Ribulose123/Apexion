@@ -48,25 +48,37 @@ const SignupForm: React.FC = () => {
 
     const password = watch('password');
 
+    
 
       console.log('Submitting to:', API_ENDPOINTS.AUTH.REGISTER);
     const onSubmit = async (data: FormData) => {
-        if (!data.agreeToTerms) {
+
+        const trimmedData ={
+            ...data,
+            email: data.email.trim(),
+        fullName: data.fullName.trim(),
+        password:data.password.trim(),
+         confirmPassword:data.confirmPassword.trim(),
+        referralCode: data.referralCode ? data.referralCode.trim() : '',
+            
+        }
+
+        if (!trimmedData.agreeToTerms) {
             toast.error("You must agree to the terms and conditions.");
             return;
         }
 
-        if (data.password !== data.confirmPassword) {
+        if (trimmedData.password !== trimmedData.confirmPassword) {
             toast.error("Passwords do not match");
             return;
         }
 
         console.log('Registration Data:',{
-            fullName: data.fullName,
-            email: data.email,
-            password: data.password,
-            confirmPassword: data.confirmPassword,
-            referralCode: data.referralCode
+            fullName: trimmedData.fullName,
+            email: trimmedData.email,
+            password: trimmedData.password,
+            confirmPassword: trimmedData.confirmPassword,
+            referralCode: trimmedData.referralCode
         });
         
 
@@ -90,7 +102,7 @@ const SignupForm: React.FC = () => {
             const result = await response.json();
              console.log("Server response:", result);
             if (!response.ok) {
-                 // Handle case where email exists but unverified
+            // Handle case where email exists but unverified
                 if(response.status ===400){
                     router.push('/emailverfi')
                 }

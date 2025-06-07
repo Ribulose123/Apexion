@@ -1,9 +1,9 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import SiderBar from "../DashboardComp/SiderBar";
-import Navbar from "../DashboardComp/Navbar";
-
+import { NotificationProvider } from "../context/NotificationContext"; 
+import ClientLayoutComponents from '@/app/context/ClientLayoutComponents'; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   icons: [
     { rel: "icon", url: "/img/logo3.jpg" },
     { rel: "apple-touch-icon", url: "/img/logo3.jpg" },
-    { rel: "shortcut icon", url: "/img/logo3.jpg" }
-  ]
+    { rel: "shortcut icon", url: "/img/logo3.jpg" },
+  ],
 };
 
 export default function RootLayout({
@@ -35,16 +35,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex flex-col min-h-screen ">
-          <Navbar />
-          <div className="flex  flex-1 ">
-            <SiderBar />
-
-            {children}
-            
-          </div>
+       
+        <NotificationProvider>
+          <div className="flex flex-col min-h-screen">
           
-        </div>
+            <ClientLayoutComponents>
+              {children} 
+            </ClientLayoutComponents>
+          </div>
+        </NotificationProvider>
       </body>
     </html>
   );

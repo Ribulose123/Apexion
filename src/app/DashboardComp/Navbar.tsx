@@ -1,3 +1,4 @@
+// components/Navbar.tsx
 'use client';
 
 import React, { useState, useEffect } from "react";
@@ -11,6 +12,7 @@ import { toast } from "react-toastify";
 import MenuBar, { DropdownMenuType } from "./MenuBar";
 import Overview from "./Overview";
 import { API_ENDPOINTS } from "../config/api";
+import { useNotifications } from "@/app/context/NotificationContext"; // Import the hook
 
 interface UserData {
   id: string;
@@ -38,17 +40,17 @@ const Navbar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
- /*  const [firstName, setFirstName] = useState<string | null>(null) */
   const router = useRouter();
 
-
+  // Consume notification state from context
+  const { settings, /* markNotificationsAsRead */ } = useNotifications();
 
   const fetchUserData = async (): Promise<void> => {
     try {
       setLoading(true);
       
       const token = localStorage.getItem('authToken'); 
-     
+      
       if (!token) {
         throw new Error('No authentication token found in localStorage');
       }
@@ -63,7 +65,6 @@ const Navbar = () => {
       });
 
       if (response.status === 401) {
-       
         throw new Error('Session expired');
       }
 
@@ -75,34 +76,22 @@ const Navbar = () => {
       console.log(data.data);
       
       setUserData(data.data);
-
-      /* if(data.data && data.data.fullName){
-        const useFullName = data.data.fullName
-        const namePart = useFullName.slice('')
-        const first = namePart[namePart.length -1]
-        setFirstName(first)
-
-      } */
     } catch (error) {
       console.error('Navbar - Authentication error:', error);
       if (error instanceof Error && error.message === 'Session expired') {
         toast.error('Your session has expired. Please log in again.');
       } else if (error instanceof Error && error.message === 'No authentication token found in localStorage') {
-         
-         console.log('Navbar: No token found, user is likely not logged in.');
+          console.log('Navbar: No token found, user is likely not logged in.');
       } else {
         toast.error(error instanceof Error ? error.message : 'Failed to load user data.');
       }
-      /* handleSignOut(); */ // Force logout if an error occurs
     } finally {
       setLoading(false);
     }
   };
 
   const handleSignOut = (): void => {
-    
     localStorage.removeItem('authToken'); 
-    
     document.cookie = 'authToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'; 
     setUserData(null);
     router.push('/login');
@@ -112,7 +101,7 @@ const Navbar = () => {
   // Fetch user data once when the component mounts
   useEffect(() => {
     fetchUserData();
-  }, []); // Empty dependency array means it runs once on mount
+  }, []); 
 
   const toggleModal = () => setShowModal(!showModal);
 
@@ -161,6 +150,7 @@ const Navbar = () => {
                       alt="pay"
                       width={17}
                       height={17}
+                      className="mr-1"
                     />{" "}
                     <span>USD</span>
                   </span>
@@ -175,6 +165,7 @@ const Navbar = () => {
                           alt="tit"
                           width={17}
                           height={17}
+                          className="mr-1"
                         />{" "}
                         P2P Trading
                       </p>
@@ -204,6 +195,7 @@ const Navbar = () => {
                           alt="tit"
                           width={17}
                           height={17}
+                          className="mr-1"
                         />{" "}
                         Quick Buy
                       </p>
@@ -221,6 +213,7 @@ const Navbar = () => {
                           alt="tit"
                           width={17}
                           height={17}
+                          className="mr-1"
                         />{" "}
                         Credit/Debit Card
                       </p>
@@ -456,10 +449,12 @@ const Navbar = () => {
         </div>
 
         {/* Notifications */}
-        <button className="relative p-1 rounded-full hover:bg-gray-800">
+        <Link href="/security#notifications" className="relative p-1 rounded-full hover:bg-gray-800">
           <Bell size={20} className="text-gray-300" />
-          <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
-        </button>
+          {settings.showBadge && settings.hasUnreadNotifications && (
+            <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
+          )}
+        </Link>
 
         {/* User Profile */}
         {loading ? (
@@ -489,9 +484,6 @@ const Navbar = () => {
                 <p className="text-sm font-medium text-white">
                   {userData.fullName || "User"}
                 </p>
-                {/* <p className="text-xs text-gray-400 capitalize">
-                  {userData.verificationStatus || "Guest"}
-                </p> */}
               </div>
               <ChevronDown size={16} className="text-gray-400" />
             </button>

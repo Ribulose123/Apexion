@@ -13,6 +13,8 @@ const EmailVerification = () => {
 
   const [code, setCode] = useState<string[]>(["", "", "", "", "", ""]);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [canResend, setCanResend] = useState(false);
+  const [countdown, setCountdown] = useState(60); // 60 seconds 
 
   const handleVerify = useCallback(async () => {
     const otp = code.join("");
@@ -54,12 +56,54 @@ const EmailVerification = () => {
     }
   }, [code, email, isVerifying, router]);
 
+  const handleResendCode = async () => {
+    try {
+      const response = await fetch(API_ENDPOINTS.AUTH.RESEND_OPT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(
+          result.message || `HTTP ${response.status}: Failed to resend code`
+        );
+      }
+
+      toast.success("Verification code resent successfully!");
+      setCanResend(false);
+      setCountdown(60); // Reset countdown
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to resend code"
+      );
+    }
+  };
+
   // Auto-submit when all digits are entered
   useEffect(() => {
     if (code.every((digit) => digit !== "")) {
       handleVerify();
     }
   }, [code, handleVerify]);
+
+  // Countdown timer for resend functionality
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else {
+      setCanResend(true);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [countdown]);
 
   const handleInputChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -112,8 +156,24 @@ const EmailVerification = () => {
           ))}
         </div>
 
+        <div className="text-center">
+          {!canResend ? (
+            <p className="text-gray-600">
+              Resend code in {countdown} seconds
+            </p>
+          ) : (
+            <button
+              onClick={handleResendCode}
+              className="text-teal-600 hover:text-teal-700 font-medium"
+              disabled={isVerifying}
+            >
+              Resend verification code
+            </button>
+          )}
+        </div>
+
         {isVerifying && (
-          <div className="text-center">
+          <div className="text-center mt-4">
             <p className="text-gray-600">Verifying...</p>
           </div>
         )}

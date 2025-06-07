@@ -30,7 +30,7 @@ const Topheader = () => {
 
         {/* Copy balance */}
 
-        <div className="border-2 border-[#141E32]  rounded-lg p-4 md:max-w-md w-full mt-10">
+        <div className="border-2 border-[#141E32]  rounded-lg p-4 lg:max-w-md  w-full mt-10">
           {/* User info */}
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">

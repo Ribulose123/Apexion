@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 
-import Navbar from "../DashboardComp/Navbar";
-import Footer from "../DashboardComp/Footer";
 
+import Footer from "../DashboardComp/Footer";
+import { NotificationProvider } from "../context/NotificationContext";
+import ClientLayoutCom from "../context/ClientLayoutCom";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,8 +23,8 @@ export const metadata: Metadata = {
   icons: [
     { rel: "icon", url: "/img/logo3.jpg" },
     { rel: "apple-touch-icon", url: "/img/logo3.jpg" },
-    { rel: "shortcut icon", url: "/img/logo3.jpg" }
-  ]
+    { rel: "shortcut icon", url: "/img/logo3.jpg" },
+  ],
 };
 
 export default function market({
@@ -36,16 +37,15 @@ export default function market({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-          
-          <div className=" min-h-screen ">
-      <Navbar />
-      <div >
-       
-        
-        {children}
-      </div>
-      <Footer/>
-    </div>
+        <NotificationProvider>
+        <div className=" min-h-screen ">
+         
+          <ClientLayoutCom>
+          <div>{children}</div>
+          </ClientLayoutCom>
+          <Footer />
+        </div>
+        </NotificationProvider>
       </body>
     </html>
   );

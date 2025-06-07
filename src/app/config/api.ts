@@ -1,9 +1,11 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const Cyptocoin_API_URL = process.env.NEXT_PUBLIC_CYRPTO_BASE_URL
+const Cyptocoin_API_HOST = process.env.NEXT_PUBLIC_CYRPTO_BASE_HOST
+const Cyptocoin_API_KEY = process.env.NEXT_PUBLIC_CYRPTO_KEY
+const COINGECKO_API = process.env.NEXT_PUBLIC_COINGECKO_API_BASE_URL
 
 
-if (!API_BASE_URL) {
-  console.error('API_BASE_URL is not defined! Check your .env file');
-}
+
 
 export const API_ENDPOINTS = {
   AUTH: {
@@ -11,6 +13,7 @@ export const API_ENDPOINTS = {
     LOGIN: `${API_BASE_URL}/auth/user/login`,
     FORGOT_PASSWORD: `${API_BASE_URL}/auth/user/forgot-password`,
     VERIFY_EMAIL: `${API_BASE_URL}/auth/user/verify-email`,
+    RESEND_OPT:`${API_BASE_URL}/auth/user/resend-otp`,
     RESET_PASSWORD: `${API_BASE_URL}/auth/user/reset-password`,
    
   },
@@ -18,3 +21,13 @@ export const API_ENDPOINTS = {
     USER_PROFILE:`${API_BASE_URL}/user/get-user`
   }
 };
+
+export const Cyptocoin_API={
+    URL: Cyptocoin_API_URL,
+    HOST: Cyptocoin_API_HOST,
+    KEY: Cyptocoin_API_KEY
+}
+
+export const COINGECKO_ENDPOINTS={
+  COINS_MARKET:`${COINGECKO_API}/coins/markets`
+}

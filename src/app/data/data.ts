@@ -200,7 +200,7 @@ import { IoCopy, IoSettingsOutline } from "react-icons/io5";
     { name: 'Referrals', icon: User, href: '#' },
     { name: 'connect Wallet', icon:Link, href: '#' },
     { name: 'Copy', icon: IoCopy, href: '/copy' },
-    { name: 'Settings', icon: IoSettingsOutline, href: '/settings' },
+    { name: 'Settings', icon: IoSettingsOutline, href: '/security' },
   ];
 
 
@@ -799,7 +799,10 @@ export const CopyProfiles = [
     roe: 0,
     pnl: 2,
     win:12,
-    lose:4
+    lose:4,
+    traderType:'Expert',
+    country:'Germany',
+    image:'',
   },
   {
     id: 2,
@@ -820,7 +823,10 @@ export const CopyProfiles = [
     roe: 1,
     pnl: 3,
     win:16,
-    lose:2
+    lose:2,
+    traderType:'Professional',
+    country:'UK',
+    image:'',
   },
   {
     id: 3,
@@ -841,7 +847,10 @@ export const CopyProfiles = [
     roe: 0,
     pnl: 3,
     win:10,
-    lose:3
+    lose:3,
+    traderType:'Expert',
+    country:'UK',
+    image:'',
   },
   {
     id: 4,
@@ -863,7 +872,10 @@ export const CopyProfiles = [
     roe: 1,
     pnl: 2,
     win:12,
-    lose:4
+    lose:4,
+    traderType:'Advanced',
+    country:'USA',
+    image:'',
   },
   {
     id: 5,
@@ -884,7 +896,10 @@ export const CopyProfiles = [
     roe: 1,
     pnl: 2,
     win:16,
-    lose:3
+    lose:3,
+    traderType:'Expert',
+    country:'Nigeria',
+    image:'',
   },
   {
     id: 6,
@@ -906,7 +921,10 @@ export const CopyProfiles = [
     roe: 0,
     pnl: 2,
     win:10,
-    lose:2
+    lose:2,
+    traderType:'Advanced',
+    country:'France',
+    image:'',
   },
   {
     id: 7,
@@ -927,7 +945,10 @@ export const CopyProfiles = [
     roe: 1,
     pnl: 2, 
     win:12,
-    lose:4
+    lose:4,
+    traderType:'Advanced',
+    country:'France',
+    image:'',
   },
   {
     id: 8,
@@ -948,7 +969,9 @@ export const CopyProfiles = [
     roe: 1,
     pnl: 3,
     win:10,
-    lose:2
+    lose:2,
+    country:'France',
+    image:'',
   },
   {
     id: 9,
@@ -970,7 +993,10 @@ export const CopyProfiles = [
     roe: 0,
     pnl: 2,
     win:12,
-    lose:4
+    lose:4,
+    traderType:'Professional',
+    country:'Nigeria',
+    image:'',
   },
   {
     id: 10,
@@ -991,6 +1017,9 @@ export const CopyProfiles = [
     roe: 1,
     pnl: 2,
     win:14,
-    lose:4
+    lose:4,
+    traderType:'Professional',
+    country:'UK',
+    image:''
   }
 ];

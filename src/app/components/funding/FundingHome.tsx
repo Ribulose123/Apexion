@@ -94,7 +94,7 @@ const FundingHome = () => {
             {/* Deposit Tab Content */}
             {activeDepositTab === "Deposit" && (
               <div>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-1">
                   {/* Coin Filter */}
                   <div>
                     <label className="block text-sm text-gray-400 mb-2">
@@ -104,7 +104,7 @@ const FundingHome = () => {
                       <select
                         value={coinFilter}
                         onChange={(e) => setCoinFilter(e.target.value)}
-                        className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white appearance-none pr-8 text-sm md:text-base w-40"
+                        className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white appearance-none pr-8 text-sm md:text-base md:w-40 "
                       >
                         <option value="All">All</option>
                         <option value="USDT">USDT</option>
@@ -124,7 +124,7 @@ const FundingHome = () => {
                       <select
                         value={statusFilter}
                         onChange={(e) => setStatusFilter(e.target.value)}
-                        className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white appearance-none pr-8 text-sm md:text-base w-40"
+                        className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white appearance-none pr-8 text-sm md:text-base md:w-40"
                       >
                         <option value="All">All</option>
                         <option value="Completed">Completed</option>
@@ -144,7 +144,7 @@ const FundingHome = () => {
                       <input
                         type="text"
                         placeholder="Start date → End date"
-                        className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white placeholder-gray-500 pr-10 text-sm md:text-base w-56"
+                        className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-white placeholder-gray-500 pr-10 text-sm md:text-base mdw-56  "
                       />
                       <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     </div>
