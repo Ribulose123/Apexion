@@ -80,14 +80,14 @@ const CoinTable = () => {
         </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-left text-sm mt-4 min-w-[700px]">
           <thead className='text-gray-400 border-b border-[#1E293B]'>
             <tr className="">
-              <th className="py-3 text-left"></th>
-              <th className="py-3 text-left">Coin</th>
-              <th className="py-3 text-right">Price</th>
-              <th className="py-3 text-right">24h Change</th>
-              <th className="py-3 text-right">Market Cap</th>
+              <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]"></th>
+              <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Coin</th>
+              <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Price</th>
+              <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">24h Change</th>
+              <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Market Cap</th>
             </tr>
           </thead>
           <tbody>
