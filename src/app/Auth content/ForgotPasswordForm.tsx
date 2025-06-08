@@ -35,14 +35,14 @@ const ForgotPasswordForm = () => {
     verificationCode,
     isSubmitting,
     showCodeInput,
-    showNewPasswordInput, // NEW: Get the new state from the store
+    showNewPasswordInput, 
     apiError,
     
     updateVerificationCodeDigit,
     setApiError, 
     resetStore, 
-    setShowCodeInput, // We might need to control this directly
-    setShowNewPasswordInput, // NEW: Use the setter
+    setShowCodeInput, 
+    setShowNewPasswordInput, 
     
     requestPasswordReset,
     resetPasswordWithOtp, 
@@ -61,7 +61,7 @@ const ForgotPasswordForm = () => {
     
     // Check if all digits are entered to trigger password input display
     const currentCode = [...verificationCode];
-    currentCode[index] = value.slice(0, 1).replace(/[^0-9]/g, ''); // Update local temp code
+    currentCode[index] = value.slice(0, 1).replace(/[^0-9]/g, ''); 
     
     const fullCodeEntered = currentCode.join("");
     if (fullCodeEntered.length === 6) {
