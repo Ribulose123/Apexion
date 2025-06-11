@@ -22,6 +22,7 @@ const LoginForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams(); 
   const [activeTab, setActiveTab] = useState('Email/Mobile');
+  const [showModal, setShowModal] = useState(false)
   const [showPassword, setShowPassword] = useState({
     email: false,
     subAccount: false,
@@ -75,7 +76,7 @@ const LoginForm = () => {
 
         toast.success('Login successful!');
 
-        // --- Redirect to the stored URL or a default dashboard ---
+        
         const destination = redirectUrl ? decodeURIComponent(redirectUrl) : '/dashboard';
         router.push(destination);
        
@@ -94,8 +95,12 @@ const LoginForm = () => {
     }
   };
 
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
   return (
-    <div className="flex items-center justify-center px-4 py-6">
+    <div className="flex items-center justify-center px-4 py-6 relative">
       <div className="bg-white rounded-lg -mt-10 sm:mt-0 sm:shadow-md w-full max-w-md p-6 md:p-8">
 
         <h1 className="text-2xl text-black font-semibold text-start sm:text-center mb-8">Welcome back</h1>
@@ -229,7 +234,7 @@ const LoginForm = () => {
           </div>
 
           {/* Wallet Connect */}
-          <div className="p-3 rounded-full border border-gray-200 hover:bg-gray-50 flex sm:items-center gap-2 sm:gap-4 justify-between w-[70%]">
+          <div className="p-3 rounded-full border border-gray-200 hover:bg-gray-50 flex sm:items-center gap-2 sm:gap-4 justify-between w-[70%]" onClick={toggleModal}>
             <span className="text-xs text-gray-500">Connect wallet</span>
             <div className="flex space-x-1">
               <button type="button">
@@ -250,6 +255,85 @@ const LoginForm = () => {
           Don’t have an account? <Link href="/register" className="text-[#439A86] hover:underline">Register</Link>
         </div>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+  <div className="fixed inset-0 bg-black/50 bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-2xl w-full max-w-md mx-4 p-6 shadow-2xl">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="text-center flex-1">
+          <div className="text-lg font-semibold text-gray-900 mb-1">LOGO</div>
+          <h2 className="text-xl font-semibold text-gray-900">Connect Wallet</h2>
+          <p className="text-sm text-gray-500 mt-1">Choose a wallet to connect</p>
+        </div>
+        <button 
+          onClick={() => setShowModal(false)}
+          className="p-2 hover:bg-gray-100 hover:bg-opacity-70 rounded-full transition-colors"
+        >
+          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Wallet Options */}
+      <div className="space-y-3">
+        <button
+          onClick={() => {
+            console.log('Connecting to MetaMask...');
+            // Add your MetaMask connection logic here
+          }}
+          className="w-full flex items-center justify-between p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
+        >
+          <div className="flex items-center">
+            <Image src='/img/meta.webp' alt='MetaMask' width={24} height={24} className="mr-3" />
+            <span className="font-medium text-gray-800">Metamask Wallet</span>
+          </div>
+          <span className="text-orange-500 text-sm font-medium">Popular</span>
+        </button>
+        
+        <button
+          onClick={() => {
+            console.log('Connecting to TONkeeper...');
+            // Add your TONkeeper connection logic here
+          }}
+          className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
+        >
+          <Image src='/img/tonkeeper.png' alt='TONkeeper' width={24} height={24} className="mr-3" />
+          <span className="font-medium text-gray-800">TONkeeper Wallet</span>
+        </button>
+        
+        <button
+          onClick={() => {
+            console.log('Connecting to MetaMask...');
+            // Add your MetaMask connection logic here
+          }}
+          className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
+        >
+          <Image src='/img/meta.webp' alt='MetaMask' width={24} height={24} className="mr-3" />
+          <span className="font-medium text-gray-800">Metamask Wallet</span>
+        </button>
+        
+        <button
+          onClick={() => {
+            console.log('Connecting to TONkeeper...');
+            // Add your TONkeeper connection logic here
+          }}
+          className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
+        >
+          <Image src='/img/tonkeeper.png' alt='TONkeeper' width={24} height={24} className="mr-3" />
+          <span className="font-medium text-gray-800">TONkeeper Wallet</span>
+        </button>
+      </div>
+      
+      {/* Footer */}
+      <div className="mt-6 text-center text-sm text-gray-500">
+        <p>New to wallets? <span className="text-[#439A86] hover:underline cursor-pointer">Learn more</span></p>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

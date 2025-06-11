@@ -84,7 +84,7 @@ if (error) {
 }
 
   return (
-    <div className="md:p-4 w-full mx-auto">
+    <div className="md:p-4 w-full ">
       {copyData ? (
         <div className=" rounded-lg p-6 shadow-lg">
           {/* User info section */}
@@ -170,7 +170,7 @@ if (error) {
             </div>
 
             {/* Right section - Actions */}
-            <div className="flex flex-col items-end gap-4">
+            <div className="flex flex-col md:items-end gap-4 mt-2 mb-4 md:mt-0 md:mb-0">
               <div className="flex items-center gap-4">
                 <button className="flex items-center gap-1 text-[#E8E8E8] hover:text-white transition-colors">
                   <Share2 size={15} />

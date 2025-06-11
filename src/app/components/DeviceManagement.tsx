@@ -26,7 +26,7 @@ const DeviceManagement = () => {
   ];
 
   return (
-    <div className="min-h-screen  text-white">
+    <div className="min-h-screen  text-white w-full">
       {/* Header */}
       <div className="flex items-center space-x-4 p-6 ">
          <button

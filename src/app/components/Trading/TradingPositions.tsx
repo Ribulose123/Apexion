@@ -123,10 +123,10 @@ const TradingPositions = () => {
         </div>
 
       <div className="border-b flex md:hidden">
-      {tabs.slice(0,5).map((tab) => (
+      {tabs.slice(0,4).map((tab) => (
           <button
             key={tab}
-            className={`px-2 py-3 md:hidden block text-[12px] md:text-[14px] whitespace-nowrap ${
+            className={`px-1.5 py-3 md:hidden block text-[11px] md:text-[14px] whitespace-nowrap  ${
               activeTab === tab
                 ? " border-b border-blue-400 scale-100"
                 : "text-[#797A80]"

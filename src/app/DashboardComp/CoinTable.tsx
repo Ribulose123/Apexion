@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { FaRegStar, FaStar } from "react-icons/fa";
 import Image from 'next/image';
 import { Loader } from '../ui/Loader';
+import Link from 'next/link';
 
 interface Coin {
   id: string;
@@ -34,7 +35,7 @@ const CoinTable = () => {
         setCoins(data);
       } catch (error) {
         console.error("Error fetching data:", error);
-        // You might want to add an error state here to show a message to the user
+        
       } finally {
         setLoading(false);
       }
@@ -64,7 +65,7 @@ const CoinTable = () => {
 
        <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-bold">Market</h2>
-        <a href="#" className="text-sm text-yellow-500 hover:underline">View More →</a>
+        <Link href="market" className="text-sm text-yellow-500 hover:underline">View More →</Link>
       </div>
       
        <div className="flex gap-2">
@@ -82,7 +83,7 @@ const CoinTable = () => {
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm mt-4 min-w-[700px]">
           <thead className='text-gray-400 border-b border-[#1E293B]'>
-            <tr className="">
+            <tr className="text-left">
               <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]"></th>
               <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Coin</th>
               <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Price</th>

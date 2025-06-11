@@ -1,49 +1,79 @@
 "use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { FaRegStar } from "react-icons/fa";
 import { ArrowRight } from "lucide-react";
 import { CgArrowsExchangeV } from "react-icons/cg";
+import { Loader } from "../ui/Loader";
 
-const assets = [
-  {
-    id: 1,
-    name: "Bitcoin",
-    symbol: "BTC",
-    quantity: "0.0035",
-    type: "Crypto",
-    price: 55140.5,
-    img: "/img/bitcoin.png",
-  },
-  {
-    id: 2,
-    name: "Binance",
-    symbol: "BNB",
-    quantity: "0.025",
-    type: "Crypto",
-    price: 55140.5,
-    img: "/img/binance-smart-chain.png",
-  },
-  {
-    id: 3,
-    name: "Litecoin",
-    symbol: "LTC",
-    quantity: "0.035",
-    type: "Crypto",
-    price: 55140.5,
-    img: "/img/litecoin.png",
-  },
-  {
-    id: 4,
-    name: "Avalanche",
-    symbol: "AVAX",
-    quantity: "0.045",
-    type: "Crypto",
-    price: 55140.5,
-    img: "/img/avalanche.png",
-  },
-];
+
+
+interface CoinGeckoAsset {
+  id: string; 
+  symbol: string; 
+  name: string; 
+  image: string; 
+  current_price: number; 
+  price_change_percentage_24h: number; 
+  total_volume: number;
+}
 
 export default function Assets() {
+
+  const [assets, setAssets] = useState<CoinGeckoAsset[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+   const BASE_URL = "https://api.coingecko.com/api/v3";
+
+  useEffect(()=>{
+    const fetchAssetCoin=async()=>{
+      setLoading(true)
+      setError(null)
+      try{
+        const response = await fetch(`${BASE_URL}//coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false`,
+          { cache: "no-store" }
+        )
+
+        if(!response.ok){
+           const errorText = await response.text();
+          throw new Error(
+            `HTTP error! status: ${response.status} - ${errorText}`
+          );
+        }
+
+        const data:CoinGeckoAsset[] = await response.json()
+        setAssets(data)
+      }catch(err){
+         console.error("Failed to fetch cryptocurrency data:", err);
+      } finally{
+        setLoading(false)
+      }
+    }
+    fetchAssetCoin()
+  },[])
+
+  const filteredAsset = assets.filter((asset)=>
+    asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    asset.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  if (loading) {
+    return (
+      <div className="mb-6 px-3 sm:border sm:border-[#141E32] rounded-xl p-6 text-center text-white">
+        Loading your assets...<Loader/>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mb-6 px-3 sm:border sm:border-[#141E32] rounded-xl p-6 text-center text-red-500">
+        Error: {error}
+      </div>
+    );
+  }
   return (
     <div className="mb-6 px-3 sm:border sm:border-[#141E32] rounded-xl p-6">
       <div className="flex justify-between items-center mb-4">
@@ -53,6 +83,7 @@ export default function Assets() {
             type="search"
             placeholder="Search..."
             className="bg-gray-800 rounded-lg px-4 py-2 text-sm sm:block hidden"
+            onChange={(e)=>setSearchTerm(e.target.value)}
           />
           <button className="sm:bg-[#6967AE] sm:text-white text-[#F2AF29] px-3 py-2 rounded-lg text-sm flex items-center">
             View All <ArrowRight size={18} />
@@ -86,7 +117,14 @@ export default function Assets() {
             </tr>
           </thead>
           <tbody>
-            {assets.map((asset, index) => (
+            {filteredAsset.length === 0 ? (
+               <tr>
+                <td colSpan={7} className="text-center py-8 text-gray-500">
+                  {searchTerm ? "No matching assets found." : "No assets to display."}
+                </td>
+              </tr>
+            ):(
+               filteredAsset.slice(0,6).map((asset, index) => (
               <tr
                 key={asset.id}
                 className={`${
@@ -98,8 +136,8 @@ export default function Assets() {
                 </td>
                 <td className="p-2 flex items-center space-x-2">
                   <Image
-                    src={asset.img}
-                    alt={asset.type}
+                    src={asset.image}
+                    alt={asset.name}
                     width={16}
                     height={16}
                     className="w-5 h-5 sm:w-6 sm:h-6"
@@ -112,10 +150,10 @@ export default function Assets() {
                     </p>
                   </span>
                 </td>
-                <td className="p-2 sm:table-cell hidden">{asset.quantity}</td>
-                <td className="p-2 sm:table-cell hidden">{asset.type}</td>
+                <td className="p-2 sm:table-cell hidden">{asset.current_price}</td>
+                <td className="p-2 sm:table-cell hidden">{asset.total_volume.toLocaleString()}</td>
                 <td className="p-2 text-center sm:text-start">
-                  ${asset.price.toLocaleString()}
+                  ${asset.price_change_percentage_24h.toFixed(2)}
                 </td>
                 <td className="p-2 text-right sm:table-cell hidden">
                   <button className="text-indigo-400 mr-2 Table px-2 py-1 text-xs">
@@ -131,7 +169,9 @@ export default function Assets() {
                   </button>
                 </td>
               </tr>
-            ))}
+            ))
+            )}
+           
           </tbody>
         </table>
       </div>
