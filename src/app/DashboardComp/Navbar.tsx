@@ -12,8 +12,8 @@ import { toast } from "react-toastify";
 import MenuBar, { DropdownMenuType } from "./MenuBar";
 import Overview from "./Overview";
 import { API_ENDPOINTS } from "../config/api";
-import { useNotifications } from "@/app/context/NotificationContext"; // Import the hook
-
+import { useNotifications } from "@/app/context/NotificationContext";
+import NotificationModal from "../modals/NotificationModal"; 
 interface UserData {
   id: string;
   fullName: string;
@@ -40,10 +40,12 @@ const Navbar = () => {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showNotifications, setShowNotifications] = useState(false);
   const router = useRouter();
 
+
   // Consume notification state from context
-  const { settings, /* markNotificationsAsRead */ } = useNotifications();
+  const { settings, markNotificationsAsRead } = useNotifications();
 
   const fetchUserData = async (): Promise<void> => {
     try {
@@ -449,12 +451,27 @@ const Navbar = () => {
         </div>
 
         {/* Notifications */}
-        <Link href="/security#notifications" className="relative p-1 rounded-full hover:bg-gray-800">
-          <Bell size={20} className="text-gray-300" />
-          {settings.showBadge && settings.hasUnreadNotifications && (
-            <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
-          )}
-        </Link>
+      
+<div className="relative">
+  <button 
+    className="relative p-1 rounded-full hover:bg-gray-800"
+    onClick={() => {
+      setShowNotifications(!showNotifications);
+      if (!showNotifications && settings.hasUnreadNotifications) {
+        markNotificationsAsRead();
+      }
+    }}
+  >
+    <Bell size={20} className="text-gray-300" />
+    {settings.showBadge && settings.hasUnreadNotifications && (
+      <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
+    )}
+  </button>
+  
+  {showNotifications && (
+    <NotificationModal onClose={() => setShowNotifications(false)} />
+  )}
+</div>
 
         {/* User Profile */}
         {loading ? (

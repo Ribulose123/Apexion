@@ -71,7 +71,7 @@ const ApexoionCard = () => {
           </button>
         </div>
         <Image
-          src="/img/Card images.png"
+          src="/img/Bidvest Card.png"
           alt="cards"
           width={350}
           height={300}
@@ -113,7 +113,7 @@ const ApexoionCard = () => {
 
           <div className="mx-auto md:mx-0">
             <Image
-              src="/img/image 10 (1).png"
+              src="/img/bid.png"
               alt="card"
               width={350}
               height={350}

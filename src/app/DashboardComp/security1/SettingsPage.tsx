@@ -66,7 +66,7 @@ const SettingsPage = () => {
                 </p>
               </div>
 
-              <Link href='/settings' className="bg-[#439A86] px-4 py-2 text-sm rounded-lg text-center text-white">Manage</Link>
+              <Link href='/security/settings' className="bg-[#439A86] px-4 py-2 text-sm rounded-lg text-center text-white">Manage</Link>
           </div>
         </div>
 

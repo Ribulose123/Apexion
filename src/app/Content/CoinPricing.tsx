@@ -15,9 +15,9 @@ const Sparkline: React.FC<SparklineProps> = ({ data, isPositive }) => {
     return <div className="w-16 h-8 flex items-center justify-center text-gray-500 text-xs">No Data</div>;
   }
 
-  const width = 60; 
-  const height = 30; 
-  const strokeColor = isPositive ? "#10B981" : "#EF4444"; 
+  const width = 60;
+  const height = 30;
+  const strokeColor = isPositive ? "#10B981" : "#EF4444";
 
   // Find min/max values for scaling
   const minY = Math.min(...data);
@@ -26,7 +26,7 @@ const Sparkline: React.FC<SparklineProps> = ({ data, isPositive }) => {
   // Calculate points for the SVG path
   const points = data.map((value, index) => {
     const x = (index / (data.length - 1)) * width;
-    const y = height - ((value - minY) / (maxY - minY)) * height; 
+    const y = height - ((value - minY) / (maxY - minY)) * height;
     return `${x},${y}`;
   }).join(" ");
 
@@ -42,8 +42,6 @@ const Sparkline: React.FC<SparklineProps> = ({ data, isPositive }) => {
   );
 };
 
-
-
 // Interface for a single cryptocurrency coin
 interface Coin {
   id: string;
@@ -56,8 +54,8 @@ interface Coin {
   high_24h: number;
   low_24h: number;
   price_change_percentage_24h: number;
-  
-  sparkline_in_7d?: { 
+
+  sparkline_in_7d?: {
     price: number[];
   };
 }
@@ -67,7 +65,7 @@ const CryptoTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [category, setCategory] = useState("All"); 
+  const [category, setCategory] = useState("All");
   const [favorites, setFavorites] = useState<string[]>(() => {
     if (typeof window !== 'undefined') {
       const savedFavorites = localStorage.getItem('cryptoFavorites');
@@ -76,8 +74,9 @@ const CryptoTable = () => {
     return [];
   });
   const [searchTerm, setSearchTerm] = useState("");
-  
-  const itemsPerPage = 10;
+
+
+  const itemsPerPage = 20; 
 
   const categories = ["All", "Gainers", "Losers", "Hot", "Tradeable", "New", "Volume", "Watchlist"];
 
@@ -92,15 +91,15 @@ const CryptoTable = () => {
       setLoading(true);
       setError(null);
       try {
-        // --- UPDATED API CALL: sparkline=true ---
         const response = await fetch(
-          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=true' 
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${itemsPerPage}&page=${currentPage}&sparkline=true`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data: Coin[] = await response.json();
         setCoins(data);
+        // totalCryptoCount is no longer used
       } catch (err) {
         console.error("Error fetching data:", err);
         setError(`Failed to fetch cryptocurrency data: ${err instanceof Error ? err.message : String(err)}`);
@@ -110,12 +109,12 @@ const CryptoTable = () => {
     };
 
     fetchData();
-  }, []);
+  }, [currentPage, itemsPerPage]);
 
   const toggleFavorite = (coinId: string) => {
     setFavorites(prev => {
-      const newFavorites = prev.includes(coinId) 
-        ? prev.filter(id => id !== coinId) 
+      const newFavorites = prev.includes(coinId)
+        ? prev.filter(id => id !== coinId)
         : [...prev, coinId];
       return newFavorites;
     });
@@ -125,7 +124,7 @@ const CryptoTable = () => {
     let currentFiltered = coins;
 
     if (category === "All") {
-      currentFiltered = coins; 
+      currentFiltered = coins;
     } else if (category === "Gainers") {
       currentFiltered = currentFiltered.filter(coin => coin.price_change_percentage_24h > 0);
     } else if (category === "Losers") {
@@ -133,9 +132,9 @@ const CryptoTable = () => {
     } else if (category === "Hot") {
       currentFiltered = [...currentFiltered].sort((a, b) => b.total_volume - a.total_volume);
     } else if (category === "Tradeable") {
-        currentFiltered = coins; 
+        currentFiltered = coins;
     } else if (category === "New") {
-        currentFiltered = coins; 
+        currentFiltered = coins;
     } else if (category === "Volume") {
       currentFiltered = [...currentFiltered].sort((a, b) => b.total_volume - a.total_volume);
     } else if (category === "Watchlist") {
@@ -143,7 +142,7 @@ const CryptoTable = () => {
     }
 
     if (searchTerm) {
-      currentFiltered = currentFiltered.filter(coin => 
+      currentFiltered = currentFiltered.filter(coin =>
         coin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         coin.symbol.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -152,19 +151,23 @@ const CryptoTable = () => {
     return currentFiltered;
   }, [coins, category, favorites, searchTerm]);
 
+  const currentData = filteredAndSearchedCoins.length; 
 
-  const totalPages = Math.ceil(filteredAndSearchedCoins.length / itemsPerPage);
+  const totalPages = Math.ceil(currentData / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage; // Corrected variable name
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredAndSearchedCoins.slice(indexOfFirstItem, indexOfLastItem);
 
-  if (loading) {
-    return (
-      <div className="bg-[#01040F] text-white min-h-screen p-2 sm:p-6 flex justify-center items-center">
-        Loading cryptocurrency data...
+ if (loading) {
+  return (
+    <div className="bg-[#01040F] text-white min-h-screen p-2 sm:p-6 flex  justify-center items-center">
+      <div className="flex  items-center justify-center gap-4">
+        <p className="text-lg mb-4">Loading cryptocurrency data...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   if (error) {
     return (
@@ -176,7 +179,7 @@ const CryptoTable = () => {
 
   return (
     <div className="bg-[#01040F] text-white min-h-screen p-2 sm:p-6 relative w-full mt-32">
-      
+
       <div className="w-full max-w-7xl mx-auto p-2 sm:p-4 rounded-lg overflow-x-auto">
         <div className="flex overflow-auto items-center gap-10 justify-between text-gray-400 mb-4 px-3">
           {categories.map((cat) => (
@@ -189,9 +192,9 @@ const CryptoTable = () => {
             </span>
           ))}
           <div className="relative mt-2 sm:mt-0">
-            <input 
-              type="search" 
-              placeholder="Search asset" 
+            <input
+              type="search"
+              placeholder="Search asset"
               className="border border-white bg-[#10131F] rounded-full placeholder:text-[#7D8491] text-center text-[10px] p-2 pr-8"
               value={searchTerm}
               onChange={(e) => {
@@ -203,7 +206,7 @@ const CryptoTable = () => {
           </div>
         </div>
         <h2 className="text-white capitalize flex items-center gap-1 text-sm sm:text-base px-3">
-          {category} cryptocurrencies 
+          {category} cryptocurrencies
           <span><IoIosInformationCircleOutline/></span>
         </h2>
         <div className="overflow-x-auto">
@@ -217,7 +220,7 @@ const CryptoTable = () => {
                 <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">24hr Low</th>
                 <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">24hr Volume</th>
                 <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">24(%)</th>
-                <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Trending</th> {/* This column will now show the graph */}
+                <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Trending</th>
                 <th className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px]">Trade</th>
               </tr>
             </thead>
@@ -238,18 +241,18 @@ const CryptoTable = () => {
                   <tr key={coin.id} className="border-b border-[#141E325C]">
                     <td className="py-3 sm:py-5 px-2 sm:px-4">
                       <button onClick={() => toggleFavorite(coin.id)}>
-                        {favorites.includes(coin.id) ? 
-                          <FaStar className="text-yellow-500"/> : 
+                        {favorites.includes(coin.id) ?
+                          <FaStar className="text-yellow-500"/> :
                           <FaRegStar className="text-gray-500"/>
                         }
                       </button>
                     </td>
                     <td className="py-3 sm:py-5 px-2 sm:px-4 text-[10px] sm:text-[14px] flex items-center gap-2">
-                        <Image 
-                            src={coin.image} 
-                            alt={coin.name} 
-                            width={24} 
-                            height={24} 
+                        <Image
+                            src={coin.image}
+                            alt={coin.name}
+                            width={24}
+                            height={24}
                             className="w-6 h-6"
                             onError={(e) => {
                                 (e.target as HTMLImageElement).src = 'https://via.placeholder.com/24/0A101D/FFFFFF?text=X';
@@ -275,16 +278,16 @@ const CryptoTable = () => {
                     <td className="py-3 sm:py-5 px-2 sm:px-4">
                       {/* Render Sparkline graph */}
                       {coin.sparkline_in_7d?.price && coin.sparkline_in_7d.price.length > 0 ? (
-                        <Sparkline 
-                          data={coin.sparkline_in_7d.price} 
-                          isPositive={coin.price_change_percentage_24h >= 0} 
+                        <Sparkline
+                          data={coin.sparkline_in_7d.price}
+                          isPositive={coin.price_change_percentage_24h >= 0}
                         />
                       ) : (
                         <div className="w-16 h-8 flex items-center justify-center text-gray-500 text-xs">N/A</div>
                       )}
                     </td>
                     <td className="py-3 sm:py-5 px-2 sm:px-4">
-                      <button className="border border-gray-100 p-1 w-[100] rounded-full text-[10px] sm:text-[14px]">Trade</button>
+                      <button className="currency-display p-1 w-[100] rounded-full text-[10px] sm:text-[14px]">Trade</button>
                     </td>
                   </tr>
                 ))
@@ -295,8 +298,8 @@ const CryptoTable = () => {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-2 mt-6 mb-4 flex-wrap">
-            <button 
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} 
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               className="p-2 rounded-full disabled:opacity-50"
               disabled={currentPage === 1}
             >
@@ -311,8 +314,8 @@ const CryptoTable = () => {
                 {i + 1}
               </button>
             ))}
-            <button 
-              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} 
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
               className="p-2 rounded-full disabled:opacity-50"
               disabled={currentPage === totalPages}
             >

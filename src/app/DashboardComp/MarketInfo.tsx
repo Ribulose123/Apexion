@@ -105,7 +105,7 @@ const MarketInfo = () => {
         crypto.symbol.toLowerCase().includes(searchTerm.toLowerCase())
       );
 
-    // Calculate total pages based on the assumed totalCryptoCount and itemsPerPage
+  
     const totalPages = Math.ceil(totalCryptoCount / itemsPerPage);
 
 
@@ -208,12 +208,15 @@ const MarketInfo = () => {
     };
 
     if (loading) {
-      return (
-        <div className="text-white mt-15 flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      );
-    }
+  return (
+    <div className="bg-[#01040F] text-white min-h-screen p-2 sm:p-6 flex flex-col justify-center items-center">
+      <div className="flex flex-col items-center justify-center gap-4">
+        <p className="text-lg mb-4">Loading cryptocurrency data...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    </div>
+  );
+}
 
     if (error) {
       return (
