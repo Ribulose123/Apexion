@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 import Mission from "../../Content/Mission";
 import Founded from "../../Content/Founded";
 import GoalAndTechnology from "../../Content/GoalAndTechnology";
@@ -10,26 +10,12 @@ export default function About() {
     <main className="min-h-screen -mt-30 sm:mt-25">
       <section className="relative w-full min-h-screen md:min-h-[70vh] flex items-center justify-center sm:top-0">
         {/* Background Image */}
-        <div className="absolute inset-1">
-          <Image 
-            src="/img/Mask group.png" 
-            alt="Moon" 
-            layout="fill"
-            objectFit="contain"
-            quality={100}
-            priority
-            className="w-full h-full"
-          />
-        </div>
+       
 
         {/* Text Overlay */}
         <div className="relative text-center text-white px-4">
-          <h1 className="text-5xl sm:text-6xl md:text-4xl lg:text-6xl font-bold leading-tight">
-            Redefining the Future of <span className="text-blue-400">Trading</span>
-          </h1>
-          <h1 className="text-5xl sm:text-6xl md:text-4xl lg:text-6xl font-bold leading-tight">
-            with Innovation and <span className="text-blue-400">Trust</span>
-          </h1>
+          <h1 className="text-4xl sm:text-7xl md:text-4xl lg:text-6xl font-bold leading-tight"> Redefining the Future of <br /> <span className="text-blue-400">Trading</span> with Innovation <br /> and <span className="text-blue-400">Trust</span></h1>
+          
         </div>
       </section>
       

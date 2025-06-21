@@ -276,7 +276,7 @@ const SignupForm: React.FC = () => {
                                 {...register('agreeToTerms', { required: 'You must agree to the terms' })}
                             />
                             <span className="ml-2 text-sm text-gray-600">
-                                I agree to the <a href="#" className="text-blue-600 hover:underline">User Agreement</a> and <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>.
+                                I agree to the <Link href="#" className="text-blue-600 hover:underline">User Agreement</Link> and <Link href="/policy" className="text-blue-600 hover:underline">Privacy Policy</Link>.
                             </span>
                         </label>
                         {errors.agreeToTerms && <p className="mt-1 text-xs text-red-500">{errors.agreeToTerms.message}</p>}

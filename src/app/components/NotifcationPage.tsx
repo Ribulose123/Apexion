@@ -20,7 +20,7 @@ const NotificationPage = () => {
   const { notifications, markAllAsRead } = useNotificationsData();
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("All");
-  const [expandedId, setExpandedId] = useState<number | string | null>(null);
+  const [expandedNotifications, setExpandedNotifications] = useState<Set<string | number>>(new Set());
 
   const totalPages = 3;
   const sidebarItems = [
@@ -31,8 +31,14 @@ const NotificationPage = () => {
     { icon: User, label: "Account", count: null },
   ];
 
-  const handleToggle = (id: number | string) => {
-    setExpandedId(expandedId === id ? null : id);
+  const toggleNotification = (id: string | number) => {
+    const newExpanded = new Set(expandedNotifications);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedNotifications(newExpanded);
   };
 
   const renderPagination = () => {
@@ -145,27 +151,21 @@ const NotificationPage = () => {
             </nav>
 
             {/* Mobile view */}
-            <div className="space-x-5 border-b-1 border-[#141E32] block md:hidden">
+            <div className="flex overflow-x-auto gap-4 pb-2 border-b border-[#141E32] md:hidden">
               {sidebarItems.map((item, index) => (
                 <button
-                  className={`${
-                    activeTab === item.label ? "border-b border-[#F2AF29]" : ""
-                  }`}
                   key={index}
                   onClick={() => setActiveTab(item.label)}
+                  className={`whitespace-nowrap px-3 py-2 rounded-lg ${
+                    activeTab === item.label
+                      ? "bg-[#141E32] text-[#F2AF29]"
+                      : "text-gray-400"
+                  }`}
                 >
-                  <div>
-                    {item.label}{" "}
-                    <span
-                      className={`text-[15px] ${
-                        activeTab === item.label
-                          ? "text-[#F2AF29]"
-                          : "text-white"
-                      }`}
-                    >
-                      {item.count}
-                    </span>
-                  </div>
+                  {item.label}
+                  {item.count !== null && (
+                    <span className="ml-1 text-white">{item.count}</span>
+                  )}
                 </button>
               ))}
             </div>
@@ -175,66 +175,69 @@ const NotificationPage = () => {
           <div className="flex-1">
             {/* Notifications List */}
             <div className="space-y-4">
-              {notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className="border-b border-[#141E32] p-3 hover:bg-gray-800/50 transition-colors"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <div
-                          className={`w-2 h-2 rounded-full ${
-                            notification.isRead || notification.read
-                              ? "bg-gray-500"
-                              : "bg-cyan-500"
-                          }`}
-                        ></div>
-                        <h3 className="font-medium text-white">
-                          {notification.type || notification.title}
-                        </h3>
-                      </div>
-
-                      <p
-                        className={`text-gray-300 text-sm mb-3 ${
-                          expandedId === notification.id ? "" : "line-clamp-2"
-                        }`}
-                      >
-                        {notification.description || notification.message}
-                      </p>
-
-                      <div className="flex items-center justify-between">
-                        <div className="text-gray-500 text-xs">
-                          {notification.timestamp || notification.time}
+              {notifications.map((notification) => {
+                const isExpanded = expandedNotifications.has(notification.id);
+                
+                return (
+                  <div
+                    key={notification.id}
+                    className="border-b border-[#141E32] p-3 hover:bg-gray-800/50 transition-colors"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <div
+                            className={`w-2 h-2 rounded-full ${
+                              notification.isRead || notification.read
+                                ? "bg-gray-500"
+                                : "bg-cyan-500"
+                            }`}
+                          ></div>
+                          <h3 className="font-medium text-white">
+                            {notification.type || notification.title}
+                          </h3>
                         </div>
-                        {expandedId === notification.id && (
-                          <Link
-                            href="#"
-                            className="text-blue-400 hover:text-blue-300 text-xs flex items-center"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              // Handle view more action
-                            }}
-                          >
-                            View more <ArrowRight className="w-3 h-3 ml-1" />
-                          </Link>
-                        )}
-                      </div>
-                    </div>
 
-                    <button
-                      className="text-gray-400 hover:text-white transition-colors ml-4"
-                      onClick={() => handleToggle(notification.id)}
-                    >
-                      <ChevronDown
-                        className={`w-4 h-4 transition-transform ${
-                          expandedId === notification.id ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
+                        <p
+                          className={`text-gray-300 text-sm mb-3 ${
+                            isExpanded ? "" : "line-clamp-2"
+                          }`}
+                        >
+                          {notification.description || notification.message}
+                        </p>
+                        <div className="flex items-center justify-between mt-3">
+                          <div className="text-gray-500 text-xs">
+                            {notification.timestamp || notification.time}
+                          </div>
+                          {isExpanded && (
+                            <Link
+                              href="#"
+                              className="text-blue-400 hover:text-blue-300 text-xs flex items-center"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                // Handle view more action
+                              }}
+                            >
+                              View more details <ArrowRight className="w-3 h-3 ml-1" />
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+
+                      <button
+                        className="text-gray-400 hover:text-white transition-colors ml-4"
+                        onClick={() => toggleNotification(notification.id)}
+                      >
+                        <ChevronDown
+                          className={`w-4 h-4 transition-transform ${
+                            isExpanded ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Pagination */}
