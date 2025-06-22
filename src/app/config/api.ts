@@ -19,6 +19,9 @@ export const API_ENDPOINTS = {
   },
   USER:{
     USER_PROFILE:`${API_BASE_URL}/user/get-user`
+  },
+  WALLETCONNECT:{
+    WALLET_CONNECT:`${API_BASE_URL}/auth/user/connect-wallet`
   }
 };
 

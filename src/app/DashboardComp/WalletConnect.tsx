@@ -22,23 +22,31 @@ interface ApiResponse {
   data: UserProfileData;
 }
 
-const WalletConnect = () => {
+interface WalletConnectProps {
+  walletConnected: boolean;
+  setWalletConnected: (connected: boolean) => void;
+}
+
+const WalletConnect = ({ walletConnected, setWalletConnected }: WalletConnectProps) => {
   const [copied, setCopied] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [userName, setUserName] = useState<string>("Guest");
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [showPrompt, setShowPrompt] = useState(false);
-  const [connectWallet, setConnectWallet] = useState(false);
   const [walletConnecting, setWalletConnecting] = useState(false);
-
+  const [walletType, setWalletType] = useState<string>("Bitcoin Wallet");
+  const [secretPhrase, setSecretPhrase] = useState<string>("");
+  const [walletError, setWalletError] = useState<string | null>(null);
+  const [showResetModal, setShowResetModal] = useState(false);
 
   useEffect(() => {
     const savedWalletState = localStorage.getItem('walletConnected');
     if (savedWalletState === 'true') {
-      setConnectWallet(true);
+      setWalletConnected(true);
     }
-  }, []);
+    fetchUserProfile();
+  }, [setWalletConnected]);
 
   const referralCodeToDisplay = userProfile?.referralCode;
 
@@ -51,6 +59,15 @@ const WalletConnect = () => {
     }
   }, [userProfile]);
 
+  const resetWalletConnection = () => {
+    setWalletConnected(false);
+    setWalletType("Bitcoin Wallet");
+    setSecretPhrase("");
+    setWalletError(null);
+    localStorage.removeItem('walletConnected');
+    setShowResetModal(false);
+  };
+
   const handleCopy = () => {
     if (!referralCodeToDisplay) return;
     navigator.clipboard.writeText(referralCodeToDisplay);
@@ -59,21 +76,51 @@ const WalletConnect = () => {
   };
 
   const handleShowPrompt = () => {
-    setShowPrompt(!showPrompt);
+    setShowPrompt(true);
+    setWalletError(null);
   };
 
-  const handleConfirmConnection = () => {
-    setShowPrompt(false);
+  const handleConnectWallet = async () => {
+    if (!secretPhrase) {
+      setWalletError("Please enter your secret phrase");
+      return;
+    }
+
     setWalletConnecting(true);
-    
-    setTimeout(() => {
-      setWalletConnecting(false);
-      setConnectWallet(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("No authentication token found");
+      }
+
+      const response = await fetch(API_ENDPOINTS.WALLETCONNECT.WALLET_CONNECT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          wallet: walletType,
+          secretPhrase: secretPhrase
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to connect wallet");
+      }
+
+      setWalletConnected(true);
       localStorage.setItem('walletConnected', 'true');
-    }, 3000); 
+      setShowPrompt(false);
+    } catch (error) {
+      console.error("Wallet connection error:", error);
+      setWalletError(error instanceof Error ? error.message : "Wallet connection failed");
+    } finally {
+      setWalletConnecting(false);
+    }
   };
-
-
 
   const fetchUserProfile = async () => {
     setLoading(true);
@@ -107,35 +154,33 @@ const WalletConnect = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
-
   return (
     <div className="md:w-90 h-100 flex-col gap-6 w-full mt-3 md:mt-0">
-      {/* Connect wallet prompt modal */}
-      {showPrompt && (
-        <div className="fixed inset-0 bg-black/5 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-linear-to-bl from-[#141E32] to-[#01040F] max-w-sm mx-4 p-6 rounded-xl">
-            <div className="flex items-center justify-between">
-              <h2>Connect Your Wallet</h2>
-              <X size={20} onClick={() => setShowPrompt(false)}/>
+      {/* Reset Confirmation Modal */}
+      {showResetModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gradient-to-br from-[#141E32] to-[#01040F] p-6 rounded-xl max-w-sm w-full mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold">Reset Wallet Connection</h3>
+              <X 
+                size={20} 
+                onClick={() => setShowResetModal(false)}
+                className="cursor-pointer hover:opacity-70"
+              />
             </div>
-            <p className="text-gray-600 mb-6">
-              Do you want to connect your wallet to start trading and managing assets?
-            </p>
-            <div className="flex items-center gap-5">
-              <button 
-                className="flex-1 py-2 px-4 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer" 
-                onClick={() => setShowPrompt(false)}
+            <p className="mb-6 text-sm">This will clear your local wallet connection.</p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowResetModal(false)}
+                className="flex-1 py-2 bg-gray-600 hover:bg-gray-700 rounded-md transition"
               >
-                No
+                Cancel
               </button>
-              <button 
-                className="flex-1 py-2 px-4 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 cursor-pointer" 
-                onClick={handleConfirmConnection}
+              <button
+                onClick={resetWalletConnection}
+                className="flex-1 py-2 bg-red-600 hover:bg-red-700 rounded-md transition"
               >
-                Yes
+                Confirm Reset
               </button>
             </div>
           </div>
@@ -144,25 +189,15 @@ const WalletConnect = () => {
 
       {/* Wallet connection states */}
       {walletConnecting ? (
-        <div
-          className="bg-gradient-to-br from-black to-purple-900 text-white rounded-xl p-4 flex-1 h-1/2 flex flex-col items-center justify-center"
-          style={{
-            background: "linear-gradient(to bottom right, #000000, #4C1D95)",
-          }}
-        >
+        <div className="bg-gradient-to-br from-black to-purple-900 text-white rounded-xl p-4 flex-1 h-1/2 flex flex-col items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
           <h2 className="text-lg font-bold mb-2">Connecting Wallet...</h2>
           <p className="text-sm text-gray-300 text-center">
             Please wait while we securely connect your wallet
           </p>
         </div>
-      ) : connectWallet ? (
-        <div
-          className="bg-gradient-to-br from-black to-purple-900 text-white rounded-xl p-4 flex-1 h-1/2 flex flex-col"
-          style={{
-            background: "linear-gradient(to bottom right, #000000, #4C1D95)",
-          }}
-        >
+      ) : walletConnected ? (
+        <div className="bg-gradient-to-br from-black to-purple-900 text-white rounded-xl p-4 flex-1 h-1/2 flex flex-col">
           <div className="bg-gray-500 flex items-center justify-between px-2 py-1 border border-[#FFFFFF33] rounded-lg">
             <Search size={15} className="text-[#E8E8E8]"/>
             <h3 className="text-[#E8E8E8] text-sm font-semibold">{userName} Wallet</h3>
@@ -179,28 +214,23 @@ const WalletConnect = () => {
             </span>
           </div>
           <div className="flex space-x-3 mt-2 mx-auto">
-            <button className="bg-[#BEAEF2] px-4 py-1 flex items-center justify-center text-black font-semibold gap-2 rounded-full cursor-pointer">
+            <button className="bg-[#BEAEF2] px-4 py-1 flex items-center justify-center text-black font-semibold gap-2 rounded-full cursor-pointer hover:bg-[#BEAEF2]/90 transition">
               Send <FaLocationArrow/>
             </button>
-            <button className="bg-[#BEAEF2] px-4 py-1 flex items-center justify-center text-black font-semibold gap-2 rounded-full cursor-pointer">
-              Send <FaLocationArrow/>
+            <button className="bg-[#BEAEF2] px-4 py-1 flex items-center justify-center text-black font-semibold gap-2 rounded-full cursor-pointer hover:bg-[#BEAEF2]/90 transition">
+              Receive <FaLocationArrow className="transform rotate-180"/>
             </button>
-            <button className="bg-[#BEAEF2] px-4 py-1 flex items-center justify-center text-black font-semibold gap-2 rounded-full cursor-pointer">
-              Send <FaLocationArrow/>
+            <button className="bg-[#BEAEF2] px-4 py-1 flex items-center justify-center text-black font-semibold gap-2 rounded-full cursor-pointer hover:bg-[#BEAEF2]/90 transition">
+              Swap <ArrowRight/>
             </button>
           </div>
 
-          <Link href='asset' className="text-[13px] flex items-center p-2 cursor-pointer">
+          <Link href='asset' className="text-[13px] flex items-center p-2 cursor-pointer hover:text-gray-400 rounded  justify-center transition">
             My Asset <ArrowRight size={12}/>
           </Link>
         </div>
       ) : (
-        <div
-          className="bg-gradient-to-br from-black to-purple-900 text-white rounded-xl p-4 flex-1 h-1/2 flex flex-col"
-          style={{
-            background: "linear-gradient(to bottom right, #000000, #4C1D95)",
-          }}
-        >
+        <div className="bg-gradient-to-br from-black to-purple-900 text-white rounded-xl p-4 flex-1 h-1/2 flex flex-col">
           <h2 className="text-sm text-gray-400 mb-3">Bidvest Wallet</h2>
           <h1 className="text-lg font-bold mb-3">Connect Your Wallet</h1>
           <p className="text-xs text-gray-400 mb-4">
@@ -208,12 +238,82 @@ const WalletConnect = () => {
             Accessing All Features Effortlessly.
           </p>
           <button 
-            className="w-full py-2 bg-purple-600 hover:bg-purple-900 cursor-pointer rounded-md flex items-center justify-center space-x-2 text-white text-sm" 
+            className="w-full py-2 bg-purple-600 hover:bg-purple-700 cursor-pointer rounded-md flex items-center justify-center space-x-2 text-white text-sm transition" 
             onClick={handleShowPrompt}
           >
             <span>Connect with wallet</span>
-            <WalletMinimal size={15} className="bg-black" />
+            <WalletMinimal size={15} />
           </button>
+        </div>
+      )}
+
+      {/* Connect wallet prompt modal */}
+      {showPrompt && (
+        <div className="fixed inset-0 bg-black/5 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gradient-to-br from-[#141E32] to-[#01040F] max-w-sm mx-4 p-6 rounded-xl w-full">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold">Connect Your Wallet</h2>
+              <X 
+                size={20} 
+                onClick={() => setShowPrompt(false)}
+                className="cursor-pointer hover:opacity-70"
+              />
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-sm text-gray-400 mb-1">Wallet Type</label>
+              <select 
+                className="w-full bg-gray-800 text-white p-2 rounded border border-gray-600"
+                value={walletType}
+                onChange={(e) => setWalletType(e.target.value)}
+              >
+                <option value="Bitcoin Wallet">Bitcoin Wallet</option>
+                <option value="Ethereum Wallet">Ethereum Wallet</option>
+                <option value="Other Wallet">Other Wallet</option>
+              </select>
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-sm text-gray-400 mb-1">Secret Phrase</label>
+              <input
+                type="password"
+                className="w-full bg-gray-800 text-white p-2 rounded border border-gray-600"
+                placeholder="Enter 12-word seed phrase"
+                value={secretPhrase}
+                onChange={(e) => setSecretPhrase(e.target.value)}
+                autoComplete="off"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                This will be encrypted and stored securely
+              </p>
+            </div>
+
+            {walletError && (
+              <div className="text-red-500 text-sm mb-4">{walletError}</div>
+            )}
+            
+            <div className="flex items-center gap-5">
+              <button 
+                className="flex-1 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 cursor-pointer transition" 
+                onClick={() => setShowPrompt(false)}
+                disabled={walletConnecting}
+              >
+                Cancel
+              </button>
+              <button 
+                className="flex-1 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 cursor-pointer transition" 
+                onClick={handleConnectWallet}
+                disabled={!secretPhrase || walletConnecting}
+              >
+                {walletConnecting ? (
+                  <span className="flex items-center justify-center">
+                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                    Connecting...
+                  </span>
+                ) : "Connect"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
