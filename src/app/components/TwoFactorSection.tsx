@@ -1,6 +1,6 @@
 // TwoFactorSection.tsx - Two-Factor Authentication section
 import React from 'react';
-import { Lock, Mail, MessageSquare, Shield } from 'lucide-react';
+import { Lock, Mail, Shield } from 'lucide-react';
 import SecurityOption from './SecurityOption';
 import { SecurityState } from '../data/data';
 
@@ -12,7 +12,7 @@ interface TwoFactorSectionProps {
 const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({ securityOptions, onActionClick }) => {
   return (
     <div className="mb-8">
-      <h2 className="text-sm font-medium mb-4 text-white">Two-Factor Authentication</h2>
+      <h2 className="text-[15px] font-medium mb-4 text-white">Protection</h2>
       
       <SecurityOption
         icon={<Lock size={18} />}
@@ -21,7 +21,7 @@ const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({ securityOptions, on
         status={securityOptions.loginPassword.enabled ? 'enabled' : 'disabled'}
         action="edit"
         onActionClick={() => onActionClick('loginPassword')}
-        link="/settings/newpassword" 
+        link="/security/newpassword" 
       />
       
       <SecurityOption
@@ -35,19 +35,11 @@ const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({ securityOptions, on
         link="/settings/emailauth" 
       />
       
-      <SecurityOption
-        icon={<MessageSquare size={18} />}
-        title="SMS Authentication"
-        description="Enabling SMS verification provides an additional layer of protection for 24 hours."
-        status={securityOptions.smsAuth.enabled ? 'enabled' : 'disabled'}
-        action="settings"
-        onActionClick={() => onActionClick('smsAuth')}
-        link="/settings/phoneauth" 
-      />
+      
       
       <SecurityOption
         icon={<Shield size={18} />}
-        title="Google Two-Factor Authentication"
+        title="Two-Factor Authentication"
         description="Enabling Two-Factor Authentication provides enhanced protection for 24 hours."
         status={securityOptions.googleAuth.enabled ? 'enabled' : 'disabled'}
         action={securityOptions.googleAuth.enabled ? 'disable' : 'enable'}

@@ -19,7 +19,7 @@ export const handleSecurityAction = (
     case 'loginPassword':
      
       if (openModal) {
-        openModal('passwordModal');
+        openModal('/security/newpassword');
       } else if (navigate) {
         navigate('/settings');
       }

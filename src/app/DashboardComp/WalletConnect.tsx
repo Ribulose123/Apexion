@@ -1,10 +1,20 @@
+
 "use client";
 import React, { useState, useEffect } from "react";
-import { ArrowDown, ArrowRight, Copy, Search, WalletMinimal, X } from "lucide-react";
-import { API_ENDPOINTS } from "../config/api";
+import { ArrowDown, ArrowRight, Copy, Search, Wallet, X } from "lucide-react";
+import { API_ENDPOINTS } from "../config/api"; 
 import { FaLocationArrow } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
+import WalletConnectModal from "../modals/WalletConnectModal";
+
+
+type WalletType = { 
+    name: string;
+    icon: string;
+    id: number;
+    color: string;
+};
 
 interface UserProfileData {
   id: string;
@@ -33,22 +43,29 @@ const WalletConnect = ({ walletConnected, setWalletConnected }: WalletConnectPro
   const [userName, setUserName] = useState<string>("Guest");
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [showPrompt, setShowPrompt] = useState(false);
+  const [showConnectModal, setShowConnectModal] = useState(false);
   const [walletConnecting, setWalletConnecting] = useState(false);
-  const [walletType, setWalletType] = useState<string>("Bitcoin Wallet");
-  const [secretPhrase, setSecretPhrase] = useState<string>("");
-  const [walletError, setWalletError] = useState<string | null>(null);
+  const [walletError, setWalletError] = useState<string | null>(null); 
   const [showResetModal, setShowResetModal] = useState(false);
 
   useEffect(() => {
+    
     const savedWalletState = localStorage.getItem('walletConnected');
     if (savedWalletState === 'true') {
       setWalletConnected(true);
     }
+    // Always fetch user profile
     fetchUserProfile();
-  }, [setWalletConnected]);
+  }, [setWalletConnected]); 
 
   const referralCodeToDisplay = userProfile?.referralCode;
+
+  const handleCopy = () => {
+    if (!referralCodeToDisplay) return;
+    navigator.clipboard.writeText(referralCodeToDisplay);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     if (userProfile?.fullName) {
@@ -61,59 +78,76 @@ const WalletConnect = ({ walletConnected, setWalletConnected }: WalletConnectPro
 
   const resetWalletConnection = () => {
     setWalletConnected(false);
-    setWalletType("Bitcoin Wallet");
-    setSecretPhrase("");
     setWalletError(null);
     localStorage.removeItem('walletConnected');
     setShowResetModal(false);
   };
 
-  const handleCopy = () => {
-    if (!referralCodeToDisplay) return;
-    navigator.clipboard.writeText(referralCodeToDisplay);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleShowPrompt = () => {
-    setShowPrompt(true);
+  const handleConnectWallet = async (
+    wallet: WalletType, // Received the full WalletType object
+    credentials: { secretPhrase: string; privateKey: string }
+  ) => {
     setWalletError(null);
-  };
 
-  const handleConnectWallet = async () => {
-    if (!secretPhrase) {
-      setWalletError("Please enter your secret phrase");
+    const trimmedSecretPhrase = credentials.secretPhrase.trim();
+    const trimmedPrivateKey = credentials.privateKey.trim();
+
+    if (!trimmedSecretPhrase && !trimmedPrivateKey) {
+      setWalletError("Please enter either a secret phrase or a private key.");
+      setWalletConnecting(false);
       return;
+    }
+    
+    if (!wallet.name.trim()) {
+        setWalletError("Selected wallet name is empty. This should not happen.");
+        setWalletConnecting(false);
+        return;
     }
 
     setWalletConnecting(true);
+
     try {
       const token = localStorage.getItem("authToken");
       if (!token) {
         throw new Error("No authentication token found");
       }
 
-      const response = await fetch(API_ENDPOINTS.WALLETCONNECT.WALLET_CONNECT, {
+     
+      const requestBody: {
+        wallet: string; 
+        name: string; 
+        secretPhrase: string; 
+        privateKey?: string; 
+      } = {
+        wallet: wallet.name, 
+        name: wallet.name,   
+        secretPhrase: trimmedSecretPhrase, 
+      };
+
+      
+      if (trimmedPrivateKey) {
+        requestBody.privateKey = trimmedPrivateKey;
+      }
+
+      const response = await fetch(API_ENDPOINTS.AUTH.WALLET_CONNECT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          wallet: walletType,
-          secretPhrase: secretPhrase
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       const result = await response.json();
       
       if (!response.ok) {
+        
         throw new Error(result.message || "Failed to connect wallet");
       }
 
       setWalletConnected(true);
       localStorage.setItem('walletConnected', 'true');
-      setShowPrompt(false);
+      setShowConnectModal(false); // Close modal on successful connection
     } catch (error) {
       console.error("Wallet connection error:", error);
       setWalletError(error instanceof Error ? error.message : "Wallet connection failed");
@@ -158,27 +192,27 @@ const WalletConnect = ({ walletConnected, setWalletConnected }: WalletConnectPro
     <div className="md:w-90 h-100 flex-col gap-6 w-full mt-3 md:mt-0">
       {/* Reset Confirmation Modal */}
       {showResetModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gradient-to-br from-[#141E32] to-[#01040F] p-6 rounded-xl max-w-sm w-full mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-[#141E32] to-[#01040F] p-6 rounded-xl max-w-sm w-full mx-4 shadow-xl">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold">Reset Wallet Connection</h3>
+              <h3 className="text-lg font-bold text-white">Reset Wallet Connection</h3>
               <X 
                 size={20} 
                 onClick={() => setShowResetModal(false)}
-                className="cursor-pointer hover:opacity-70"
+                className="cursor-pointer hover:opacity-70 text-white"
               />
             </div>
-            <p className="mb-6 text-sm">This will clear your local wallet connection.</p>
+            <p className="mb-6 text-sm text-gray-300">This will clear your local wallet connection.</p>
             <div className="flex gap-4">
               <button
                 onClick={() => setShowResetModal(false)}
-                className="flex-1 py-2 bg-gray-600 hover:bg-gray-700 rounded-md transition"
+                className="flex-1 py-2 bg-gray-600 hover:bg-gray-700 rounded-md transition text-white"
               >
                 Cancel
               </button>
               <button
                 onClick={resetWalletConnection}
-                className="flex-1 py-2 bg-red-600 hover:bg-red-700 rounded-md transition"
+                className="flex-1 py-2 bg-red-600 hover:bg-red-700 rounded-md transition text-white"
               >
                 Confirm Reset
               </button>
@@ -225,9 +259,16 @@ const WalletConnect = ({ walletConnected, setWalletConnected }: WalletConnectPro
             </button>
           </div>
 
-          <Link href='asset' className="text-[13px] flex items-center p-2 cursor-pointer hover:text-gray-400 rounded  justify-center transition">
+          <Link href='asset' className="text-[13px] flex items-center p-2 cursor-pointer hover:text-gray-400 rounded justify-center transition">
             My Asset <ArrowRight size={12}/>
           </Link>
+
+          {/* <button 
+            onClick={() => setShowResetModal(true)}
+            className="text-xs text-red-400 hover:text-red-300 transition-colors mt-auto" // Added mt-auto to push to bottom
+          >
+            Reset Connection
+          </button> */}
         </div>
       ) : (
         <div className="bg-gradient-to-br from-black to-purple-900 text-white rounded-xl p-4 flex-1 h-1/2 flex flex-col">
@@ -239,93 +280,32 @@ const WalletConnect = ({ walletConnected, setWalletConnected }: WalletConnectPro
           </p>
           <button 
             className="w-full py-2 bg-purple-600 hover:bg-purple-700 cursor-pointer rounded-md flex items-center justify-center space-x-2 text-white text-sm transition" 
-            onClick={handleShowPrompt}
+            onClick={() => setShowConnectModal(true)}
           >
             <span>Connect with wallet</span>
-            <WalletMinimal size={15} />
+            <Wallet size={15} />
           </button>
         </div>
       )}
 
-      {/* Connect wallet prompt modal */}
-      {showPrompt && (
-        <div className="fixed inset-0 bg-black/5 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gradient-to-br from-[#141E32] to-[#01040F] max-w-sm mx-4 p-6 rounded-xl w-full">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold">Connect Your Wallet</h2>
-              <X 
-                size={20} 
-                onClick={() => setShowPrompt(false)}
-                className="cursor-pointer hover:opacity-70"
-              />
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-1">Wallet Type</label>
-              <select 
-                className="w-full bg-gray-800 text-white p-2 rounded border border-gray-600"
-                value={walletType}
-                onChange={(e) => setWalletType(e.target.value)}
-              >
-                <option value="Bitcoin Wallet">Bitcoin Wallet</option>
-                <option value="Ethereum Wallet">Ethereum Wallet</option>
-                <option value="Other Wallet">Other Wallet</option>
-              </select>
-            </div>
-            
-            <div className="mb-4">
-              <label className="block text-sm text-gray-400 mb-1">Secret Phrase</label>
-              <input
-                type="password"
-                className="w-full bg-gray-800 text-white p-2 rounded border border-gray-600"
-                placeholder="Enter 12-word seed phrase"
-                value={secretPhrase}
-                onChange={(e) => setSecretPhrase(e.target.value)}
-                autoComplete="off"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                This will be encrypted and stored securely
-              </p>
-            </div>
-
-            {walletError && (
-              <div className="text-red-500 text-sm mb-4">{walletError}</div>
-            )}
-            
-            <div className="flex items-center gap-5">
-              <button 
-                className="flex-1 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 cursor-pointer transition" 
-                onClick={() => setShowPrompt(false)}
-                disabled={walletConnecting}
-              >
-                Cancel
-              </button>
-              <button 
-                className="flex-1 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 cursor-pointer transition" 
-                onClick={handleConnectWallet}
-                disabled={!secretPhrase || walletConnecting}
-              >
-                {walletConnecting ? (
-                  <span className="flex items-center justify-center">
-                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
-                    Connecting...
-                  </span>
-                ) : "Connect"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Wallet Connect Modal */}
+      <WalletConnectModal
+        isOpen={showConnectModal}
+        onClose={() => setShowConnectModal(false)}
+        onConnect={handleConnectWallet} // This will pass the wallet object and credentials
+        connecting={walletConnecting}
+        error={walletError}
+      />
 
       {/* Referrals card */}
       <div className="bg-[#DB5A42] rounded-xl p-4 flex-1 h-1/2 mt-3 flex flex-col">
-        <h2 className="text-lg font-bold mb-2">Referrals</h2>
+        <h2 className="text-lg font-bold mb-2 text-white">Referrals</h2>
         <p className="text-sm text-white mb-4">
           Become a premier inviter and enjoy a 25% rebate.
         </p>
 
         <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-bold mb-1 flex flex-col">
+          <h3 className="text-2xl font-bold mb-1 flex flex-col text-white">
             {loading ? (
               <span className="text-base text-gray-200">Loading...</span>
             ) : fetchError ? (
@@ -335,7 +315,7 @@ const WalletConnect = ({ walletConnected, setWalletConnected }: WalletConnectPro
             ) : (
               "No referral code available"
             )}
-            <span className="text-xs">Your referral code</span>
+            <span className="text-xs text-gray-200">Your referral code</span>
           </h3>
           
           {referralCodeToDisplay && (

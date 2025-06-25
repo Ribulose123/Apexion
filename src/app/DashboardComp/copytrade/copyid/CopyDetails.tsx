@@ -5,24 +5,26 @@ import { CopyProfiles } from "@/app/data/data";
 import { Calendar, CircleDollarSign, Wallet, PieChart, Share2, Heart } from "lucide-react";
 import Image from "next/image";
 import Usersdetails from "./Usersdetails";
+import CopyTradeModal from "@/app/modals/CopyTradeModal";
 
 type CopyProfile = {
   id: number;
   name: string;
-   completedOrders: number;
+  completedOrders: number;
   completionRate: number;
   profitPercentage: string;
-   totalPnL:string;
-   openPnL:string;
-  win:number;
-  lose:number;
+  totalPnL: string;
+  openPnL: string;
+  win: number;
+  lose: number;
 };
 
 const CopyDetails = () => {
-const pathname = usePathname();
+  const pathname = usePathname();
   const [copyData, setCopyData] = useState<CopyProfile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false); // State for modal visibility
 
   useEffect(() => {
     const extractIdFromPath = () => {
@@ -49,7 +51,6 @@ const pathname = usePathname();
         setError("Trader not found");
         setCopyData(null);
       } else {
-        // Ensure data types match the CopyProfile type
         const formattedData: CopyProfile = {
           ...copyTrader,
           completedOrders: Number(copyTrader.completedOrders),
@@ -74,19 +75,34 @@ const pathname = usePathname();
     }
   }, [pathname]);
 
-  // Rest of your component remains the same...
+  const handleCopyClick = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
   if (loading) {
     return <div className="p-4 text-gray-500">Loading trader details...</div>;
   }
 
-if (error) {
-  return <div className="p-4 text-red-500">{error}</div>;
-}
+  if (error) {
+    return <div className="p-4 text-red-500">{error}</div>;
+  }
 
   return (
-    <div className="md:p-4 w-full ">
+    <div className="md:p-4 w-full">
+      {/* Modal - shown when showModal is true */}
+      {showModal && copyData && (
+        <CopyTradeModal 
+          traderName={copyData.name}
+          onClose={closeModal}
+        />
+      )}
+
       {copyData ? (
-        <div className=" rounded-lg p-6 shadow-lg">
+        <div className="rounded-lg p-6 shadow-lg">
           {/* User info section */}
           <div className="flex flex-col md:flex-row justify-between gap-6">
             {/* Left section - Profile info */}
@@ -181,13 +197,16 @@ if (error) {
                   <span className="text-sm">Subscribe</span>
                 </button>
               </div>
-              <button className="bg-[#439A86] hover:bg-[#3a8a77] text-white font-medium py-3 px-8 rounded-lg transition-colors">
+              <button 
+                className="bg-[#439A86] hover:bg-[#3a8a77] text-white font-medium py-3 px-8 rounded-lg transition-colors"
+                onClick={handleCopyClick} // Add click handler
+              >
                 Copy Trader
               </button>
             </div>
           </div>
             
-           {/* Copy Content */} 
+          {/* Copy Content */} 
           <div className="mt-3">
             <Usersdetails copyData={{
               completionRate: String(copyData.completionRate),

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Star } from "lucide-react";
@@ -6,6 +6,7 @@ import { PiUsersThree } from "react-icons/pi";
 import { BiSolidUpArrow } from "react-icons/bi";
 import { CopyProfiles } from "@/app/data/data";
 import { useRouter } from 'next/navigation'; 
+import CopyTradeModal from "@/app/modals/CopyTradeModal";
 
 interface ChartData {
   minValue: number;
@@ -31,13 +32,39 @@ const generateChartData: GenerateChartDataFn = (id, currentValue) => {
 
 const TopBalanced = () => {
   const router = useRouter();
+   const [showModal, setShowModal] = useState(false);
+   const [selectedTrader, setSelectedTrader] = useState<number | null>(null)
 
+
+
+   const handleCopyClick = (copyId:number, e:React.MouseEvent)=>{
+    e.stopPropagation()
+    setSelectedTrader(copyId)
+    setShowModal(true)
+   }
+
+    const closeModal = () => {
+    setShowModal(false);
+    setSelectedTrader(null);
+  };
   const handleNavigation = (copyId: number) => {
     router.push(`/copy/${copyId}`);
   };
 
+  const traderData = selectedTrader 
+    ? CopyProfiles.find(copy => copy.id === selectedTrader)
+    : null;
+
   return (
     <div className="mt-6">
+
+       {/* Modal - only show when trader is selected */}
+      {showModal && traderData && (
+        <CopyTradeModal 
+          traderName={traderData.name}
+          onClose={closeModal}
+        />
+      )}
       <div className="md:flex justify-between items-center hidden">
         <p className="text-[#7D8491] text-[16px] font-medium">
           Traders that balance profit and risk.
@@ -232,7 +259,7 @@ const TopBalanced = () => {
                 {/* Copy button */}
                 <button
                   className="w-full py-3 bg-[#439A86] hover:bg-[#3a8a77] text-white font-medium transition-colors rounded-md mt-4 cursor-pointer"
-                  
+                  onClick={(e)=>handleCopyClick(copy.id, e)}
                 >
                   Copy
                 </button>

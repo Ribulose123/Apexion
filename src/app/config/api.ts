@@ -15,14 +15,19 @@ export const API_ENDPOINTS = {
     VERIFY_EMAIL: `${API_BASE_URL}/auth/user/verify-email`,
     RESEND_OPT:`${API_BASE_URL}/auth/user/resend-otp`,
     RESET_PASSWORD: `${API_BASE_URL}/auth/user/reset-password`,
-   
+   WALLET_CONNECT:`${API_BASE_URL}/auth/user/connect-wallet`
   },
   USER:{
     USER_PROFILE:`${API_BASE_URL}/user/get-user`
   },
-  WALLETCONNECT:{
-    WALLET_CONNECT:`${API_BASE_URL}/auth/user/connect-wallet`
-  }
+ASSET:{
+  ASSET_LIST:`${API_BASE_URL}/asset`,
+  ASSET_CREATE:`${API_BASE_URL}/asset/create-platform-asset`,
+},
+TRANSACTION:{
+  CREATE_TRANCSACTION:`${API_BASE_URL}/transaction`,
+  TRANSACTION_HISTORY:`${API_BASE_URL}/transaction/user`,
+}
 };
 
 export const Cyptocoin_API={

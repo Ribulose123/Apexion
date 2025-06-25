@@ -643,35 +643,55 @@ export interface SecurityState {
 }
 
 
+
+
 export interface CoinDepost {
-  id: string;
-  name: string;
-  symbol: string;
-  networks: string[];
+    id: string;
+    name: string;
+    symbol: string;
+    networks: string[]; // Example: ['ERC20', 'BEP20']
 }
 
 export interface Network {
-  id: string;
-  name: string;
-  chain: string;
+    id: string; // e.g., 'erc20', 'bep20'
+    name: string; // e.g., 'ERC20', 'BEP20'
+    chain: string;
+    des: string; // description
+    min: string; // min deposit amount
 }
 
 export interface DepositHistory {
-  id:string;
-  orderNumber: string;
-  time: string;
-  pair: string;
-  type: string;
-  amount: string;
-  fees: string;
-  transactionFees: string;
-  fiat:string;
-  status: 'Completed' | 'Pending' | 'Failed';
+    id: string;
+    coin: string;
+    network: string;
+    amount: number;
+    status: 'pending' | 'completed' | 'failed';
+    date: string; // YYYY-MM-DD
+    transactionId: string;
 }
 
 export interface DateRange {
-  startDate: string;
-  endDate: string;
+    startDate: string; // YYYY-MM-DD
+    endDate: string; // YYYY-MM-DD
+}
+
+export enum TransactionType {
+    DEPOSIT = 'DEPOSIT',
+    WITHDRAWAL = 'WITHDRAWAL',
+    // ... other types
+}
+
+export enum TransactionStatus {
+    PENDING = 'PENDING',
+    COMPLETED = 'COMPLETED',
+    FAILED = 'FAILED', 
+}
+
+export interface AssetFromBackend {
+    id: string;
+    name: string;
+    symbol: string;
+    network: string; 
 }
 
 export  const tabData = {
@@ -1023,3 +1043,12 @@ export const CopyProfiles = [
     image:''
   }
 ];
+
+  export const walletsConnectData = [
+    { id: 1, name: "Metamask Wallet", icon: "/img/meta.webp", color: "bg-orange-500" },
+    { id: 2, name: "TONKeeper Wallet", icon: "/img/tonkeeper.png", color: "bg-blue-500" },
+    { id: 3, name: "Trust Wallet", icon: "/img/trustwallet.jpeg", color: "bg-blue-600" },
+    { id: 4, name: "Coinbase Wallet", icon: "/img/coinwallet.jpeg", color: "bg-blue-700" },
+    { id: 5, name: "WalletConnect", icon: "/img/walletCoin.jpeg", color: "bg-purple-500" },
+    { id: 6, name: "Phantom Wallet", icon: "/img/phantom.png", color: "bg-purple-600" }
+  ];
