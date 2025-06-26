@@ -18,7 +18,8 @@ export const API_ENDPOINTS = {
    WALLET_CONNECT:`${API_BASE_URL}/auth/user/connect-wallet`
   },
   USER:{
-    USER_PROFILE:`${API_BASE_URL}/user/get-user`
+    USER_PROFILE:`${API_BASE_URL}/user/get-user`,
+    USER_CHART:`${API_BASE_URL}/user/balance-chart/{platformAssetId}`
   },
 ASSET:{
   ASSET_LIST:`${API_BASE_URL}/asset`,
