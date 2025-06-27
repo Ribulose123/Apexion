@@ -206,15 +206,7 @@ export const useDepositData = () => {
             type: transactionTypeFilter,
         });
 
-        // Backend doesn't support status filtering - will filter client-side
-        // if (transactionStatusFilter !== 'all') {
-        //     params.append('status', transactionStatusFilter);
-        // }
-
-        // Remove platformAssetId from API call - filter client-side instead
-        // if (coinIdFilter !== 'all') {
-        //     params.append('platformAssetId', coinIdFilter);
-        // }
+        
 
         const response = await fetch(`${API_ENDPOINTS.TRANSACTION.TRANSACTION_HISTORY}?${params.toString()}`, {
             method: 'GET',

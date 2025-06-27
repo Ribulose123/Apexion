@@ -47,7 +47,7 @@ export function Dropdown<T>({
       
       {isOpen && (
         <div className="absolute z-10 w-full mt-1 bg-[#0A0D19] rounded-lg shadow-lg max-h-60 overflow-y-auto">
-          <p className='text-sm text-[#E8E8E8] p-3'>Please ensure that you select a network that corresponds to the withdrawal platform of the coin you wish to withdraw to prevent potential asset losses.</p>
+          
           {options.map((option, index) => (
             <div 
               key={index}

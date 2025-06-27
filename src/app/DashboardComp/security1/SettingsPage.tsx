@@ -82,7 +82,7 @@ const SettingsPage = () => {
                 </p>
               </div>
 
-              <Link href='#' className="bg-[#439A86] px-4 py-2 text-sm rounded-lg text-center text-white">Verify</Link>
+              <Link href='/security/verfication' className="bg-[#439A86] px-4 py-2 text-sm rounded-lg text-center text-white">Verify</Link>
           </div>
         </div>
         </div>

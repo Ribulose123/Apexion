@@ -2,9 +2,11 @@
 import React, { useState } from "react";
 import { CircleCheck } from "lucide-react";
 import VerificationFAQ from "./VerificationFAQ";
+import UnifiedVerificationModal from "../modals/UnifiedVerificationModal";
 
 const VeriAuth = () => {
   const [activeTab, setActiveTab] = useState("individual");
+  const [showVerificationModal, setShowVerificationModal] = useState(false); // State for modal visibility
 
   const individualVerificationItems = [
     { id: "withdrawals", name: "Withdrawals", completed: true },
@@ -18,8 +20,22 @@ const VeriAuth = () => {
     { id: "crypto", name: "Crypto deposit", completed: true },
   ];
 
+  const handleVerifyClick = () => {
+    setShowVerificationModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowVerificationModal(false);
+  };
+
   return (
     <div className="min-h-screen px-2 sm:px-4 w-full bg-[#01040F] text-white">
+      {/* Verification Modal */}
+      <UnifiedVerificationModal 
+        isOpen={showVerificationModal} 
+        onClose={handleCloseModal} 
+      />
+
       {/* Tab navigation */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center md:gap-120 md:ml-3 w-full mb-6 md:border-b-2 md:border-white/10 p-2">
         <h2 className="text-white text-2xl font-semibold">
@@ -96,7 +112,10 @@ const VeriAuth = () => {
                   </ul>
                 </div>
 
-                <button className="bg-[#439A86] text-white py-3 px-6 rounded text-center w-full">
+                <button 
+                  className="bg-[#439A86] text-white py-3 px-6 rounded text-center w-full"
+                  onClick={handleVerifyClick}
+                >
                   Verify
                 </button>
               </div>
@@ -142,7 +161,10 @@ const VeriAuth = () => {
                   </ul>
                 </div>
 
-                <button className="bg-[#439A86] text-white py-3 px-6 rounded text-center w-full">
+                <button 
+                  className="bg-[#439A86] text-white py-3 px-6 rounded text-center w-full"
+                  onClick={handleVerifyClick}
+                >
                   Verify
                 </button>
               </div>
