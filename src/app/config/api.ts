@@ -19,7 +19,10 @@ export const API_ENDPOINTS = {
   },
   USER:{
     USER_PROFILE:`${API_BASE_URL}/user/get-user`,
-    USER_CHART:`${API_BASE_URL}/user/balance-chart/{platformAssetId}`
+    USER_CHART:`${API_BASE_URL}/user/balance-chart/{platformAssetId}`,
+    USER_UPDATEPASSWORD:`${API_BASE_URL}/user/update-password`,
+    CONVERT_ASSEST:`${API_BASE_URL}/user/convert-asset`,
+    TWO_FACTOR:`${API_BASE_URL}/user/update-user`
   },
 ASSET:{
   ASSET_LIST:`${API_BASE_URL}/asset`,

@@ -37,7 +37,7 @@ const sidebarMenuItems = [
   { name: 'Dashboard',  href: '/dashboard' },
       { name: 'Asset',  href: '/asset' },
       { name: 'Deposit',  href: 'deposit' },
-      { name: 'Withdraw',  href: '#' },
+      { name: 'Withdraw',  href: '/withdrawal' },
       { name: 'Subscribe',  href: '/subscription' },
       { name: 'Signal',  href: '/signal' },
       { name: 'Staking',  href: '/stake' },

@@ -1,14 +1,22 @@
 import React from 'react';
-import { Check, X } from 'lucide-react'; // Icon imports
+import { Check, X } from 'lucide-react';
 
-interface DepositStatusModalProps {
+// Define the coin interface to match your data structure
+interface CoinDepost {
+    id: string;
+    name: string;
+    symbol: string;
+    networks: string[]; // Replace 'string' with a more specific type if needed
+}
+
+interface WithdrawalStatusModalProps {
     status: 'approved' | 'pending' | 'failed'; 
     onClose: () => void;
     amount?: number; 
-    selectedCoin?: { symbol?: string } | null; 
+    selectedCoin: CoinDepost; 
 }
 
-const DepositStatusModal: React.FC<DepositStatusModalProps> = ({ 
+const WithdrawalStatusModal: React.FC<WithdrawalStatusModalProps> = ({ 
     status, 
     onClose,
     amount,
@@ -30,8 +38,8 @@ const DepositStatusModal: React.FC<DepositStatusModalProps> = ({
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-white text-sm font-medium">
                         {/* Dynamic title based on status */}
-                        {isFailed ? 'Deposit Failed' : 
-                         isApproved ? 'Deposit Approved' : 'Deposit Submission'}
+                        {isFailed ? 'Withdrawal Failed' : 
+                         isApproved ? 'Withdrawal Approved' : 'Withdrawal Submission'}
                     </h2>
                     <button 
                         onClick={onClose} // Close button
@@ -43,7 +51,7 @@ const DepositStatusModal: React.FC<DepositStatusModalProps> = ({
                 </div>
                 
                 <div className="text-center mb-6">
-                    {/* Status icon based on deposit result */}
+                    {/* Status icon based on withdrawal result */}
                     <div className={`w-16 h-16 ${
                         isFailed ? 'bg-red-500' : 
                         isApproved ? 'bg-teal-500' : 'bg-orange-400'
@@ -53,8 +61,8 @@ const DepositStatusModal: React.FC<DepositStatusModalProps> = ({
                     
                     {/* Main status message */}
                     <h3 className="text-white text-lg font-semibold mb-2">
-                        {isFailed ? 'Deposit Failed' : 
-                         isApproved ? 'Deposit Approved' : 'Deposit Submitted'}
+                        {isFailed ? 'Withdrawal Failed' : 
+                         isApproved ? 'Withdrawal Approved' : 'Withdrawal Submitted'}
                     </h3>
                     
                     {/* Decorative line */}
@@ -66,10 +74,10 @@ const DepositStatusModal: React.FC<DepositStatusModalProps> = ({
                     {/* Detailed message */}
                     <p className="text-gray-300 text-sm">
                         {isFailed 
-                            ? 'Your deposit request could not be processed.'
+                            ? 'Your withdrawal request could not be processed.'
                             : isApproved 
-                                ? `${amount} ${selectedCoin?.symbol} successfully deposited.`
-                                : 'Your deposit request has been submitted.'}
+                                ? `${amount} ${selectedCoin.symbol} successfully withdrawn.`
+                                : 'Your withdrawal request has been submitted.'}
                     </p>
                 </div>
 
@@ -108,4 +116,6 @@ const DepositStatusModal: React.FC<DepositStatusModalProps> = ({
     );
 };
 
-export default DepositStatusModal;
+// Export the modal component for use in your app
+export { WithdrawalStatusModal };
+export default WithdrawalStatusModal;

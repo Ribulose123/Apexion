@@ -1,34 +1,181 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff, ChevronDown } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import React, { useEffect, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+import { API_ENDPOINTS } from "../config/api";
+
+interface PlatformAsset {
+  id: string;
+  name: string;
+  symbol: string;
+  updatedAt: string;
+}
+
+interface UserAsset {
+  platformAssetId: string;
+  platformAsset: PlatformAsset;
+  balance: number;
+}
+
+interface ChartDataPoint {
+  date: string;
+  balance: number;
+}
 
 const TopSection: React.FC = () => {
   const [showBalance, setShowBalance] = useState(true);
-  const [selectedPeriod, setSelectedPeriod] = useState('Days');
-  const [showBalanceDropdown, setShowBalanceDropdown] = useState(false);
-  const [activeBtn, setActiveBtn] = useState('Deposit');
+  const [totalBalance, setTotalBalance] = useState<number>(0);
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
+  const [userAssets, setUserAssets] = useState<UserAsset[]>([]);
+  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
+  const [activeBtn, setActiveBtn] = useState("Deposit");
+  const [loadingUserAssets, setLoadingUserAssets] = useState(true);
+  const [loadingChartData, setLoadingChartData] = useState(false);
+  const [userAssetsError, setUserAssetsError] = useState<string | null>(null);
+  const [chartDataError, setChartDataError] = useState<string | null>(null);
 
-  const buttons = ['Deposit', 'Buy Crypto', 'Convert', 'Withdraw'];
   
+  const links = [
+   { name:"Deposit", herf:'/deposit'},
+   { name:"Buy Crypto", herf:'#'},
+   { name:"Convert", herf:'/conversion'},
+   { name:"Withdraw", herf:'/withdrawal'},
+  ]
   const handleBalance = () => {
     setShowBalance(!showBalance);
   };
-  
-  const toggleBalanceDropdown = () => {
-    setShowBalanceDropdown(!showBalanceDropdown);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setLoadingUserAssets(true);
+      setUserAssetsError(null);
+      try {
+        if (typeof window === "undefined") {
+          setLoadingUserAssets(false);
+          return;
+        }
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        const response = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+       if (!response.ok) {
+  if (response.status === 401) {
+    throw new Error("Authentication failed - please login again");
+  } else if (response.status === 500) {
+    throw new Error("Server error - please try again later");
+  } else {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+}
+
+        const responseData = await response.json();
+
+        const assets = responseData.data.userAssets || [];
+        setUserAssets(assets);
+        setTotalBalance(
+          assets.reduce(
+            (sum: number, asset: UserAsset) => sum + asset.balance,
+            0
+          )
+        );
+
+        // Select first asset by default if available
+        if (assets.length > 0) {
+          setSelectedAssetId(assets[0].platformAssetId);
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        setUserAssetsError(
+          err instanceof Error ? err.message : "Failed to load user assets."
+        );
+      } finally {
+        setLoadingUserAssets(false);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    const fetchChartData = async () => {
+      setLoadingChartData(true);
+      setChartDataError(null);
+      if (!selectedAssetId) {
+        setChartData([]);
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) return;
+
+        const chartEndpoint = API_ENDPOINTS.USER.USER_CHART.replace(
+          "{platformAssetId}",
+          selectedAssetId
+        );
+
+        console.log("Fetching chart data for asset:", selectedAssetId);
+        const response = await fetch(chartEndpoint, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Chart data fetch failed: ${response.status}`);
+        }
+
+        const chartData = await response.json();
+        console.log("Chart data received:", chartData);
+        setChartData(chartData || []);
+      } catch (err) {
+        console.error("Error fetching chart data:", err);
+        setChartData([]);
+      } finally {
+        setLoadingChartData(false);
+      }
+    };
+
+    fetchChartData();
+  }, [selectedAssetId]);
+
+  const formatDate = (dateSting: string) => {
+    try {
+      if (!dateSting) return "No update time available";
+
+      const date = new Date(dateSting);
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "UTC",
+        timeZoneName: "short",
+      });
+    } catch {
+      return "No update time available";
+    }
   };
-  
-  const timePeriods = ['Days', 'Weeks', 'Month', 'Months'];
-  
-  const chartData = [
-    { name: 'Apr 5', value: 4000 },
-    { name: 'Apr 10', value: 3000 },
-    { name: 'Apr 15', value: 5000 },
-    { name: 'Apr 20', value: 2780 },
-    { name: 'Apr 25', value: 1890 },
-    { name: 'Apr 30', value: 2390 },
-  ];
-  
+
   return (
     <div className="bg-gradient-to-r from-[rgba(20,30,50,0.0576)] to-[rgba(61,70,104,0.24)] rounded-xl p-6 mb-6 border border-[#141E32]">
       <div className="flex flex-col lg:flex-row w-full gap-10">
@@ -36,71 +183,31 @@ const TopSection: React.FC = () => {
         <div className="w-full lg:w-1/2">
           <div className="flex justify-between items-start mb-4">
             <div className="flex flex-row sm:flex-col gap-10 text-xs sm:text-sm lg:text-base">
-              
               {/* Total Balance and Profit Balance Row */}
               <div className="flex justify-between items-center gap-6 sm:gap-60">
                 <div>
-                  <div className="flex items-center">
-                    <h2 className="text-gray-400 font-medium sm:text-lg">Total Balance</h2>
-                    <button
-                      onClick={handleBalance}
-                      className="text-gray-400 hover:text-white transition ml-2"
-                    >
-                      {showBalance ? <Eye size={15} /> : <EyeOff size={15} />}
-                    </button>
-                  </div>
-                  <div className="flex items-center mt-1">
-                    <h2 className="sm:text-2xl text-[15px] text-gray-200 font-bold tracking-wider">
-                      {showBalance ? "$12,600.00" : "******"}
-                    </h2>
-                  </div>
-                </div>
-      
-                {/* Profit Balance with Dropdown */}
-                <div>
-                  <div className="relative">
-                    <button 
-                      onClick={toggleBalanceDropdown}
-                      className="flex items-center gap-1 text-gray-400 hover:text-white transition"
-                    >
-                      <span className="font-medium">Profit Bal</span>
-                      <ChevronDown size={16} />
-                    </button>
-      
-                    {showBalanceDropdown && (
-                      <div className="absolute top-full right-0 mt-1 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
-                        <ul className="py-1">
-                          {['Profit Bal', 'Total Bal', 'Deposit Bal'].map((item, i) => (
-                            <li
-                              key={i}
-                              onClick={() => setShowBalanceDropdown(false)}
-                              className="px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 cursor-pointer"
-                            >
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex gap-3 items-end mt-1">
-                    <p className="text-green-500 font-bold sm:text-xl">
-                      {showBalance ? "$32,121.52" : "******"}
-                    </p>
-                    <div className="bg-green-900/20 text-green-500 px-2 py-1 rounded sm:text-xs text-[10px] font-semibold mt-1">
-                      +5.23%
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-1">
+                      <h2 className="text-gray-400 font-medium sm:text-lg">
+                        Total Balance
+                      </h2>
+                      <button
+                        onClick={handleBalance}
+                        className="text-gray-400 hover:text-white transition ml-2"
+                      >
+                        {showBalance ? <Eye size={15} /> : <EyeOff size={15} />}
+                      </button>
+                    </div>
+                    <div className="flex items-center mt-1">
+                      <h2 className="sm:text-2xl text-[15px] text-gray-200 font-bold tracking-wider">
+                        {loadingUserAssets
+                          ? "Loading..."
+                          : showBalance
+                          ? totalBalance.toFixed(2)
+                          : "******"}
+                      </h2>
                     </div>
                   </div>
-                </div>
-              </div>
-
-              {/* Deposit Balance */}
-              <div>
-                <p className="text-gray-400 font-medium sm:text-sm">Deposit Balance</p>
-                <div className="flex items-center space-x-2">
-                  <h2 className="sm:text-xl text-[12px] font-bold text-gray-200 tracking-wider">
-                    {showBalance ? "$5,300.00" : "*****"}
-                  </h2>
                 </div>
               </div>
             </div>
@@ -108,68 +215,147 @@ const TopSection: React.FC = () => {
 
           {/* Buttons */}
           <div className="grid grid-cols-4 gap-2 mt-22">
-          {buttons.map((btn) => (
-        <button
-          key={btn}
-          onClick={() => setActiveBtn(btn)}
-          className={`
-            py-2 px-3 rounded-md text-xs font-medium transition
-            ${activeBtn === btn
-              ? 'bg-indigo-700 text-white'
-              : 'bg-transparent border border-gray-600 text-white hover:bg-gray-700'}
-          `}
-        >
-          {btn}
-        </button>
-      ))}
+            {links.map((btn) => (
+              <Link
+                href={btn.herf}
+                key={btn.name}
+                onClick={() => setActiveBtn(btn.name)}
+                className={`
+                  py-2 px-3 rounded-md text-xs font-medium transition
+                  ${
+                    activeBtn === btn.name
+                      ? "bg-indigo-700 text-white"
+                      : "bg-transparent border border-gray-600 text-white hover:bg-gray-700"
+                  }
+                `}
+              >
+                {btn.name}
+              </Link>
+            ))}
           </div>
+          {userAssetsError && (
+            <p className="text-red-500 text-sm mt-4">{userAssetsError}</p>
+          )}
         </div>
 
         {/* Right Section - Chart */}
         <div className="w-full lg:w-1/2">
-          <div className="flex space-x-4 mb-4 border boder-[#141E32] sm:w-[58%] w-[80%] rounded-lg p-2">
-            {timePeriods.map((period) => (
-              <button
-                key={period}
-                onClick={() => setSelectedPeriod(period)}
-                className={`text-xs px-3 py-1 rounded-lg transition-colors ${
-                  selectedPeriod === period
-                    ? 'text-indigo-400 border-b border-indigo-400'
-                    : 'text-gray-400 hover:text-gray-300'
-                }`}
+          {/* Asset selection dropdown */}
+          <div className="relative mb-4 w-full sm:w-64">
+            <select
+              value={selectedAssetId || ""}
+              onChange={(e) => setSelectedAssetId(e.target.value || null)}
+              className="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-md px-3 py-2 appearance-none focus:outline-none focus:ring-1 focus:ring-purple-600"
+              disabled={loadingUserAssets}
+            >
+              <option value="">Select an asset</option>
+              {userAssets.map((asset) => (
+                <option
+                  key={asset.platformAssetId}
+                  value={asset.platformAssetId}
+                >
+                  {asset.platformAsset?.name} ({asset.platformAsset?.symbol})
+                </option>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+              <svg
+                className="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                {period}
-              </button>
-            ))}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </div>
           </div>
+          {/* Selected asset info */}
           <div className="h-48 w-full -ml-8 sm:ml-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <XAxis 
-                  dataKey="name" 
-                  stroke="#6B7280" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fontSize: 10 }}
-                />
-                <YAxis 
-                  stroke="#6B7280" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fontSize: 10 }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#8B5CF6" 
-                  strokeWidth={2} 
-                  dot={false} 
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {loadingChartData ? (
+              <div className="h-full flex items-center justify-center text-gray-500">
+                Loading chart data...
+              </div>
+            ) : chartDataError ? (
+              <div className="h-full flex items-center justify-center text-red-500">
+                Error: {chartDataError}
+              </div>
+            ) : chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart
+                  data={chartData}
+                  margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient
+                      id="colorBalance"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="0%" stopColor="#8B5CF6" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="#8B5CF6" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="#1F2937"
+                    vertical={false}
+                  />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fill: "#9CA3AF", fontSize: 10 }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fill: "#9CA3AF", fontSize: 10 }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#111827",
+                      border: "none",
+                      borderRadius: "8px",
+                      color: "#F9FAFB",
+                    }}
+                    formatter={(value) => [`$${value}`, "Balance"]}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="balance"
+                    stroke="#8B5CF6"
+                    fillOpacity={1}
+                    fill="url(#colorBalance)"
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full flex items-center justify-center text-gray-500">
+                {selectedAssetId
+                  ? "No chart data available for this asset."
+                  : "Select an asset to view chart."}
+              </div>
+            )}
           </div>
           <div className="text-xs text-gray-400 mt-2">
-            Last Update: April 10, 2025 (07:45 UTC)
+            {selectedAssetId && (
+              <span>
+                Last Update:{" "}
+                {formatDate(
+                  userAssets.find(
+                    (asset) => asset.platformAssetId === selectedAssetId
+                  )?.platformAsset?.updatedAt || ""
+                )}
+              </span>
+            )}
           </div>
         </div>
       </div>

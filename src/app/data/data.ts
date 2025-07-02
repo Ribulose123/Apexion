@@ -193,7 +193,7 @@ import { IoCopy, IoSettingsOutline } from "react-icons/io5";
     { name: 'Dashboard', icon: House, href: '/dashboard' },
     { name: 'Asset', icon: WalletMinimal, href: '/asset' },
     { name: 'Deposit', icon: CirclePlus, href: '/deposit' },
-    { name: 'Withdraw', icon: CircleMinus, href: '#' },
+    { name: 'Withdraw', icon: CircleMinus, href: '/withdrawal' },
     { name: 'Subscribe', icon: Radiation, href: '/subscription' },
     { name: 'Signal', icon: Radio, href: '/signal' },
     { name: 'Staking', icon: Coins, href: '/stake' },
@@ -678,8 +678,10 @@ export interface DateRange {
 export enum TransactionType {
     DEPOSIT = 'DEPOSIT',
     WITHDRAWAL = 'WITHDRAWAL',
-    // ... other types
-}
+    CONVERSION='CONVERSION',
+    INTEREST= 'INTEREST',
+    trade ='TRADE'
+  }
 
 export enum TransactionStatus {
     PENDING = 'PENDING',

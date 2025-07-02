@@ -34,7 +34,7 @@ const DepositHistoryComponent: React.FC<DepositHistoryProps> = ({
     onStatusFilterChange,
     allCoins, 
     selectedHistoryCoinId,
-    isFullPage = false, // Default to false
+    isFullPage = false,
 }) => {
     const availableCoinsForFilter = [{ id: 'all', symbol: 'All Coins' }, ...allCoins];
 

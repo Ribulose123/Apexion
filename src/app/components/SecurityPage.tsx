@@ -29,7 +29,7 @@ const SecurityPage: React.FC = () => {
       option, 
       securityOptions, 
       setSecurityOptions, 
-      (path: string) => router.push(path), // Navigation function with type
+      (path: string) => router.push(path), 
     );
   };
 

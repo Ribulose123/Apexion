@@ -82,6 +82,7 @@ const LoginForm = () => {
        
 
       } else {
+        router.push(`/emailverfi?email=${encodeURIComponent(data.email || '')}`);
         console.warn('Login successful but no token received');
         toast.error('Login successful but session could not be established');
       }

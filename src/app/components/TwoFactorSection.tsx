@@ -44,7 +44,7 @@ const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({ securityOptions, on
         status={securityOptions.googleAuth.enabled ? 'enabled' : 'disabled'}
         action={securityOptions.googleAuth.enabled ? 'disable' : 'enable'}
         onActionClick={() => onActionClick('googleAuth')}
-        link={securityOptions.googleAuth.enabled ? undefined : "/settings/goggleauth"} 
+        link={undefined} 
       />
     </div>
   );
