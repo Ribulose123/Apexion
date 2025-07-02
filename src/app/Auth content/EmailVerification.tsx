@@ -43,6 +43,10 @@ const EmailVerification = () => {
         );
       }
 
+      if (result.data?.token) {
+  localStorage.setItem('authToken', result.data.token);
+  document.cookie = `authToken=${result.data.token}; path=/; secure; SameSite=Lax`;
+}
       router.push("/dashboard");
       toast.success("Verified successfully!");
       return;
