@@ -1,8 +1,7 @@
-// AdvancedProtectionSection.tsx - Advanced Protection section
 import React from 'react';
-import { Key, ShieldAlert, KeyRound } from 'lucide-react';
 import SecurityOption from './SecurityOption';
 import { SecurityState } from '../data/data';
+import { Key, ShieldAlert, KeyRound } from 'lucide-react';
 
 interface AdvancedProtectionSectionProps {
   securityOptions: SecurityState;
@@ -22,9 +21,8 @@ const AdvancedProtectionSection: React.FC<AdvancedProtectionSectionProps> = ({
         title="Fund Password"
         description="Use a fund password when a P2P trading, withdrawal, conversion, or connect security verification."
         status={securityOptions.fundPassword.enabled ? 'enabled' : 'disabled'}
-        action="enable"
+        action={securityOptions.fundPassword.enabled ? 'disable' : 'enable'}
         onActionClick={() => onActionClick('fundPassword')}
-        link='/security/passkey'
       />
       
       <SecurityOption
@@ -32,7 +30,7 @@ const AdvancedProtectionSection: React.FC<AdvancedProtectionSectionProps> = ({
         title="Anti-Phishing Code"
         description="Protect yourself from impersonators who might impersonate official communications."
         status={securityOptions.antiPhishing.enabled ? 'enabled' : 'disabled'}
-        action="enable"
+        action={securityOptions.antiPhishing.enabled ? 'disable' : 'enable'}
         onActionClick={() => onActionClick('antiPhishing')}
       />
       
@@ -41,9 +39,8 @@ const AdvancedProtectionSection: React.FC<AdvancedProtectionSectionProps> = ({
         title="Pass Keys"
         description="Your account and devices are safer with passkeys."
         status={securityOptions.passKeys.enabled ? 'enabled' : 'disabled'}
-        action="enable"
+        action={securityOptions.passKeys.enabled ? 'disable' : 'enable'}
         onActionClick={() => onActionClick('passKeys')}
-        link='/settings/passkey'
       />
     </div>
   );

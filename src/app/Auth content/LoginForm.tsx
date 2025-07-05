@@ -9,6 +9,15 @@ import Image from 'next/image';
 import { toast } from 'react-toastify';
 import { API_ENDPOINTS } from '../config/api';
 
+
+
+// Loading Spinner Component
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center">
+    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+  </div>
+);
+
 interface LoginFormData {
   email?: string;
   password?: string;
@@ -27,6 +36,7 @@ const LoginForm = () => {
     email: false,
     subAccount: false,
   });
+  const [isLoading, setIsLoading] = useState(false)
 
   const { register, handleSubmit, formState: { errors }, getValues } = useForm<LoginFormData>();
 
@@ -34,6 +44,8 @@ const LoginForm = () => {
   const redirectUrl = searchParams.get('redirect');
 
   const onSubmit = async (data: LoginFormData) => {
+
+    setIsLoading(true)
     try {
       console.log("Attempting login with data:", data);
 
@@ -93,6 +105,8 @@ const LoginForm = () => {
       } else {
         toast.error(error instanceof Error ? error.message : 'Login failed');
       }
+    } finally{
+      setIsLoading(false)
     }
   };
 
@@ -205,9 +219,22 @@ const LoginForm = () => {
           </div>
 
           {/* Login Button */}
-          <button type="submit" className="w-full py-3 bg-[#439A86] text-white rounded-2xl hover:bg-teal-600 transition">
-            {activeTab === 'QR Account' ? 'Scan QR Code' : 'Log in'}
-          </button>
+         <button 
+        type="submit" 
+        disabled={isLoading}
+        className={`w-full py-3 bg-[#439A86] text-white cursor-pointer rounded-2xl hover:bg-teal-600 transition flex items-center justify-center ${
+          isLoading ? 'opacity-75 cursor-not-allowed' : ''
+        }`}
+      >
+        {isLoading ? (
+          <>
+            <LoadingSpinner />
+            <span className="ml-2">Logging in...</span>
+          </>
+        ) : (
+          activeTab === 'QR Account' ? 'Scan QR Code' : 'Log in'
+        )}
+      </button>
         </form>
 
         {/* Divider */}

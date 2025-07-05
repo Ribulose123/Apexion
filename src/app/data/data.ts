@@ -621,25 +621,39 @@ export const dummyCoins = [
 
 
   
-// types.ts - Define shared types
 export interface SecurityOptionProps {
   icon: React.ReactNode;
   title: string;
   description: string;
-  status: 'enabled' | 'disabled' | '';
+  status: 'enabled' | 'disabled';
   email?: string;
-  action: 'edit' | 'settings' | 'enable' | 'disable' | 'manage' | 'more';
-  onActionClick: () => void;
+  action?: string;
+  link?: string;
+  onActionClick?: (action: string) => void;
 }
 
 export interface SecurityState {
-  loginPassword: { enabled: boolean; email: string | null };
-  emailAuth: { enabled: boolean; email: string | null };
-  smsAuth: { enabled: boolean; phone: string | null };
-  googleAuth: { enabled: boolean; email: string | null };
-  fundPassword: { enabled: boolean };
-  antiPhishing: { enabled: boolean };
-  passKeys: { enabled: boolean };
+  loginPassword: {
+    enabled: boolean;
+    email: string | null;
+  };
+  emailAuth: {
+    enabled: boolean;
+    email: string | null;
+  };
+  googleAuth: {
+    enabled: boolean;
+    email: string | null;
+  };
+  fundPassword: {
+    enabled: boolean;
+  };
+  antiPhishing: {
+    enabled: boolean;
+  };
+  passKeys: {
+    enabled: boolean;
+  };
 }
 
 

@@ -1,15 +1,22 @@
-// TwoFactorSection.tsx - Two-Factor Authentication section
 import React from 'react';
-import { Lock, Mail, Shield } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import SecurityOption from './SecurityOption';
 import { SecurityState } from '../data/data';
+
+// Dynamically import icons
+const Lock = dynamic(() => import('lucide-react').then(mod => mod.Lock), { ssr: false });
+const Mail = dynamic(() => import('lucide-react').then(mod => mod.Mail), { ssr: false });
+const Shield = dynamic(() => import('lucide-react').then(mod => mod.Shield), { ssr: false });
 
 interface TwoFactorSectionProps {
   securityOptions: SecurityState;
   onActionClick: (option: string) => void;
 }
 
-const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({ securityOptions, onActionClick }) => {
+const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({ 
+  securityOptions, 
+  onActionClick 
+}) => {
   return (
     <div className="mb-8">
       <h2 className="text-[15px] font-medium mb-4 text-white">Protection</h2>
@@ -21,7 +28,7 @@ const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({ securityOptions, on
         status={securityOptions.loginPassword.enabled ? 'enabled' : 'disabled'}
         action="edit"
         onActionClick={() => onActionClick('loginPassword')}
-        link="/security/newpassword" 
+        link="/security/newpassword"
       />
       
       <SecurityOption
@@ -32,10 +39,8 @@ const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({ securityOptions, on
         email={securityOptions.emailAuth.email || undefined}
         action="edit"
         onActionClick={() => onActionClick('emailAuth')}
-        link="/settings/emailauth" 
+        link="/settings/emailauth"
       />
-      
-      
       
       <SecurityOption
         icon={<Shield size={18} />}
@@ -44,7 +49,6 @@ const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({ securityOptions, on
         status={securityOptions.googleAuth.enabled ? 'enabled' : 'disabled'}
         action={securityOptions.googleAuth.enabled ? 'disable' : 'enable'}
         onActionClick={() => onActionClick('googleAuth')}
-        link={undefined} 
       />
     </div>
   );
