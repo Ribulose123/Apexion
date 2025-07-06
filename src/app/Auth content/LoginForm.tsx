@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react'; // Import useEffect
+import React, { useState } from 'react'; 
 import { useForm } from 'react-hook-form';
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
-import { useRouter, useSearchParams } from 'next/navigation'; // Import useSearchParams
+import { useRouter, useSearchParams } from 'next/navigation'; 
 import Link from 'next/link';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
@@ -43,73 +43,70 @@ const LoginForm = () => {
   // Get the redirect URL from the query parameters
   const redirectUrl = searchParams.get('redirect');
 
-  const onSubmit = async (data: LoginFormData) => {
+ const onSubmit = async (data: LoginFormData) => {
+  setIsLoading(true)
+  try {
+    console.log("Attempting login with data:", data);
 
-    setIsLoading(true)
-    try {
-      console.log("Attempting login with data:", data);
+    const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password
+      }),
+      credentials: 'include',
+    });
 
-      const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password
-        }),
-        credentials: 'include',
-      });
+    console.log("Login response status:", response.status);
+    console.log("Login response OK status:", response.ok);
+    const result = await response.json();
+    console.log("Login response JSON result:", result);
 
-      console.log("Login response status:", response.status);
-      console.log("Login response OK status:", response.ok);
-      const result = await response.json();
-      console.log("Login response JSON result:", result);
-
-      if (!response.ok) {
-        // Check unverfired email
-        if (response.status === 400) {
-          const email = getValues('email');
-          router.push(`/emailverfi?email=${encodeURIComponent(email || '')}`);
-          return; 
-        }
-
-        // Check for Incorrect Password
-        if (response.status === 401) {
-          throw new Error('Incorrect Password');
-        }
-        throw new Error(result.message || 'Login failed');
+    if (!response.ok) {
+      // Check for Incorrect Password first
+      if (response.status === 401) {
+        throw new Error('Incorrect Password');
       }
-
-      // Token Storage: localStorage AND document.cookie
-      if (result.data?.token) {
-        localStorage.setItem('authToken', result.data.token);
-        document.cookie = `authToken=${result.data.token}; path=/; secure; SameSite=Lax`;
-
-        toast.success('Login successful!');
-
-        
-        const destination = redirectUrl ? decodeURIComponent(redirectUrl) : '/dashboard';
-        router.push(destination);
-       
-
-      } else {
-        router.push(`/emailverfi?email=${encodeURIComponent(data.email || '')}`);
-        console.warn('Login successful but no token received');
-        toast.error('Login successful but session could not be established');
+      
+      // Then check for unverified email
+      if (response.status === 400) {
+        const email = getValues('email');
+        router.push(`/emailverfi?email=${encodeURIComponent(email || '')}`);
+        return;
       }
-    } catch (error) {
-      console.error('Login Error:', error);
-      if (error instanceof Error && error.message === 'Incorrect Password') {
-        toast.error('Incorrect Password');
-      } else {
-        toast.error(error instanceof Error ? error.message : 'Login failed');
-      }
-    } finally{
-      setIsLoading(false)
+      
+      // Handle other errors
+      throw new Error(result.message || 'Login failed');
     }
-  };
 
+    // Token Storage: localStorage AND document.cookie
+    if (result.data?.token) {
+      localStorage.setItem('authToken', result.data.token);
+      document.cookie = `authToken=${result.data.token}; path=/; secure; SameSite=Lax`;
+
+      toast.success('Login successful!');
+
+      const destination = redirectUrl ? decodeURIComponent(redirectUrl) : '/dashboard';
+      router.push(destination);
+    } else {
+      router.push(`/emailverfi?email=${encodeURIComponent(data.email || '')}`);
+      console.warn('Login successful but no token received');
+      toast.error('Login successful but session could not be established');
+    }
+  } catch (error) {
+    console.error('Login Error:', error);
+    if (error instanceof Error && error.message === 'Incorrect Password') {
+      toast.error('Incorrect Password');
+    } else {
+      toast.error(error instanceof Error ? error.message : 'Login failed');
+    }
+  } finally {
+    setIsLoading(false)
+  }
+};
   const toggleModal = () => {
     setShowModal(!showModal);
   };

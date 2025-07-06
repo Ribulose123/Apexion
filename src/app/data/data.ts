@@ -620,12 +620,11 @@ export const dummyCoins = [
   ];
 
 
-  
 export interface SecurityOptionProps {
   icon: React.ReactNode;
   title: string;
   description: string;
-  status: 'enabled' | 'disabled';
+  status?: 'enabled' | 'disabled'; // Made optional
   email?: string;
   action?: string;
   link?: string;
@@ -654,8 +653,11 @@ export interface SecurityState {
   passKeys: {
     enabled: boolean;
   };
+  // Device Management and Account Activity don't need 'enabled' in SecurityState
+  // as their status is implicitly 'disabled' or 'manageable'
+  deviceManagement: object;
+  accountActivity: object;
 }
-
 
 
 

@@ -1,13 +1,13 @@
 'use client';
 import Link from 'next/link';
-import { BadgeCheck, OctagonAlert } from 'lucide-react'; 
-import { SecurityOptionProps } from '../data/data'; 
+import { BadgeCheck, OctagonAlert } from 'lucide-react';
+import { SecurityOptionProps } from '../data/data';
 
 const SecurityOption: React.FC<SecurityOptionProps> = ({
   icon,
   title,
   description,
-  status,
+  status, // Status is now optional based on SecurityOptionProps
   email,
   action = 'more',
   onActionClick,
@@ -42,17 +42,18 @@ const SecurityOption: React.FC<SecurityOptionProps> = ({
             <div className="sm:hidden">
               {!email && (
                 <div className="flex items-center text-xs text-gray-400 -mt-5">
+                  {/* Conditionally render status only if it's provided */}
                   {status === 'enabled' ? (
                     <>
                       <BadgeCheck size={14} className="mr-1 text-green-500" />
                       <span>Enabled</span>
                     </>
-                  ) : (
+                  ) : status === 'disabled' ? ( // Check explicitly for 'disabled'
                     <>
                       <OctagonAlert size={14} className="mr-1 text-gray-400" />
                       <span>Disabled</span>
                     </>
-                  )}
+                  ) : null} {/* Render nothing if status is undefined */}
                 </div>
               )}
             </div>
@@ -71,17 +72,18 @@ const SecurityOption: React.FC<SecurityOptionProps> = ({
         <div className="hidden sm:flex sm:items-center sm:mr-5">
           {!email && (
             <div className="flex items-center text-xs text-gray-400">
+              {/* Conditionally render status only if it's provided */}
               {status === 'enabled' ? (
                 <>
                   <BadgeCheck size={14} className="mr-1 text-green-500" />
                   <span>Enabled</span>
                 </>
-              ) : (
+              ) : status === 'disabled' ? ( // Check explicitly for 'disabled'
                 <>
                   <OctagonAlert size={14} className="mr-1 text-gray-400" />
                   <span>Disabled</span>
                 </>
-              )}
+              ) : null} {/* Render nothing if status is undefined */}
             </div>
           )}
         </div>

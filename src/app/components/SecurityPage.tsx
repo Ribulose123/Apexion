@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react'; // Import useEffect
+import React, { useState, useEffect } from 'react';
 import TwoFactorSection from './TwoFactorSection';
 import AdvancedProtectionSection from './AdvancedProtectionSection';
 import DeviceActivitiesSection from './DeviceActivitiesSection';
@@ -9,12 +9,14 @@ import { SecurityState } from '../data/data';
 
 // Define a default/initial state that is guaranteed to be the same on server and client
 const defaultSecurityState: SecurityState = {
-  loginPassword: { enabled: false, email: null }, 
+  loginPassword: { enabled: false, email: null },
   emailAuth: { enabled: false, email: '' },
   googleAuth: { enabled: false, email: null },
   fundPassword: { enabled: false },
   antiPhishing: { enabled: false },
   passKeys: { enabled: false },
+  deviceManagement: {}, // UPDATED THIS
+  accountActivity: {},  // UPDATED THIS
 };
 
 const SecurityPage: React.FC = () => {
@@ -24,7 +26,7 @@ const SecurityPage: React.FC = () => {
   useEffect(() => {
     const storedPreferences = loadSecurityPreferences();
     setSecurityOptions(storedPreferences);
-  }, []); 
+  }, []);
 
   const handleActionClick = (option: string) => {
     handleSecurityAction(
@@ -53,6 +55,7 @@ const SecurityPage: React.FC = () => {
         />
 
         <DeviceActivitiesSection
+          securityOptions={securityOptions} // Still passing this prop
           onActionClick={handleActionClick}
         />
       </div>

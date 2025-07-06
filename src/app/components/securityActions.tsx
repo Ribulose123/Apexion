@@ -1,4 +1,3 @@
-// src/app/components/securityActions.ts
 'use client';
 
 import { SecurityState } from '../data/data';
@@ -16,6 +15,9 @@ export const initialSecurityState: SecurityState = {
   fundPassword: { enabled: false },
   antiPhishing: { enabled: false },
   passKeys: { enabled: false },
+  // Added missing properties to match SecurityState interface
+  deviceManagement: {},
+  accountActivity: {},
 };
 
 export const loadSecurityPreferences = (): SecurityState => {
@@ -53,8 +55,6 @@ export const handleSecurityAction = async (
         if (openModal) openModal('emailAuthModal');
         else if (navigate) navigate('/settings');
         break;
-
-     
 
       case 'googleAuth':
         const token = localStorage.getItem('authToken');
