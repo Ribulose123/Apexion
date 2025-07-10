@@ -1,15 +1,13 @@
 'use client';
 
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
-import { useRouter, useSearchParams } from 'next/navigation'; 
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
 import { API_ENDPOINTS } from '../config/api';
-
-
 
 // Loading Spinner Component
 const LoadingSpinner = () => (
@@ -29,84 +27,101 @@ const categories = ['Email/Mobile', 'Sub-Account', 'QR Account'];
 
 const LoginForm = () => {
   const router = useRouter();
-  const searchParams = useSearchParams(); 
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState('Email/Mobile');
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
   const [showPassword, setShowPassword] = useState({
     email: false,
     subAccount: false,
   });
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const { register, handleSubmit, formState: { errors }, getValues } = useForm<LoginFormData>();
 
   // Get the redirect URL from the query parameters
   const redirectUrl = searchParams.get('redirect');
 
- const onSubmit = async (data: LoginFormData) => {
-  setIsLoading(true)
-  try {
-    console.log("Attempting login with data:", data);
-
-    const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: data.email,
-        password: data.password
-      }),
-      credentials: 'include',
-    });
-
-    console.log("Login response status:", response.status);
-    console.log("Login response OK status:", response.ok);
-    const result = await response.json();
-    console.log("Login response JSON result:", result);
-
-    if (!response.ok) {
-      // Check for Incorrect Password first
-      if (response.status === 401) {
-        throw new Error('Incorrect Password');
+  
+  useEffect(() => {
+    // Only run this on the client side
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('authToken');
+      // If a token exists, redirect to dashboard or the intended URL
+      if (token) {
+        const destination = redirectUrl ? decodeURIComponent(redirectUrl) : '/dashboard';
+        router.replace(destination);
       }
-      
-      // Then check for unverified email
-      if (response.status === 400) {
-        const email = getValues('email');
-        router.push(`/emailverfi?email=${encodeURIComponent(email || '')}`);
-        return;
+    }
+  }, [router, redirectUrl]);
+
+
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+    try {
+      console.log("Attempting login with data:", data);
+
+      const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password
+        }),
+        credentials: 'include',
+      });
+
+      console.log("Login response status:", response.status);
+      console.log("Login response OK status:", response.ok);
+      const result = await response.json();
+      console.log("Login response JSON result:", result);
+
+      if (!response.ok) {
+        // --- MODIFIED LOGIC: Specific error messages ---
+        if (response.status === 400 && result.message === 'Email not verified') {
+          // Explicitly check for unverified email message from backend
+          const email = getValues('email');
+          router.push(`/emailverfi?email=${encodeURIComponent(email || '')}`);
+          return;
+        } else if (response.status === 401 && result.message === 'Incorrect Password') {
+          // Explicitly check for incorrect password message from backend
+          // We already have 'Incorrect Password' as a thrown error below, so this could be simplified
+          throw new Error('Incorrect Password');
+        } else {
+          // Fallback for other errors, including a generic 401 if not 'Incorrect Password'
+          throw new Error(result.message || 'Login failed');
+        }
+        // --- END MODIFIED LOGIC ---
       }
-      
-      // Handle other errors
-      throw new Error(result.message || 'Login failed');
-    }
 
-    // Token Storage: localStorage AND document.cookie
-    if (result.data?.token) {
-      localStorage.setItem('authToken', result.data.token);
-      document.cookie = `authToken=${result.data.token}; path=/; secure; SameSite=Lax`;
+      // Token Storage: localStorage AND document.cookie
+      if (result.data?.token) {
+        localStorage.setItem('authToken', result.data.token);
+        document.cookie = `authToken=${result.data.token}; path=/; secure; SameSite=Lax`;
 
-      toast.success('Login successful!');
+        toast.success('Login successful!');
 
-      const destination = redirectUrl ? decodeURIComponent(redirectUrl) : '/dashboard';
-      router.push(destination);
-    } else {
-      router.push(`/emailverfi?email=${encodeURIComponent(data.email || '')}`);
-      console.warn('Login successful but no token received');
-      toast.error('Login successful but session could not be established');
+        const destination = redirectUrl ? decodeURIComponent(redirectUrl) : '/dashboard';
+        router.push(destination);
+      } else {
+        router.push(`/emailverfi?email=${encodeURIComponent(data.email || '')}`);
+        console.warn('Login successful but no token received, redirecting to email verification.');
+        toast.error('Login successful but session could not be established, please verify your email.');
+      }
+    } catch (error) {
+      console.error('Login Error:', error);
+      if (error instanceof Error && error.message === 'Incorrect Password') {
+        toast.error('Incorrect Password');
+      } else {
+        // This will catch the generic 'Login failed' or other specific errors thrown
+        toast.error(error instanceof Error ? error.message : 'Login failed');
+      }
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('Login Error:', error);
-    if (error instanceof Error && error.message === 'Incorrect Password') {
-      toast.error('Incorrect Password');
-    } else {
-      toast.error(error instanceof Error ? error.message : 'Login failed');
-    }
-  } finally {
-    setIsLoading(false)
-  }
-};
+  };
+
   const toggleModal = () => {
     setShowModal(!showModal);
   };
@@ -114,7 +129,6 @@ const LoginForm = () => {
   return (
     <div className="flex items-center justify-center px-4 py-6 relative">
       <div className="bg-white rounded-lg -mt-10 sm:mt-0 sm:shadow-md w-full max-w-md p-6 md:p-8">
-
         <h1 className="text-2xl text-black font-semibold text-start sm:text-center mb-8">Welcome back</h1>
 
         {/* Tabs */}
@@ -216,22 +230,22 @@ const LoginForm = () => {
           </div>
 
           {/* Login Button */}
-         <button 
-        type="submit" 
-        disabled={isLoading}
-        className={`w-full py-3 bg-[#439A86] text-white cursor-pointer rounded-2xl hover:bg-teal-600 transition flex items-center justify-center ${
-          isLoading ? 'opacity-75 cursor-not-allowed' : ''
-        }`}
-      >
-        {isLoading ? (
-          <>
-            <LoadingSpinner />
-            <span className="ml-2">Logging in...</span>
-          </>
-        ) : (
-          activeTab === 'QR Account' ? 'Scan QR Code' : 'Log in'
-        )}
-      </button>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`w-full py-3 bg-[#439A86] text-white cursor-pointer rounded-2xl hover:bg-teal-600 transition flex items-center justify-center ${
+              isLoading ? 'opacity-75 cursor-not-allowed' : ''
+            }`}
+          >
+            {isLoading ? (
+              <>
+                <LoadingSpinner />
+                <span className="ml-2">Logging in...</span>
+              </>
+            ) : (
+              activeTab === 'QR Account' ? 'Scan QR Code' : 'Log in'
+            )}
+          </button>
         </form>
 
         {/* Divider */}
@@ -283,82 +297,82 @@ const LoginForm = () => {
 
       {/* Modal */}
       {showModal && (
-  <div className="fixed inset-0 bg-black/50 bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-2xl w-full max-w-md mx-4 p-6 shadow-2xl">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="text-center flex-1">
-          <div className="text-lg font-semibold text-gray-900 mb-1">LOGO</div>
-          <h2 className="text-xl font-semibold text-gray-900">Connect Wallet</h2>
-          <p className="text-sm text-gray-500 mt-1">Choose a wallet to connect</p>
-        </div>
-        <button 
-          onClick={() => setShowModal(false)}
-          className="p-2 hover:bg-gray-100 hover:bg-opacity-70 rounded-full transition-colors"
-        >
-          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
+        <div className="fixed inset-0 bg-black/50 bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white bg-opacity-95 backdrop-blur-sm rounded-2xl w-full max-w-md mx-4 p-6 shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="text-center flex-1">
+                <div className="text-lg font-semibold text-gray-900 mb-1">LOGO</div>
+                <h2 className="text-xl font-semibold text-gray-900">Connect Wallet</h2>
+                <p className="text-sm text-gray-500 mt-1">Choose a wallet to connect</p>
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="p-2 hover:bg-gray-100 hover:bg-opacity-70 rounded-full transition-colors"
+              >
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
-      {/* Wallet Options */}
-      <div className="space-y-3">
-        <button
-          onClick={() => {
-            console.log('Connecting to MetaMask...');
-            // Add your MetaMask connection logic here
-          }}
-          className="w-full flex items-center justify-between p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
-        >
-          <div className="flex items-center">
-            <Image src='/img/meta.webp' alt='MetaMask' width={24} height={24} className="mr-3" />
-            <span className="font-medium text-gray-800">Metamask Wallet</span>
+            {/* Wallet Options */}
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  console.log('Connecting to MetaMask...');
+                  // Add your MetaMask connection logic here
+                }}
+                className="w-full flex items-center justify-between p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
+              >
+                <div className="flex items-center">
+                  <Image src='/img/meta.webp' alt='MetaMask' width={24} height={24} className="mr-3" />
+                  <span className="font-medium text-gray-800">Metamask Wallet</span>
+                </div>
+                <span className="text-orange-500 text-sm font-medium">Popular</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  console.log('Connecting to TONkeeper...');
+                  // Add your TONkeeper connection logic here
+                }}
+                className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
+              >
+                <Image src='/img/tonkeeper.png' alt='TONkeeper' width={24} height={24} className="mr-3" />
+                <span className="font-medium text-gray-800">TONkeeper Wallet</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  console.log('Connecting to MetaMask...');
+                  // Add your MetaMask connection logic here
+                }}
+                className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
+              >
+                <Image src='/img/meta.webp' alt='MetaMask' width={24} height={24} className="mr-3" />
+                <span className="font-medium text-gray-800">Metamask Wallet</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  console.log('Connecting to TONkeeper...');
+                  // Add your TONkeeper connection logic here
+                }}
+                className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
+              >
+                <Image src='/img/tonkeeper.png' alt='TONkeeper' width={24} height={24} className="mr-3" />
+                <span className="font-medium text-gray-800">TONkeeper Wallet</span>
+              </button>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-6 text-center text-sm text-gray-500">
+              <p>New to wallets? <span className="text-[#439A86] hover:underline cursor-pointer">Learn more</span></p>
+            </div>
           </div>
-          <span className="text-orange-500 text-sm font-medium">Popular</span>
-        </button>
-        
-        <button
-          onClick={() => {
-            console.log('Connecting to TONkeeper...');
-            // Add your TONkeeper connection logic here
-          }}
-          className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
-        >
-          <Image src='/img/tonkeeper.png' alt='TONkeeper' width={24} height={24} className="mr-3" />
-          <span className="font-medium text-gray-800">TONkeeper Wallet</span>
-        </button>
-        
-        <button
-          onClick={() => {
-            console.log('Connecting to MetaMask...');
-            // Add your MetaMask connection logic here
-          }}
-          className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
-        >
-          <Image src='/img/meta.webp' alt='MetaMask' width={24} height={24} className="mr-3" />
-          <span className="font-medium text-gray-800">Metamask Wallet</span>
-        </button>
-        
-        <button
-          onClick={() => {
-            console.log('Connecting to TONkeeper...');
-            // Add your TONkeeper connection logic here
-          }}
-          className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
-        >
-          <Image src='/img/tonkeeper.png' alt='TONkeeper' width={24} height={24} className="mr-3" />
-          <span className="font-medium text-gray-800">TONkeeper Wallet</span>
-        </button>
-      </div>
-      
-      {/* Footer */}
-      <div className="mt-6 text-center text-sm text-gray-500">
-        <p>New to wallets? <span className="text-[#439A86] hover:underline cursor-pointer">Learn more</span></p>
-      </div>
-    </div>
-  </div>
-)}
+        </div>
+      )}
     </div>
   );
 };
