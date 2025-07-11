@@ -199,7 +199,7 @@ const AdminTradeContent = () => {
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
             <div className="relative">
               <select
-                className="block appearance-none w-full bg-[#10131F] border border-gray-600 text-white py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none "
+                className="block appearance-none w-full bg-[#10131F] border border-gray-600 text-white py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none truncate "
                 value={filterOutcome}
                 onChange={(e) => setFilterOutcome(e.target.value)}
               >
@@ -214,7 +214,7 @@ const AdminTradeContent = () => {
 
             <div className="relative">
               <select
-                className="block appearance-none w-full bg-[#10131F] border border-gray-600 text-white py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none "
+                className="block appearance-none w-full bg-[#10131F] border border-gray-600 text-white py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none truncate "
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
               >
@@ -265,12 +265,12 @@ const AdminTradeContent = () => {
                         {trade.status}
                       </span>
                     </td>
-                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                   <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                       <button
                         className="text-gray-400 hover:text-white focus:outline-none p-1 rounded-md hover:bg-gray-600 transition-colors duration-200"
                         onClick={(e) => handleActionClick(trade.id, e)}
                       >
-                        <span className="text-xl font-bold">⋮</span>
+                        <span className="text-xl font-bold">...</span>
                       </button>
                     </td>
                   </tr>

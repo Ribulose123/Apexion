@@ -62,9 +62,9 @@ const AdminSideBar = () => {
       icon: <Users className="w-5 h-5" />,
       hasDropdown: true,
       children: [
-        { id: 'manage-users', label: 'Manage Users', href: '#' },
-        { id: 'trade-management', label: 'Token Management', href: '/admin/trademangment' },
-        { id: 'manage-copy-experts', label: 'Manage Copy Experts', href: '#' }
+        { id: 'manage-users', label: 'Manage Users', href: '/admin/usermanagement' },
+        { id: 'trade-management', label: 'Trade Management', href: '/admin/trademangment' },
+        { id: 'manage-copy-experts', label: 'Manage Copy Experts', href: '/admin/copytrademanagement' }
       ]
     },
     {
@@ -73,8 +73,8 @@ const AdminSideBar = () => {
       icon: <CreditCard className="w-5 h-5" />,
       hasDropdown: true,
       children: [
-        { id: 'wallet', label: 'Wallet', href: '#' },
-        { id: 'core-transactions', label: 'Core Transactions', href: '#' }
+        { id: 'wallet', label: 'Wallet', href: '/admin/wallet' },
+        { id: 'card-transactions', label: 'Card Transactions', href: '/admin/cardtranstions' }
       ]
     },
     {
@@ -178,7 +178,7 @@ const AdminSideBar = () => {
         ) : (
           <a
             href={item.href}
-            className={`flex items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 block ${
+            className={` items-center justify-between px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 block ${
               isActive
                 ? 'bg-[#F2AF29] text-white'
                 : 'text-gray-300 hover:bg-gray-700 hover:text-white'

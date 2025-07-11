@@ -56,7 +56,7 @@ const Chart = () => {
         }
 
         const responseData = await response.json()
-        console.log('User assets:', responseData.data.userAssets)
+        
         
         const assets = responseData.data.userAssets || []
         setUserAssets(assets)
