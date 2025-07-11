@@ -181,25 +181,24 @@ const AdminTradeContent = () => {
   return (
     <div className="min-h-screen  text-gray-100 p-8 font-inter">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-6">Trades ({filteredTrades.length})</h1>
-
-        {/* Search and Filter Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between p-4 rounded-lg shadow-lg mb-6">
-          <div className="relative w-full md:w-1/3 mb-4 md:mb-0">
+        
+    <div className='flex items-center justify-between'>
+      <h1 className="text-2xl font-semibold mb-6">Trades ({filteredTrades.length})</h1>
+      {/* Search and Filter Section */}
+        <div className="flex flex-col md:flex-row items-center gap-2 p-4 rounded-lg shadow-lg mb-6">
+          <div className="relative w-full  mb-4 md:mb-0">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
               placeholder="Search..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg bg-[#10131F]  focus:outline-none focus:border-[#F2AF29] text-white placeholder-gray-400"
+              className="w- pl-10 pr-4 py-2 rounded-lg bg-[#10131F]  focus:outline-none focus:border-[#F2AF29] text-white placeholder-gray-400"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-
-          <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 w-full md:w-auto">
-            <div className="relative">
+           <div className="relative">
               <select
-                className="block appearance-none w-full bg-[#10131F] border border-gray-600 text-white py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none truncate "
+                className="block appearance-none  bg-[#10131F] border border-gray-600 text-white py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none truncate "
                 value={filterOutcome}
                 onChange={(e) => setFilterOutcome(e.target.value)}
               >
@@ -212,9 +211,9 @@ const AdminTradeContent = () => {
               </div>
             </div>
 
-            <div className="relative">
+             <div className="relative">
               <select
-                className="block appearance-none w-full bg-[#10131F] border border-gray-600 text-white py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none truncate "
+                className="block appearance-none bg-[#10131F] border border-gray-600 text-white py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none truncate "
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
               >
@@ -226,9 +225,11 @@ const AdminTradeContent = () => {
                 <ChevronDown className="w-4 h-4" />
               </div>
             </div>
-          </div>
+         
         </div>
 
+    </div>
+        
         {/* Trades Table */}
         <div className="  overflow-x-auto relative">
           <table className="min-w-full ">

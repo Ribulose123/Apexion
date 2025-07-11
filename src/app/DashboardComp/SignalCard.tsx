@@ -18,7 +18,7 @@ const SignalCard: React.FC<SignalProps> = ({
     currency
   }) => {
     return (
-        <div className="rounded-2xl p-[1px]  bg-gradient-to-b from-[#06023daf] from-25%   via-[#240a6b] to-[#644ca1] shadow-lg h-[250px] sm:w-[365apx]">
+        <div className="rounded-2xl p-[1px]  bg-gradient-to-b from-[#06023daf] from-25%   via-[#240a6b] to-[#644ca1] shadow-lg h-[250px] sm:w-[365px]">
         <div className="rounded-2xl p-4 h-full flex flex-col justify-between gradient-border">
           
           {/* Top Section */}

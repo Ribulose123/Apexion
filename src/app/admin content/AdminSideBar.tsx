@@ -82,7 +82,7 @@ const AdminSideBar = () => {
       label: 'Deposit Management',
       icon: <FileText className="w-5 h-5" />,
       hasDropdown: false,
-      href: '#'
+      href: '/admin/deposit'
     },
     {
       id: 'withdrawal-management',
@@ -101,7 +101,7 @@ const AdminSideBar = () => {
       hasDropdown: true,
       children: [
         { id: 'posts', label: 'Posts', href: '#' },
-        { id: 'signals', label: 'Signals', href: '#' },
+        { id: 'signals', label: 'Signals', href: '/admin/signal' },
         { id: 'stakes', label: 'Stakes', href: '#' }
       ]
     },
@@ -121,8 +121,8 @@ const AdminSideBar = () => {
       icon: <Settings className="w-5 h-5" />,
       hasDropdown: true,
       children: [
-        { id: 'security', label: 'Security', href: '#' },
-        { id: 'limits-global', label: 'Limits & Global Settings', href: '#' }
+        { id: 'security', label: 'Security', href: '/admin/security' },
+        { id: 'limits-global', label: 'Limits & Global Settings', href: '/admin/limit' }
       ]
     }
   ], []);
