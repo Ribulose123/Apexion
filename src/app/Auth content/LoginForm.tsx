@@ -58,7 +58,7 @@ const LoginForm = () => {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      console.log("Attempting login with data:", data);
+      
 
       const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
         method: 'POST',
@@ -72,10 +72,8 @@ const LoginForm = () => {
         credentials: 'include',
       });
 
-      console.log("Login response status:", response.status);
-      console.log("Login response OK status:", response.ok);
+    
       const result = await response.json();
-      console.log("Login response JSON result:", result);
 
       if (!response.ok) {
         // --- MODIFIED LOGIC: Specific error messages ---

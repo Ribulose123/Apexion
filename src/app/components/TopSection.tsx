@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import axios from "axios";
 import {
   AreaChart,
   Area,
@@ -17,6 +18,7 @@ interface PlatformAsset {
   id: string;
   name: string;
   symbol: string;
+  networkId?: string;
   updatedAt: string;
 }
 
@@ -31,6 +33,46 @@ interface ChartDataPoint {
   balance: number;
 }
 
+interface CoinGeckoPrice {
+  [coinId: string]: {
+    usd: number;
+  };
+}
+
+// Comprehensive mapping of symbols to CoinGecko IDs
+const SYMBOL_TO_COINGECKO_ID: Record<string, string> = {
+  BTC: 'bitcoin',
+  ETH: 'ethereum',
+  BNB: 'binancecoin',
+  SOL: 'solana',
+  XRP: 'ripple',
+  ADA: 'cardano',
+  DOGE: 'dogecoin',
+  DOT: 'polkadot',
+  SHIB: 'shiba-inu',
+  AVAX: 'avalanche-2',
+  MATIC: 'matic-network',
+  LTC: 'litecoin',
+  TRX: 'tron',
+  UNI: 'uniswap',
+  LINK: 'chainlink',
+  ATOM: 'cosmos',
+  XLM: 'stellar',
+  XMR: 'monero',
+  ETC: 'ethereum-classic',
+};
+
+const getCoinGeckoId = (asset: PlatformAsset): string => {
+  // Checking if networkId is available
+  if (asset.networkId) {
+    return asset.networkId.toLowerCase();
+  }
+  
+  // Fallback to symbol mapping
+  return SYMBOL_TO_COINGECKO_ID[asset.symbol] || asset.symbol.toLowerCase();
+};
+
+
 const TopSection: React.FC = () => {
   const [showBalance, setShowBalance] = useState(true);
   const [totalBalance, setTotalBalance] = useState<number>(0);
@@ -43,96 +85,49 @@ const TopSection: React.FC = () => {
   const [userAssetsError, setUserAssetsError] = useState<string | null>(null);
   const [chartDataError, setChartDataError] = useState<string | null>(null);
 
-  
   const links = [
-   { name:"Deposit", herf:'/deposit'},
-   { name:"Buy Crypto", herf:'#'},
-   { name:"Convert", herf:'/conversion'},
-   { name:"Withdraw", herf:'/withdrawal'},
-  ]
-  const handleBalance = () => {
-    setShowBalance(!showBalance);
+    { name: "Deposit", herf: '/deposit' },
+    { name: "Buy Crypto", herf: '#' },
+    { name: "Convert", herf: '/conversion' },
+    { name: "Withdraw", herf: '/withdrawal' },
+  ];
+
+
+
+
+ const fetchPrices = async (assets: UserAsset[]): Promise<CoinGeckoPrice> => {
+    try {
+      // Get all unique CoinGecko IDs
+      const coinGeckoIds = [...new Set(
+        assets.map(asset => getCoinGeckoId(asset.platformAsset))
+      )].filter(Boolean).join(',');
+
+      if (!coinGeckoIds) {
+        return {};
+      }
+
+      const response = await axios.get<CoinGeckoPrice>(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${coinGeckoIds}&vs_currencies=usd`,
+        { timeout: 5000 }
+      );
+
+      return response.data || {};
+    } catch (error) {
+      console.error('no id', error);
+      return {};
+    }
   };
 
   useEffect(() => {
     const fetchUserData = async () => {
       setLoadingUserAssets(true);
       setUserAssetsError(null);
+
       try {
-        if (typeof window === "undefined") {
-          setLoadingUserAssets(false);
-          return;
-        }
         const token = localStorage.getItem("authToken");
-        if (!token) {
-          throw new Error("No authentication token found");
-        }
+        if (!token) throw new Error("No authentication token found");
 
         const response = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-       if (!response.ok) {
-  if (response.status === 401) {
-    throw new Error("Authentication failed - please login again");
-  } else if (response.status === 500) {
-    throw new Error("Server error - please try again later");
-  } else {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-}
-
-        const responseData = await response.json();
-
-        const assets = responseData.data.userAssets || [];
-        setUserAssets(assets);
-        setTotalBalance(
-          assets.reduce(
-            (sum: number, asset: UserAsset) => sum + asset.balance,
-            0
-          )
-        );
-
-        // Select first asset by default if available
-        if (assets.length > 0) {
-          setSelectedAssetId(assets[0].platformAssetId);
-        }
-      } catch (err) {
-        console.error("Error fetching user data:", err);
-        setUserAssetsError(
-          err instanceof Error ? err.message : "Failed to load user assets."
-        );
-      } finally {
-        setLoadingUserAssets(false);
-      }
-    };
-    fetchUserData();
-  }, []);
-
-  useEffect(() => {
-    const fetchChartData = async () => {
-      setLoadingChartData(true);
-      setChartDataError(null);
-      if (!selectedAssetId) {
-        setChartData([]);
-        return;
-      }
-
-      try {
-        const token = localStorage.getItem("authToken");
-        if (!token) return;
-
-        const chartEndpoint = API_ENDPOINTS.USER.USER_CHART.replace(
-          "{platformAssetId}",
-          selectedAssetId
-        );
-
-        console.log("Fetching chart data for asset:", selectedAssetId);
-        const response = await fetch(chartEndpoint, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -140,16 +135,86 @@ const TopSection: React.FC = () => {
         });
 
         if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        const assets: UserAsset[] = responseData.data?.userAssets || [];
+        setUserAssets(assets);
+
+        if (assets.length > 0) {
+          const prices = await fetchPrices(assets);
+          
+          const totalUsdBalance = assets.reduce((sum, asset) => {
+            const coinGeckoId = getCoinGeckoId(asset.platformAsset);
+            const price = prices[coinGeckoId]?.usd || 0;
+            return sum + (asset.balance * price);
+          }, 0);
+
+          setTotalBalance(totalUsdBalance);
+          setSelectedAssetId(assets[0].platformAssetId);
+        } else {
+          setTotalBalance(0);
+        }
+      } catch (err) {
+        setUserAssetsError(
+          err instanceof Error ? err.message : "Failed to load user assets"
+        );
+      } finally {
+        setLoadingUserAssets(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    const fetchChartData = async () => {
+      if (!selectedAssetId) {
+       
+        setChartData([]);
+        return;
+      }
+
+     
+      setLoadingChartData(true);
+      setChartDataError(null);
+
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          console.log('No auth token - skipping chart fetch');
+          return;
+        }
+
+        const chartEndpoint = API_ENDPOINTS.USER.USER_CHART.replace(
+          "{platformAssetId}",
+          selectedAssetId
+        );
+       
+
+        const response = await fetch(chartEndpoint, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+       
+        if (!response.ok) {
           throw new Error(`Chart data fetch failed: ${response.status}`);
         }
 
         const chartData = await response.json();
-        console.log("Chart data received:", chartData);
         setChartData(chartData || []);
       } catch (err) {
-        console.error("Error fetching chart data:", err);
+        console.error('Error fetching chart data:', err);
+        setChartDataError(
+          err instanceof Error ? err.message : "Failed to load chart data"
+        );
         setChartData([]);
       } finally {
+        console.groupEnd();
         setLoadingChartData(false);
       }
     };
@@ -157,11 +222,10 @@ const TopSection: React.FC = () => {
     fetchChartData();
   }, [selectedAssetId]);
 
-  const formatDate = (dateSting: string) => {
+  const formatDate = (dateString: string) => {
     try {
-      if (!dateSting) return "No update time available";
-
-      const date = new Date(dateSting);
+      if (!dateString) return "No update time available";
+      const date = new Date(dateString);
       return date.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
@@ -176,6 +240,10 @@ const TopSection: React.FC = () => {
     }
   };
 
+  const handleBalance = () => {
+    setShowBalance(!showBalance);
+  };
+
   return (
     <div className="bg-gradient-to-r from-[rgba(20,30,50,0.0576)] to-[rgba(61,70,104,0.24)] rounded-xl p-6 mb-6 border border-[#141E32]">
       <div className="flex flex-col lg:flex-row w-full gap-10">
@@ -183,7 +251,6 @@ const TopSection: React.FC = () => {
         <div className="w-full lg:w-1/2">
           <div className="flex justify-between items-start mb-4">
             <div className="flex flex-row sm:flex-col gap-10 text-xs sm:text-sm lg:text-base">
-              {/* Total Balance and Profit Balance Row */}
               <div className="flex justify-between items-center gap-6 sm:gap-60">
                 <div>
                   <div className="flex flex-col">
@@ -203,8 +270,8 @@ const TopSection: React.FC = () => {
                         {loadingUserAssets
                           ? "Loading..."
                           : showBalance
-                          ? totalBalance.toFixed(2)
-                          : "******"}
+                            ? `$${totalBalance.toFixed(2)}`
+                            : "******"}
                       </h2>
                     </div>
                   </div>
@@ -223,9 +290,9 @@ const TopSection: React.FC = () => {
                 className={`
                   py-2 px-3 rounded-md text-xs font-medium transition
                   ${
-                    activeBtn === btn.name
-                      ? "bg-indigo-700 text-white"
-                      : "bg-transparent border border-gray-600 text-white hover:bg-gray-700"
+                  activeBtn === btn.name
+                    ? "bg-indigo-700 text-white"
+                    : "bg-transparent border border-gray-600 text-white hover:bg-gray-700"
                   }
                 `}
               >
@@ -274,6 +341,7 @@ const TopSection: React.FC = () => {
               </svg>
             </div>
           </div>
+          
           {/* Selected asset info */}
           <div className="h-48 w-full -ml-8 sm:ml-0">
             {loadingChartData ? (

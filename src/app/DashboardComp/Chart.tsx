@@ -10,6 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts'
+import axios from 'axios'
 
 interface ChartDataPoint {
   date: string
@@ -17,9 +18,10 @@ interface ChartDataPoint {
 }
 
 interface PlatformAsset {
-  id: string
-  name: string
-  symbol: string
+  id: string;
+  name: string;
+  symbol: string;
+  networkId?: string;
 }
 
 interface UserAsset {
@@ -27,6 +29,46 @@ interface UserAsset {
   platformAsset: PlatformAsset
   balance: number
 }
+
+interface CoinGeckoPrice{
+  [coinId: string]:{
+    usd:number
+  }
+}
+
+// Comprehensive mapping of symbols to CoinGecko IDs
+const SYMBOL_TO_COINGECKO_ID: Record<string, string> = {
+  BTC: 'bitcoin',
+  ETH: 'ethereum',
+  BNB: 'binancecoin',
+  SOL: 'solana',
+  XRP: 'ripple',
+  ADA: 'cardano',
+  DOGE: 'dogecoin',
+  DOT: 'polkadot',
+  SHIB: 'shiba-inu',
+  AVAX: 'avalanche-2',
+  MATIC: 'matic-network',
+  LTC: 'litecoin',
+  TRX: 'tron',
+  UNI: 'uniswap',
+  LINK: 'chainlink',
+  ATOM: 'cosmos',
+  XLM: 'stellar',
+  XMR: 'monero',
+  ETC: 'ethereum-classic',
+};
+
+const getCoinGeckoId = (asset: PlatformAsset): string => {
+  // Checking if networkId is available
+  if (asset.networkId) {
+    return asset.networkId.toLowerCase();
+  }
+  
+  // Fallback to symbol mapping
+  return SYMBOL_TO_COINGECKO_ID[asset.symbol] || asset.symbol.toLowerCase();
+};
+
 
 const Chart = () => {
   const [totalBalance, setTotalBalance] = useState<number>(0)
@@ -36,44 +78,73 @@ const Chart = () => {
   const [userAssets, setUserAssets] = useState<UserAsset[]>([])
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null)
 
+
+  const fetchPrices = async (assets: UserAsset[]):
+  Promise<CoinGeckoPrice>=>{
+    try{
+      const coinGeckoIds = [...new Set(
+        assets.map(asset => getCoinGeckoId(asset.platformAsset))
+      )].filter(Boolean).join(',');
+
+      if (!coinGeckoIds) {
+        return {};
+      }
+
+      const response = await axios.get<CoinGeckoPrice>(
+              `https://api.coingecko.com/api/v3/simple/price?ids=${coinGeckoIds}&vs_currencies=usd`,
+              { timeout: 5000 }
+            );
+            return response.data || {};
+    }  catch (error) {
+      console.error('no id', error);
+      return {};
+    }
+  }
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        if (typeof window === 'undefined') return
-        
-        const token = localStorage.getItem('authToken')
-        if (!token) throw new Error('No authentication token found')
+  try {
+    if (typeof window === 'undefined') return
+    
+    const token = localStorage.getItem('authToken')
+    if (!token) throw new Error('No authentication token found')
 
-        const response = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        })
+    const response = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
-        const responseData = await response.json()
-        
-        
-        const assets = responseData.data.userAssets || []
-        setUserAssets(assets)
-        setTotalBalance(assets.reduce((sum: number, asset: UserAsset) => sum + asset.balance, 0))
-
-        // Select first asset by default if available
-        if (assets.length > 0) {
-          setSelectedAssetId(assets[0].platformAssetId)
-        }
-
-      } catch (err) {
-        console.error('Error fetching user data:', err)
-        setError(err instanceof Error ? err.message : 'An error occurred')
-      } finally {
-        setLoading(false)
-      }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
+
+    const responseData = await response.json()
+    
+    const assets = responseData.data.userAssets || []
+    setUserAssets(assets)
+    if (assets.length > 0) {
+      const prices = await fetchPrices(assets);
+
+      const totalBalance = assets.reduce((sum: number, asset: UserAsset) => {
+        const coinGeckoId = getCoinGeckoId(asset.platformAsset);
+        const price = prices[coinGeckoId]?.usd || 0;
+        return sum + (asset.balance * price);
+      }, 0);
+
+      setTotalBalance(totalBalance);
+      setSelectedAssetId(assets[0].platformAssetId);
+    } else {
+      setTotalBalance(0);
+    }
+
+  } catch (err) {
+    console.error('Error fetching user data:', err)
+    setError(err instanceof Error ? err.message : 'An error occurred')
+  } finally {
+    setLoading(false)
+  }
+}
 
     fetchUserData()
   }, [])
@@ -204,7 +275,7 @@ const Chart = () => {
                     {getSelectedAsset()?.name} ({getSelectedAsset()?.symbol})
                   </span>
                   <span className="text-sm text-gray-400">
-                    Balance: ${userAssets.find(a => a.platformAssetId === selectedAssetId)?.balance.toFixed(2)}
+                    Balance:{userAssets.find(a => a.platformAssetId === selectedAssetId)?.balance.toFixed(2)}
                   </span>
                 </>
               )}
