@@ -536,8 +536,6 @@ const CopyChart = () => {
                         {pair.pnl}
                       </div>
 
-                      {/* Empty space for actions/buttons if needed */}
-                      <div className="flex-1"></div>
                     </div>
                   ))}
                 </div>

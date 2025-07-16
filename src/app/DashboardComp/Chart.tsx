@@ -165,7 +165,7 @@ const Chart = () => {
           selectedAssetId
         )
 
-        console.log('Fetching chart data for asset:', selectedAssetId)
+        
         const response = await fetch(chartEndpoint, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -178,7 +178,6 @@ const Chart = () => {
         }
 
         const chartData = await response.json()
-        console.log('Chart data received:', chartData)
         setChartData(chartData || [])
       } catch (err) {
         console.error('Error fetching chart data:', err)

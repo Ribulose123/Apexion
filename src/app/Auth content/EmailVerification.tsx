@@ -16,59 +16,47 @@ const EmailVerification = () => {
   const [canResend, setCanResend] = useState(false);
   const [countdown, setCountdown] = useState(60); // 60 seconds
 
-  const handleVerify = useCallback(async () => {
-    const otp = code.join("");
-    if (otp.length !== 6 || isVerifying) return;
+ const handleVerify = useCallback(async () => {
+  const otp = code.join("");
+  if (otp.length !== 6 || isVerifying) return;
 
-    setIsVerifying(true);
+  setIsVerifying(true);
 
-    try {
-      const response = await fetch(API_ENDPOINTS.AUTH.VERIFY_EMAIL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          otp,
-        }),
-      });
+  try {
+    const response = await fetch(API_ENDPOINTS.AUTH.VERIFY_EMAIL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp }),
+    });
 
-      const result = await response.json();
-      console.log("Response status:", response.status);
-      console.log("Response body:", result); // This is where you see token: null
+    const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error(
-          result.message || `HTTP ${response.status}: Verification failed`
-        );
-      }
-
-      // --- MODIFIED LOGIC HERE ---
-      if (result.data?.token) {
-        localStorage.setItem('authToken', result.data.token);
-        document.cookie = `authToken=${result.data.token}; path=/; secure; SameSite=Lax`;
-        toast.success("Email verified and logged in successfully!");
-        router.push("/dashboard");
-      } else {
-        // Verification was successful, but no token was provided by the backend.
-        // This suggests a backend issue or a different intended flow.
-        console.warn("Email verified successfully, but no token received. User might need to re-login.");
-        toast.warn("Email verified! Please log in to continue.");
-        router.push("/login"); // Redirect to login page to acquire a token
-      }
-      // --- END MODIFIED LOGIC ---
-
-      return; // Ensure no further execution if redirection occurs
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Verification failed"
-      );
-      setCode(["", "", "", "", "", ""]); // Clear OTP field on failure
-    } finally {
-      setIsVerifying(false);
+    if (!response.ok) {
+      throw new Error(result.message || `Verification failed (${response.status})`);
     }
-  }, [code, email, isVerifying, router]);
+
+    // Handle verification outcomes
+    if (result.data?.token) {
+      // Successful verification with token
+      localStorage.setItem('authToken', result.data.token);
+      document.cookie = `authToken=${result.data.token}; path=/; secure; SameSite=Lax`;
+      toast.success("Email verified successfully!");
+      router.push("/dashboard");
+    } else if (result.success) {
+      // Verification succeeded but no token - prompt login
+      toast.success("Email verified! Please log in to continue.");
+      router.push("/login");
+    } else {
+      // Unexpected response
+      throw new Error("Verification completed but no token received");
+    }
+  } catch (error) {
+    toast.error(error instanceof Error ? error.message : "Verification failed");
+    setCode(["", "", "", "", "", ""]);
+  } finally {
+    setIsVerifying(false);
+  }
+}, [code, email, isVerifying, router]);
 
   const handleResendCode = async () => {
     try {

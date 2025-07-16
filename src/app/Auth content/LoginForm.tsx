@@ -17,8 +17,8 @@ const LoadingSpinner = () => (
 );
 
 interface LoginFormData {
-  email?: string;
-  password?: string;
+  email: string;
+  password: string;
   subAccountId?: string;
   rememberMe?: boolean;
 }
@@ -36,92 +36,81 @@ const LoginForm = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, getValues } = useForm<LoginFormData>();
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors },
+    reset
+  } = useForm<LoginFormData>();
 
-  // Get the redirect URL from the query parameters
   const redirectUrl = searchParams.get('redirect');
 
-  
   useEffect(() => {
-    // Only run this on the client side
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('authToken');
-      // If a token exists, redirect to dashboard or the intended URL
-      if (token) {
+      const currentPath = window.location.pathname;
+      
+      if (token && !['/login', '/register'].includes(currentPath)) {
         const destination = redirectUrl ? decodeURIComponent(redirectUrl) : '/dashboard';
         router.replace(destination);
       }
     }
   }, [router, redirectUrl]);
 
+const onSubmit = async (data: LoginFormData) => {
+  setIsLoading(true);
+  try {
+    const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password
+      }),
+      credentials: 'include'
+    });
 
-  const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
-    try {
-      
+    const result = await response.json();
 
-      const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password
-        }),
-        credentials: 'include',
-      });
-
-    
-      const result = await response.json();
-
-      if (!response.ok) {
-        // --- MODIFIED LOGIC: Specific error messages ---
-        if (response.status === 400 && result.message === 'Email not verified') {
-          // Explicitly check for unverified email message from backend
-          const email = getValues('email');
-          router.push(`/emailverfi?email=${encodeURIComponent(email || '')}`);
-          return;
-        } else if (response.status === 401 && result.message === 'Incorrect Password') {
-          // Explicitly check for incorrect password message from backend
-          // We already have 'Incorrect Password' as a thrown error below, so this could be simplified
-          throw new Error('Incorrect Password');
-        } else {
-          // Fallback for other errors, including a generic 401 if not 'Incorrect Password'
-          throw new Error(result.message || 'Login failed');
-        }
-        // --- END MODIFIED LOGIC ---
+    if (!response.ok) {
+      if (response.status === 400 && result.message === 'Email not verified') {
+        router.push(`/emailverfi?email=${encodeURIComponent(data.email)}`);
+        return;
       }
-
-      // Token Storage: localStorage AND document.cookie
-      if (result.data?.token) {
-        localStorage.setItem('authToken', result.data.token);
-        document.cookie = `authToken=${result.data.token}; path=/; secure; SameSite=Lax`;
-
-        toast.success('Login successful!');
-
-        const destination = redirectUrl ? decodeURIComponent(redirectUrl) : '/dashboard';
-        router.push(destination);
-      } else {
-        router.push(`/emailverfi?email=${encodeURIComponent(data.email || '')}`);
-        console.warn('Login successful but no token received, redirecting to email verification.');
-        toast.error('Login successful but session could not be established, please verify your email.');
-      }
-    } catch (error) {
-      console.error('Login Error:', error);
-      if (error instanceof Error && error.message === 'Incorrect Password') {
-        toast.error('Incorrect Password');
-      } else {
-        // This will catch the generic 'Login failed' or other specific errors thrown
-        toast.error(error instanceof Error ? error.message : 'Login failed');
-      }
-    } finally {
-      setIsLoading(false);
+      throw new Error(result.message || 'Login failed');
     }
-  };
+
+    // Handle successful login
+    if (result.data?.token) {
+      // Store token securely
+      localStorage.setItem('authToken', result.data.token);
+      document.cookie = `authToken=${result.data.token}; path=/; secure; SameSite=Lax`;
+      
+      toast.success('Login successful!');
+      router.push(redirectUrl || '/dashboard');
+    } else if (result.data?.token === null) {
+      // Token is explicitly null - redirect to email verification
+      toast.warn('Please verify your email first');
+      router.push(`/emailverfi?email=${encodeURIComponent(data.email)}`);
+    } else {
+      // No token provided - this might be a backend misconfiguration
+      throw new Error('Authentication failed - no token received');
+    }
+  } catch (error) {
+    console.error('Login Error:', error);
+    toast.error(error instanceof Error ? error.message : 'Login failed');
+    reset({ password: '' });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const toggleModal = () => {
     setShowModal(!showModal);
+  };
+
+  const togglePasswordVisibility = (field: 'email' | 'subAccount') => {
+    setShowPassword(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
   return (
@@ -138,6 +127,7 @@ const LoginForm = () => {
                 activeTab === category ? 'text-[#01040F]' : 'text-[#797A80]'
               }`}
               onClick={() => setActiveTab(category)}
+              disabled={isLoading}
             >
               {category}
             </button>
@@ -162,7 +152,14 @@ const LoginForm = () => {
                   type="text"
                   placeholder="Email or Mobile"
                   className={`w-full px-4 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded focus:outline-none placeholder-black text-black`}
-                  {...register('email', { required: 'Email or Mobile is required' })}
+                  {...register('email', { 
+                    required: 'Email or Mobile is required',
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$|^\d+$/,
+                      message: 'Please enter a valid email or phone number'
+                    }
+                  })}
+                  disabled={isLoading}
                 />
                 {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
               </div>
@@ -172,10 +169,21 @@ const LoginForm = () => {
                   type={showPassword.email ? 'text' : 'password'}
                   placeholder="Password"
                   className={`w-full px-4 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded focus:outline-none placeholder-black text-black`}
-                  {...register('password', { required: 'Password is required', minLength: { value: 8, message: 'Minimum 8 characters' } })}
+                  {...register('password', { 
+                    required: 'Password is required', 
+                    minLength: { 
+                      value: 8, 
+                      message: 'Minimum 8 characters' 
+                    } 
+                  })}
+                  disabled={isLoading}
                 />
-                <button type="button" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  onClick={() => setShowPassword({ ...showPassword, email: !showPassword.email })}>
+                <button 
+                  type="button" 
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  onClick={() => togglePasswordVisibility('email')}
+                  disabled={isLoading}
+                >
                   {showPassword.email ? <IoMdEyeOff size={18} /> : <IoMdEye size={18} />}
                 </button>
                 {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
@@ -191,7 +199,14 @@ const LoginForm = () => {
                   type="text"
                   placeholder="Sub-Account ID"
                   className={`w-full px-4 py-2 border ${errors.subAccountId ? 'border-red-500' : 'border-gray-300'} rounded focus:outline-none placeholder-gray-500`}
-                  {...register('subAccountId', { required: 'Sub-Account ID is required' })}
+                  {...register('subAccountId', { 
+                    required: 'Sub-Account ID is required',
+                    pattern: {
+                      value: /^[a-zA-Z0-9-_]+$/,
+                      message: 'Only letters, numbers, hyphens and underscores allowed'
+                    }
+                  })}
+                  disabled={isLoading}
                 />
                 {errors.subAccountId && <p className="mt-1 text-xs text-red-500">{errors.subAccountId.message}</p>}
               </div>
@@ -201,10 +216,21 @@ const LoginForm = () => {
                   type={showPassword.subAccount ? 'text' : 'password'}
                   placeholder="Password"
                   className={`w-full px-4 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded focus:outline-none placeholder-gray-500`}
-                  {...register('password', { required: 'Password is required' })}
+                  {...register('password', { 
+                    required: 'Password is required',
+                    minLength: {
+                      value: 8,
+                      message: 'Minimum 8 characters'
+                    }
+                  })}
+                  disabled={isLoading}
                 />
-                <button type="button" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  onClick={() => setShowPassword({ ...showPassword, subAccount: !showPassword.subAccount })}>
+                <button 
+                  type="button" 
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  onClick={() => togglePasswordVisibility('subAccount')}
+                  disabled={isLoading}
+                >
                   {showPassword.subAccount ? <IoMdEyeOff size={18} /> : <IoMdEye size={18} />}
                 </button>
                 {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
@@ -224,7 +250,13 @@ const LoginForm = () => {
 
           {/* Forgot Password / Signup Links */}
           <div className="mt-6 mb-3 text-end text-sm text-gray-600">
-            <Link href="/forgot-password" className="text-[#439A86] hover:underline">Forgot password?</Link>
+            <Link 
+              href="/forgot-password" 
+              className="text-[#439A86] hover:underline"
+              onClick={(e) => isLoading ? e.preventDefault() : null}
+            >
+              Forgot password?
+            </Link>
           </div>
 
           {/* Login Button */}
@@ -256,30 +288,45 @@ const LoginForm = () => {
         {/* Social Sign-up Options */}
         <div className="flex gap-3 mb-6 w-full flex-col sm:flex-row items-center justify-center">
           {/* Social Buttons */}
-          <div className="flex gap-3 items-center justify-center ">
-            <button type="button" className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50">
+          <div className="flex gap-3 items-center justify-center">
+            <button 
+              type="button" 
+              className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50"
+              disabled={isLoading}
+            >
               <Image src="/img/facebook.png" alt="facebook" width={16} height={16} />
             </button>
 
-            <button type="button" className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50">
+            <button 
+              type="button" 
+              className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50"
+              disabled={isLoading}
+            >
               <Image src="/img/apple.png" alt="apple" width={16} height={16} />
             </button>
 
-            <button type="button" className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50">
+            <button 
+              type="button" 
+              className="flex justify-center items-center border border-gray-200 rounded-full w-10 h-10 hover:bg-gray-50"
+              disabled={isLoading}
+            >
               <Image src="/img/search.png" alt="Google" width={16} height={16} />
             </button>
           </div>
 
           {/* Wallet Connect */}
-          <div className="p-3 rounded-full border border-gray-200 hover:bg-gray-50 flex sm:items-center gap-2 sm:gap-4 justify-between w-[70%]" onClick={toggleModal}>
+          <div 
+            className="p-3 rounded-full border border-gray-200 hover:bg-gray-50 flex sm:items-center gap-2 sm:gap-4 justify-between w-[70%]" 
+            onClick={isLoading ? undefined : toggleModal}
+          >
             <span className="text-xs text-gray-500">Connect wallet</span>
             <div className="flex space-x-1">
-              <button type="button">
+              <button type="button" disabled={isLoading}>
                 <div className="w-6 h-6 flex items-center justify-center">
                   <Image src='/img/meta.webp' alt='meta' width={15} height={10} />
                 </div>
               </button>
-              <button type="button">
+              <button type="button" disabled={isLoading}>
                 <div className="w-6 h-6 flex items-center justify-center">
                   <Image src='/img/tonkeeper.png' alt='tonkeeper' width={15} height={10} />
                 </div>
@@ -289,7 +336,14 @@ const LoginForm = () => {
         </div>
 
         <div className="mt-2 text-center text-sm text-gray-600">
-          Don’t have an account? <Link href="/register" className="text-[#439A86] hover:underline">Register</Link>
+          Don’thave an account?{' '}
+          <Link 
+            href="/register" 
+            className="text-[#439A86] hover:underline"
+            onClick={(e) => isLoading ? e.preventDefault() : null}
+          >
+            Register
+          </Link>
         </div>
       </div>
 
@@ -307,6 +361,7 @@ const LoginForm = () => {
               <button
                 onClick={() => setShowModal(false)}
                 className="p-2 hover:bg-gray-100 hover:bg-opacity-70 rounded-full transition-colors"
+                disabled={isLoading}
               >
                 <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -322,6 +377,7 @@ const LoginForm = () => {
                   // Add your MetaMask connection logic here
                 }}
                 className="w-full flex items-center justify-between p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
+                disabled={isLoading}
               >
                 <div className="flex items-center">
                   <Image src='/img/meta.webp' alt='MetaMask' width={24} height={24} className="mr-3" />
@@ -336,28 +392,7 @@ const LoginForm = () => {
                   // Add your TONkeeper connection logic here
                 }}
                 className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
-              >
-                <Image src='/img/tonkeeper.png' alt='TONkeeper' width={24} height={24} className="mr-3" />
-                <span className="font-medium text-gray-800">TONkeeper Wallet</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  console.log('Connecting to MetaMask...');
-                  // Add your MetaMask connection logic here
-                }}
-                className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
-              >
-                <Image src='/img/meta.webp' alt='MetaMask' width={24} height={24} className="mr-3" />
-                <span className="font-medium text-gray-800">Metamask Wallet</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  console.log('Connecting to TONkeeper...');
-                  // Add your TONkeeper connection logic here
-                }}
-                className="w-full flex items-center p-4 bg-white bg-opacity-80 hover:bg-opacity-90 rounded-xl transition-all border border-gray-200 border-opacity-50 shadow-sm"
+                disabled={isLoading}
               >
                 <Image src='/img/tonkeeper.png' alt='TONkeeper' width={24} height={24} className="mr-3" />
                 <span className="font-medium text-gray-800">TONkeeper Wallet</span>
