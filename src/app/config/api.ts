@@ -31,6 +31,9 @@ ASSET:{
 TRANSACTION:{
   CREATE_TRANCSACTION:`${API_BASE_URL}/transaction`,
   TRANSACTION_HISTORY:`${API_BASE_URL}/transaction/user`,
+},
+SIGNAL:{
+  GET_SIGNAL:`${API_BASE_URL}/signal`
 }
 };
 
