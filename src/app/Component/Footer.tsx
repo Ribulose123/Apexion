@@ -49,7 +49,9 @@ const Footer = () => {
               <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#797A80] text-[13px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.company ? 'block' : 'hidden md:block'}`}>
                 <li><Link href="/contact">Career</Link></li>
                 <li><Link href="/about-us">About Bidvest</Link></li>
-                <li><Link href="faq">FAQs</Link></li>
+                <li><Link href="/faq">FAQs</Link></li>
+                <li><Link href="/copying">Copy</Link></li>
+                <li><Link href="/mining">Bitcoin mining</Link></li>
               </ul>
             </div>
             
@@ -84,7 +86,7 @@ const Footer = () => {
                 <li><a href="#">Stock</a></li>
                 <li><a href="#">Forex</a></li>
                 <li><a href="/pricing">Crypto</a></li>
-                <li><a href="#">Copy</a></li>
+                <li><a href="">Copy</a></li>
               </ul>
             </div>
             

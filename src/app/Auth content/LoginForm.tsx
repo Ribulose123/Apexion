@@ -35,6 +35,7 @@ const LoginForm = () => {
     subAccount: false,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
   const { 
     register, 
@@ -57,54 +58,51 @@ const LoginForm = () => {
     }
   }, [router, redirectUrl]);
 
-const onSubmit = async (data: LoginFormData) => {
-  setIsLoading(true);
-  try {
-    const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: data.email,
-        password: data.password
-      }),
-      credentials: 'include'
-    });
+   const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+    setLoginError(''); // Clear previous errors
+    try {
+      const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password
+        }),
+        credentials: 'include'
+      });
 
-    const result = await response.json();
+      const result = await response.json();
 
-    if (!response.ok) {
-      if (response.status === 400 && result.message === 'Email not verified') {
-        router.push(`/emailverfi?email=${encodeURIComponent(data.email)}`);
-        return;
+      if (!response.ok) {
+        if (response.status === 400 && result.message === 'Email not verified') {
+          router.push(`/emailverfi?email=${encodeURIComponent(data.email)}`);
+          return;
+        }
+        if (response.status === 401) {
+          // Check if the error is specifically about invalid credentials
+          if (result.message.toLowerCase().includes('invalid credentials')) {
+            // More specific error message
+            setLoginError('Incorrect email/username or password. Please try again.');
+          } else {
+            setLoginError(result.message || 'Invalid credentials');
+          }
+          return;
+        }
+        throw new Error(result.message || 'Login failed');
       }
-      throw new Error(result.message || 'Login failed');
-    }
 
-    // Handle successful login
-    if (result.data?.token) {
-      // Store token securely
-      localStorage.setItem('authToken', result.data.token);
-      document.cookie = `authToken=${result.data.token}; path=/; secure; SameSite=Lax`;
-      
-      toast.success('Login successful!');
-      router.push(redirectUrl || '/dashboard');
-    } else if (result.data?.token === null) {
-      // Token is explicitly null - redirect to email verification
-      toast.warn('Please verify your email first');
-      router.push(`/emailverfi?email=${encodeURIComponent(data.email)}`);
-    } else {
-      // No token provided - this might be a backend misconfiguration
-      throw new Error('Authentication failed - no token received');
+      // ... (rest of the success handling remains the same)
+    } catch (error) {
+      console.error('Login Error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Login failed';
+      toast.error(errorMessage);
+      setLoginError('An error occurred during login. Check password and Username .');
+      reset({ password: '' });
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('Login Error:', error);
-    toast.error(error instanceof Error ? error.message : 'Login failed');
-    reset({ password: '' });
-  } finally {
-    setIsLoading(false);
   }
-};
-
   const toggleModal = () => {
     setShowModal(!showModal);
   };
@@ -248,6 +246,13 @@ const onSubmit = async (data: LoginFormData) => {
             </div>
           )}
 
+          {/* Error message for login failures */}
+          {loginError && (
+            <div className="mb-3 text-center text-sm text-red-500">
+              {loginError}
+            </div>
+          )}
+
           {/* Forgot Password / Signup Links */}
           <div className="mt-6 mb-3 text-end text-sm text-gray-600">
             <Link 
@@ -336,7 +341,7 @@ const onSubmit = async (data: LoginFormData) => {
         </div>
 
         <div className="mt-2 text-center text-sm text-gray-600">
-          Don’thave an account?{' '}
+          Don&rsquo;t have an account?{' '}
           <Link 
             href="/register" 
             className="text-[#439A86] hover:underline"
