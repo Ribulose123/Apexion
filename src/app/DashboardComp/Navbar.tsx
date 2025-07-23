@@ -1,7 +1,7 @@
 // components/Navbar.tsx
 'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,7 @@ import Overview from "./Overview";
 import { API_ENDPOINTS } from "../config/api";
 import { useNotifications } from "@/app/context/NotificationContext";
 import NotificationModal from "../modals/NotificationModal"; 
+
 interface UserData {
   id: string;
   fullName: string;
@@ -41,20 +42,33 @@ const Navbar = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
-
 
   // Consume notification state from context
   const { settings, markNotificationsAsRead } = useNotifications();
 
-  const fetchUserData = async (): Promise<void> => {
+  const checkAuthenticationAndRedirect = (): boolean => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      toast.warning('Please log in to access this page.');
+      router.push('/login');
+      return false;
+    }
+    return true;
+  };
+
+  const fetchUserData = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
       
       const token = localStorage.getItem('authToken'); 
       
       if (!token) {
-        throw new Error('No authentication token found in localStorage');
+        setIsAuthenticated(false);
+        setUserData(null);
+        // Don't redirect here as this might be a public page
+        return;
       }
 
       const response = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
@@ -67,7 +81,13 @@ const Navbar = () => {
       });
 
       if (response.status === 401) {
-        throw new Error('Session expired');
+        // Token is invalid or expired
+        localStorage.removeItem('authToken');
+        setIsAuthenticated(false);
+        setUserData(null);
+        toast.error('Your session has expired. Please log in again.');
+        router.push('/login');
+        return;
       }
 
       if (!response.ok) {
@@ -75,41 +95,65 @@ const Navbar = () => {
       }
 
       const data = await response.json();
-     
-      
       setUserData(data.data);
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('Navbar - Authentication error:', error);
-      if (error instanceof Error && error.message === 'Session expired') {
-        toast.error('Your session has expired. Please log in again.');
-      } else if (error instanceof Error && error.message === 'No authentication token found in localStorage') {
-          console.log('Navbar: No token found, user is likely not logged in.');
-      } else {
-        toast.error(error instanceof Error ? error.message : 'Failed to load user data.');
+      setIsAuthenticated(false);
+      setUserData(null);
+      
+      if (error instanceof Error) {
+        if (error.message === 'Session expired') {
+          localStorage.removeItem('authToken');
+          toast.error('Your session has expired. Please log in again.');
+          router.push('/login');
+        } else if (error.message !== 'No authentication token found in localStorage') {
+          toast.error('Failed to load user data.');
+        }
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
   const handleSignOut = (): void => {
     localStorage.removeItem('authToken'); 
     document.cookie = 'authToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'; 
     setUserData(null);
+    setIsAuthenticated(false);
     router.push('/login');
     toast.success('Logged out successfully');
   };
 
+  // Protected navigation handler
+  const handleProtectedNavigation = (path: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (checkAuthenticationAndRedirect()) {
+      router.push(path);
+    }
+  };
+
   // Fetch user data once when the component mounts
   useEffect(() => {
-    fetchUserData();
-  }, []); 
+    const initializeAuth = async () => {
+      await fetchUserData();
+    };
+    
+    initializeAuth();
+  }, [fetchUserData]); 
 
   const toggleModal = () => setShowModal(!showModal);
 
   const toggleDropdown = (menu: DropdownMenuType) => {
-    setActiveDropdown((prev) => (prev === menu ? null : menu));
-  };
+  const protectedMenus: DropdownMenuType[] = ['buy', 'assest', 'tools', 'user'];
+  if (protectedMenus.includes(menu) && !userData) {
+    router.push('/login');
+    toast.info('Please login to access this feature');
+    return;
+  }
+  
+  setActiveDropdown((prev) => (prev === menu ? null : menu));
+};
 
   return (
     <header className="bg-gray-900 border-b border-gray-800 py-3 px-6 flex items-center w-full fixed top-0 z-50">
@@ -142,7 +186,7 @@ const Navbar = () => {
               <ChevronDown size={16} className="ml-1" />
             </button>
 
-            {activeDropdown === "buy" && (
+            {activeDropdown === "buy" && isAuthenticated && (
               <div className="absolute top-full left-0 mt-3 w-96 bg-[#0D1B2A] text-white rounded-2xl shadow-2xl z-50 p-6 space-y-5">
                 <div className="flex item-end justify-end gap-2 text-sm text-gray-300 font-medium">
                   <span>Pay with</span>
@@ -159,7 +203,7 @@ const Navbar = () => {
                 </div>
 
                 <div className="space-y-4 text-sm">
-                  <Link href="/buy/p2p" className="block">
+                  <Link href="/buy/p2p" className="block" onClick={handleProtectedNavigation('/buy/p2p')}>
                     <div>
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
                         <Image
@@ -177,7 +221,7 @@ const Navbar = () => {
                     </p>
                   </Link>
 
-                  <Link href="/Apexion" className="block">
+                  <Link href="/Apexion" className="block" onClick={handleProtectedNavigation('/Apexion')}>
                     <div>
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
                        <CreditCard size={14}/> {" "}
@@ -189,7 +233,7 @@ const Navbar = () => {
                     </p>
                   </Link>
 
-                  <Link href="/buy/quick" className="block">
+                  <Link href="/buy/quick" className="block" onClick={handleProtectedNavigation('/buy/quick')}>
                     <div>
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
                         <Image
@@ -207,7 +251,7 @@ const Navbar = () => {
                     </p>
                   </Link>
 
-                  <Link href="/buy/credit-card" className="block">
+                  <Link href="/buy/credit-card" className="block" onClick={handleProtectedNavigation('/buy/credit-card')}>
                     <div className="flex flex-col">
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
                         <Image
@@ -230,7 +274,11 @@ const Navbar = () => {
           </div>
 
           {/* Market Link */}
-          <Link href="/market" className="text-gray-300 hover:text-white">
+          <Link 
+            href="/market" 
+            className="text-gray-300 hover:text-white"
+            onClick={handleProtectedNavigation('/market')}
+          >
             Market
           </Link>
 
@@ -243,11 +291,15 @@ const Navbar = () => {
               Assets
               <ChevronDown size={16} className="ml-1" />
             </button>
-            {activeDropdown === "assest" && <Overview/>}
+            {activeDropdown === "assest" && isAuthenticated && <Overview/>}
           </div>
 
           {/* Trade Link */}
-          <Link href="/trade" className="text-gray-300 hover:text-white">
+          <Link 
+            href="/trade" 
+            className="text-gray-300 hover:text-white"
+            onClick={handleProtectedNavigation('/trade')}
+          >
             Trade
           </Link>
 
@@ -260,7 +312,7 @@ const Navbar = () => {
               Tools
               <ChevronDown size={16} className="ml-1" />
             </button>
-            {activeDropdown === "tools" && (
+            {activeDropdown === "tools" && isAuthenticated && (
               <div className="absolute top-full left-0 mt-3 w-[500px] bg-[#0D1B2A] text-white rounded-xl shadow-xl z-50 p-4 flex gap-4">
                 <div className="w-1/2 space-y-4">
                   <div className="p-4 rounded-lg transition cursor-pointer bg-[#152232]">
@@ -275,6 +327,7 @@ const Navbar = () => {
                   <Link
                     href="/tools/leaderboard"
                     className="block p-4 rounded-lg transition"
+                    onClick={handleProtectedNavigation('/tools/leaderboard')}
                   >
                     <p className="font-semibold flex items-center gap-2">
                       📊 Leaderboard
@@ -334,54 +387,59 @@ const Navbar = () => {
           <Search size={20} />
         </button>
 
-        <div className="relative">
-          <button
-            className="flex items-center"
-            onClick={() => toggleDropdown("user")}
-          >
-            <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center overflow-hidden">
-              <Image
-                src={userData?.avatar || "/img/Avatar DP.png"}
-                alt="Profile"
-                width={32}
-                height={32}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </button>
-
-          {activeDropdown === "user" && (
-            <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
-              <div className="py-1">
-                <Link
-                  href="/profile"
-                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                >
-                  My Profile
-                </Link>
-                <Link
-                  href="/security"
-                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                >
-                  Security
-                </Link>
-                <Link
-                  href="/settings"
-                  className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                >
-                  Settings
-                </Link>
-                <div className="border-t border-gray-700 my-1"></div>
-                <button 
-                  onClick={handleSignOut}
-                  className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
-                >
-                  Sign Out
-                </button>
+        {isAuthenticated && (
+          <div className="relative">
+            <button
+              className="flex items-center"
+              onClick={() => toggleDropdown("user")}
+            >
+              <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center overflow-hidden">
+                <Image
+                  src={userData?.avatar || "/img/Avatar DP.png"}
+                  alt="Profile"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-cover"
+                />
               </div>
-            </div>
-          )}
-        </div>
+            </button>
+
+            {activeDropdown === "user" && (
+              <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
+                <div className="py-1">
+                  <Link
+                    href="/profile"
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                    onClick={handleProtectedNavigation('/profile')}
+                  >
+                    My Profile
+                  </Link>
+                  <Link
+                    href="/security"
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                    onClick={handleProtectedNavigation('/security')}
+                  >
+                    Security
+                  </Link>
+                  <Link
+                    href="/settings"
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                    onClick={handleProtectedNavigation('/settings')}
+                  >
+                    Settings
+                  </Link>
+                  <div className="border-t border-gray-700 my-1"></div>
+                  <button 
+                    onClick={handleSignOut}
+                    className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         <button
           className="text-gray-300 hover:text-white"
@@ -443,35 +501,36 @@ const Navbar = () => {
             onClick={toggleModal}
           >
             <Flag
-              code={country.toUpperCase()}
+              code={country.toUpperCase()} // This is line 149
               style={{ width: 34, height: 18 }}
             />
             <ChevronDown size={16} className="ml-1 text-gray-400" />
           </div>
         </div>
 
-        {/* Notifications */}
-      
-<div className="relative">
-  <button 
-    className="relative p-1 rounded-full hover:bg-gray-800"
-    onClick={() => {
-      setShowNotifications(!showNotifications);
-      if (!showNotifications && settings.hasUnreadNotifications) {
-        markNotificationsAsRead();
-      }
-    }}
-  >
-    <Bell size={20} className="text-gray-300" />
-    {settings.showBadge && settings.hasUnreadNotifications && (
-      <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
-    )}
-  </button>
-  
-  {showNotifications && (
-    <NotificationModal onClose={() => setShowNotifications(false)} />
-  )}
-</div>
+        {/* Notifications - Only show if authenticated */}
+        {isAuthenticated && (
+          <div className="relative">
+            <button 
+              className="relative p-1 rounded-full hover:bg-gray-800"
+              onClick={() => {
+                setShowNotifications(!showNotifications);
+                if (!showNotifications && settings.hasUnreadNotifications) {
+                  markNotificationsAsRead();
+                }
+              }}
+            >
+              <Bell size={20} className="text-gray-300" />
+              {settings.showBadge && settings.hasUnreadNotifications && (
+                <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
+              )}
+            </button>
+            
+            {showNotifications && (
+              <NotificationModal onClose={() => setShowNotifications(false)} />
+            )}
+          </div>
+        )}
 
         {/* User Profile */}
         {loading ? (
@@ -482,7 +541,7 @@ const Navbar = () => {
               <div className="h-3 w-16 bg-gray-700 rounded animate-pulse mt-1"></div>
             </div>
           </div>
-        ) : userData ? (
+        ) : isAuthenticated && userData ? (
           <div className="relative">
             <button
               className="flex items-center space-x-2"
@@ -511,18 +570,21 @@ const Navbar = () => {
                   <Link
                     href="/profile"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                    onClick={handleProtectedNavigation('/profile')}
                   >
                     My Profile
                   </Link>
                   <Link
                     href="/security"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                    onClick={handleProtectedNavigation('/security')}
                   >
                     Security
                   </Link>
                   <Link
                     href="/settings"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                    onClick={handleProtectedNavigation('/settings')}
                   >
                     Settings
                   </Link>

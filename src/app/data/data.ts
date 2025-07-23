@@ -696,7 +696,8 @@ export enum TransactionType {
     WITHDRAWAL = 'WITHDRAWAL',
     CONVERSION='CONVERSION',
     INTEREST= 'INTEREST',
-    trade ='TRADE'
+    trade ='TRADE',
+    signal = 'SIGNAL'
   }
 
 export enum TransactionStatus {

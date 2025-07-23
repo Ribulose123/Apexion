@@ -17,7 +17,7 @@ const Founded = () => {
       </div>
       <div className="w-full md:w-1/3 flex justify-center md:justify-end">
         <Image 
-          src='/img/Crypto rocket 1.png' 
+          src='/img/Rocket asset 1.png' 
           alt='rocket' 
           width={350} 
           height={240}

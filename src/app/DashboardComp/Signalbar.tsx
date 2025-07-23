@@ -30,9 +30,7 @@ const Signalbar = () => {
               <p>{showBalance ? "$32,121.52" : "******"}</p>
             </div>
           </div>
-          <button className="bg-transparent currency-display text-gray-400 text-xs py-1 px-3 rounded -mt-7">
-            Deposit
-          </button>
+         
         </div>
       </div>
 
