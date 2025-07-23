@@ -12,11 +12,6 @@ const VerificationFAQ = () => {
       answer: 'Identity verification is a process required by financial institutions and other regulated organizations to confirm your identity. Biget will verify your identity and conduct risk assessment to mitigate risks.'
     },
     {
-      id: 'country',
-      question: 'Why can\'t I select my country/region?',
-      answer: 'Bidvest does not provide services to users in the following countries/regions: Canada (Alberta), Crimea, Cuba, Hong Kong, Iran, North Korea, Singapore, Sudan, Syria, the United...'
-    },
-    {
       id: 'documents',
       question: 'What documents can I submit for identity verification?',
       answer: 'Level 1: ID card, passport, driver\'s license, and proof of residence. Level 2: Bank statements, utility bills (within the last...'

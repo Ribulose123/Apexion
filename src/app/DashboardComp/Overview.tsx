@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Eye, EyeOff, Plus, Minus, ArrowLeftRight } from 'lucide-react';
-
+import Link from 'next/link';
 export default function Overview() {
  
   const [hideBalance, setHideBalance] = useState(false);
@@ -61,7 +61,7 @@ export default function Overview() {
 
       {/* Menu Items */}
       <div className="space-y-3">
-        <div className="flex items-center p-2 hover:bg-[#152232] rounded-lg cursor-pointer">
+        <Link href='/asset' className="flex items-center p-2 hover:bg-[#152232] rounded-lg cursor-pointer">
           <div className="w-8 h-8 bg-[#152232] rounded-lg flex items-center justify-center mr-3">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 12V8H6a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h14v4" />
@@ -70,21 +70,11 @@ export default function Overview() {
             </svg>
           </div>
           <span>Assets</span>
-        </div>
+        </Link>
 
-        <div className="flex items-center p-2 hover:bg-[#152232] rounded-lg cursor-pointer">
-          <div className="w-8 h-8 bg-[#152232] rounded-lg flex items-center justify-center mr-3">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="2" width="20" height="20" rx="2" />
-              <path d="M16 8h.01" />
-              <path d="M8 16h.01" />
-              <path d="M12 12h.01" />
-            </svg>
-          </div>
-          <span>OTC</span>
-        </div>
+        
 
-        <div className="flex items-center p-2 hover:bg-[#152232] rounded-lg cursor-pointer">
+        <Link href ='/copy' className="flex items-center p-2 hover:bg-[#152232] rounded-lg cursor-pointer">
           <div className="w-8 h-8 bg-[#152232] rounded-lg flex items-center justify-center mr-3">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -94,9 +84,9 @@ export default function Overview() {
             </svg>
           </div>
           <span>Copy Trading</span>
-        </div>
+        </Link>
 
-        <div className="flex items-center p-2 hover:bg-[#152232] rounded-lg cursor-pointer">
+        <Link href='/deposit' className="flex items-center p-2 hover:bg-[#152232] rounded-lg cursor-pointer">
           <div className="w-8 h-8 bg-[#152232] rounded-lg flex items-center justify-center mr-3">
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="1" x2="12" y2="23" />
@@ -104,7 +94,7 @@ export default function Overview() {
             </svg>
           </div>
           <span>Earn</span>
-        </div>
+        </Link>
       </div>
     </div>
   );

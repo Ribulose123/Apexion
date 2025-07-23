@@ -83,10 +83,10 @@ const Footer = () => {
                 </div>
               </div>
               <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#797A80] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.services ? 'block' : 'hidden md:block'}`}>
-                <li><a href="#">Stock</a></li>
-                <li><a href="#">Forex</a></li>
+                <li><a href="/pricing">Stock</a></li>
+                <li><a href="/pricing">Forex</a></li>
                 <li><a href="/pricing">Crypto</a></li>
-                <li><a href="">Copy</a></li>
+                <li><Link href="/copy">Copy</Link></li>
               </ul>
             </div>
             
@@ -101,8 +101,8 @@ const Footer = () => {
                 </div>
               </div>
               <ul className={`space-y-1 opacity-70 hover:opacity-100 text-[#797A80] text-[14px] sm:text-[15px] font-medium transition-all duration-300 ${activeSection.legal ? 'block' : 'hidden md:block'}`}>
-                <li><a href="#">Cookie Policy</a></li>
-                <li><a href="#">Cookie Preferences</a></li>
+                <li><a href="/policy">Cookie Policy</a></li>
+                <li><a href="/policy">Cookie Preferences</a></li>
                 <li><a href="#">Terms of Use</a></li>
                 <li><a href="/policy">Privacy Policy</a></li>
               </ul>

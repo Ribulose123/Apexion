@@ -354,19 +354,19 @@ const Navbar = () => {
               <div className="absolute top-full left-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
                 <div className="py-1">
                   <Link
-                    href="/about"
+                    href="/about-us"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
                   >
                     About
                   </Link>
                   <Link
-                    href="/support"
+                    href="/contact"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
                   >
                     Support
                   </Link>
                   <Link
-                    href="/blog"
+                    href="/copy"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
                   >
                     Blog

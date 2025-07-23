@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { FaBitcoin, FaCopy, FaChartLine, FaHome, FaArrowRight } from "react-icons/fa";
+import Link from "next/link";
 
 
 const products = [
@@ -10,13 +11,16 @@ const products = [
     title: "Crypto",
     description:
       "Trade and Mine Bitcoin and Other Leading Crypto Currencies with Decentralized Finance",
+      link:'/pricing'
   },
   {
     icon: <FaCopy size={28} className="text-gray-800" />,
     img: "/img/copy1.png",
     title: "Copy",
     description:
-      "Copy trading allows you to directly copy the positions taken by another trader. You simply copy everything",
+      "Copy trading allows you to directly copy the positions taken by another trader. You simply copy everything"
+      ,
+      link:'/copy'
   },
   {
     icon: <FaChartLine size={28} className="text-gray-800" />,
@@ -24,6 +28,7 @@ const products = [
     title: "Forex",
     description:
       "Trade currency pairs and be able to implement your own trading strategies with minimum slippage",
+     link:'/copy' 
   },
   {
     icon: <FaHome size={28} className="text-gray-800" />,
@@ -31,6 +36,7 @@ const products = [
     title: "Stocks",
     description:
       "Stocks, also commonly referred to as shares, are issued by a public company and put up for sale.",
+      link:'/pricing'
   },
 ];
 
@@ -64,10 +70,10 @@ const ProductsSection = () => {
               <h3 className="text-lg font-semibold">{product.title}</h3>
               <p className="text-sm text-gray-500 mt-2">{product.description}</p>
             </div>
-            <button className="mt-auto border border-gray-600 px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-gray-100 transition items-center flex gap-2">
+            <Link href={product.link} className="mt-auto border border-gray-600 px-4 py-2 rounded-full text-sm text-gray-700 hover:bg-gray-100 transition items-center flex gap-2">
               More
               <FaArrowRight className="inline ml-2" />
-            </button>
+            </Link>
           </div>
         ))}
       </div>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image';
 import { Search, ChevronLeft, ChevronRight} from 'lucide-react';
 import { FaStar, FaRegStar } from 'react-icons/fa';
+import Link from 'next/link';
 
 // --- Sparkline Component ---
 interface SparklineProps {
@@ -363,7 +364,7 @@ const MarketInfo = () => {
                         )}
                       </td>
                       <td className="py-3 sm:py-5 px-2 sm:px-4">
-                        <button className="border border-gray-100 p-1 w-[100] rounded-full text-[10px] sm:text-[14px]">Trade</button>
+                        <Link href='/trade' className="border border-gray-100 p-1 w-[100] rounded-full text-[10px] sm:text-[14px]">Trade</Link>
                       </td>
                     </tr>
                   ))
