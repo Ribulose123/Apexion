@@ -1,6 +1,7 @@
 // src/components/crypto-deposit/DepositFAQ.tsx
 import React, { useState } from 'react';
 import {  FileText } from 'lucide-react';
+import Link from 'next/link';
 
 
 const faqItems = [
@@ -33,7 +34,7 @@ const DepositFAQ: React.FC = () => {
           
           <span className="font-semibold text-[#E8E8E8] text-[16px]">FAQ</span>
         </div>
-        <span className="text-[#6B6B6B] text-[12px] cursor-pointer ">More {'>'}</span>
+        <Link href='/faqs' className="text-[#6B6B6B] text-[12px] cursor-pointer ">More {'>'}</Link>
       </div>
       
       <div className="space-y-3">
@@ -62,7 +63,7 @@ const DepositFAQ: React.FC = () => {
       
     </div>
     <div className="mt-4 ">
-    <p className="text-sm text-end">Deposit not credited? <span className="text-[#439A86] text-sm ml-2 cursor-pointer">Request a refund</span></p>
+    <p className="text-sm text-end">Deposit not credited? <Link href='/contact' className="text-[#439A86] text-sm ml-2 cursor-pointer">Request a refund</Link></p>
     
   </div>
   </div>

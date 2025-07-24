@@ -7,6 +7,7 @@ import Testimony from "../Component/Testimony";
 import FAQSection from "../Component/FAQSection";
 import ConTab from "../Component/ConTab";
 import LogoCarousel from "../Component/LogoCarousel";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -22,10 +23,10 @@ export default function Home() {
             secure broker designed to execute your transactions in seconds. Open a
             Live Account to access an optimised set of trading features
           </p>
-          <button className="w-[237px] h-[56px] gap-4 px-6 py-4 rounded-[48px] bg-[#6967AE] text-white text-[15px] font-medium flex items-center justify-center mt-3">
+          <Link href='/login' className="w-[237px] h-[56px] gap-4 px-6 py-4 rounded-[48px] bg-[#6967AE] text-white text-[15px] font-medium flex items-center justify-center mt-3">
   Get started for free
   <FaArrowRight className="w-5 h-5 bg-white text-black rounded-full p-1" />
-</button>
+</Link>
 
         </div>
 

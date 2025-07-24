@@ -37,26 +37,26 @@ export default function Overview() {
 
       {/* Action Buttons */}
       <div className="flex gap-4 mb-6">
-        <button className="text-center">
+        <Link href='/deposit' className="text-center">
           <div className="flex flex-col items-center">
             <Plus className="w-5 h-5 mb-1" />
             <span className="text-xs">Deposit</span>
           </div>
-        </button>
+        </Link>
 
-        <button className="text-center">
+        <Link href ='/withdrawal' className="text-center">
           <div className="flex flex-col items-center">
             <Minus className="w-5 h-5 mb-1" />
             <span className="text-xs">Withdraw</span>
           </div>
-        </button>
+        </Link>
 
-        <button className="text-center">
+        <Link href='/conversion' className="text-center">
           <div className="flex flex-col items-center">
             <ArrowLeftRight className="w-5 h-5 mb-1" />
             <span className="text-xs">Transfer</span>
           </div>
-        </button>
+        </Link>
       </div>
 
       {/* Menu Items */}

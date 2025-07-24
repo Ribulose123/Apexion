@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import Image from 'next/image';
 import { FaArrowLeft, FaArrowRight, FaSearch, FaRegStar, FaStar } from "react-icons/fa";
 import { IoIosInformationCircleOutline } from "react-icons/io";
+import Link from "next/link";
 
 // --- Sparkline Component ---
 interface SparklineProps {
@@ -287,7 +288,7 @@ const CryptoTable = () => {
                       )}
                     </td>
                     <td className="py-3 sm:py-5 px-2 sm:px-4">
-                      <button className="currency-display p-1 w-[100] rounded-full text-[10px] sm:text-[14px]">Trade</button>
+                      <Link href='/login' className="currency-display p-1 w-[100] rounded-full text-[10px] sm:text-[14px]">Trade</Link>
                     </td>
                   </tr>
                 ))

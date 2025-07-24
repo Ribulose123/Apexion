@@ -11,7 +11,7 @@ const products = [
     title: "Crypto",
     description:
       "Trade and Mine Bitcoin and Other Leading Crypto Currencies with Decentralized Finance",
-      link:'/pricing'
+      link:'/coping'
   },
   {
     icon: <FaCopy size={28} className="text-gray-800" />,
@@ -20,7 +20,7 @@ const products = [
     description:
       "Copy trading allows you to directly copy the positions taken by another trader. You simply copy everything"
       ,
-      link:'/copy'
+      link:'/copying'
   },
   {
     icon: <FaChartLine size={28} className="text-gray-800" />,
@@ -28,7 +28,7 @@ const products = [
     title: "Forex",
     description:
       "Trade currency pairs and be able to implement your own trading strategies with minimum slippage",
-     link:'/copy' 
+     link:'/copying' 
   },
   {
     icon: <FaHome size={28} className="text-gray-800" />,
@@ -36,7 +36,7 @@ const products = [
     title: "Stocks",
     description:
       "Stocks, also commonly referred to as shares, are issued by a public company and put up for sale.",
-      link:'/pricing'
+      link:'/copying'
   },
 ];
 

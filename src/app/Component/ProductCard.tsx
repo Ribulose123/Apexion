@@ -32,7 +32,7 @@ const ProductCard = () => {
             {/* Floating Card Image */}
             <div className="absolute top-4 right-4 z-10">
               <Image 
-                src="/img/card12.png" 
+                src="/img/bid.png" 
                 alt="Apexion Card" 
                 width={130} 
                 height={60} 
@@ -59,7 +59,7 @@ const ProductCard = () => {
             {/* Floating Card Image */}
             <div className="absolute top-4 right-4 z-10">
               <Image 
-                src="/img/card12.png" 
+                src="/img/bid.png" 
                 alt="Apexion Card" 
                 width={130} 
                 height={60} 

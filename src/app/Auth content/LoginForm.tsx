@@ -86,7 +86,7 @@ const LoginForm = () => {
         }
 
         if (response.status === 400) {
-          setLoginError("Incorrect password, please recheck password.");
+          setLoginError("Incorrect email or password, please recheck credentials.");
           reset({ password: "" });
           return;
         }

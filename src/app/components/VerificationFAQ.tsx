@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
 const VerificationFAQ = () => {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
@@ -33,10 +34,10 @@ const VerificationFAQ = () => {
     <div className="bg-[#131B31] rounded-xl p-6 md:min-h-[600px]">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">FAQ</h2>
-        <button className="text-blue-400 text-sm flex items-center">
+        <Link href='/faqs' className="text-blue-400 text-sm flex items-center">
           More
           <ChevronRight size={16} className="ml-1" />
-        </button>
+        </Link>
       </div>
 
       <div className="space-y-4">
