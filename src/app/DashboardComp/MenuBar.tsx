@@ -44,7 +44,7 @@ const sidebarMenuItems = [
       { name: 'Referrals',  href: '#' },
       { name: 'connect Wallet',  href: '#' },
       { name: 'Copy',  href: '/copy' },
-      { name: 'Settings',  href: '/settings' },
+      { name: 'Settings',  href: '/security' },
 ];
 
 const MenuBar: React.FC<MenuBarProps> = ({

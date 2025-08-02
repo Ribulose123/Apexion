@@ -185,7 +185,7 @@ export const contactData = [
   ];
   
 
-import { CircleMinus, CirclePlus, House, Link, Radio, User, WalletMinimal, Radiation, Coins } from "lucide-react";
+import { CircleMinus, CirclePlus, House, Link, Radio, User, WalletMinimal, Radiation, Coins, Headphones } from "lucide-react";
 
 import { IoCopy, IoSettingsOutline } from "react-icons/io5";
 
@@ -201,6 +201,7 @@ import { IoCopy, IoSettingsOutline } from "react-icons/io5";
     { name: 'connect Wallet', icon:Link, href: '#' },
     { name: 'Copy', icon: IoCopy, href: '/copy' },
     { name: 'Settings', icon: IoSettingsOutline, href: '/security' },
+    { name: 'Support', icon:Headphones, href: '/contact' },
   ];
 
 
