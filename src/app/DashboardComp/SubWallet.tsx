@@ -1,39 +1,87 @@
 "use client";
-import React, { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Eye, EyeOff, Plus } from "lucide-react";
+import { API_ENDPOINTS } from "../config/api";
+import Link from "next/link";
 
 const SubWallet = () => {
-     const [showBalance, setShowBalance] = useState(true);
+  const [showBalance, setShowBalance] = useState(true);
+  const [balance, setBalance] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-      const handleBalance = () => {
-        setShowBalance(!showBalance);
-      };
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) throw new Error("Please login to view balance");
+
+        const res = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch balance");
+        const data = await res.json();
+        setBalance(data.data?.subscriptionBalance || 0);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Connection error");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchBalance();
+  }, []);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  };
+
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-4">
+        <div className="h-4 w-24 bg-gray-700 rounded animate-pulse" />
+        <div className="h-8 w-20 bg-gray-600 rounded-md animate-pulse" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-sm">{error}</div>;
+  }
+
   return (
-    <div className='bg-linear-to-b from-[#141E323D]  to-[#141E32] p-4 sm:rounded-lg h-[170px] w-full'>
-       <div className="flex justify-between items-center">
-          <div>
-            <div className="flex items-center">
-              <h2 className="text-gray-400 font-medium sm:text-lg">
-                Total Balance
-              </h2>
-              <button
-                onClick={handleBalance}
-                className="text-gray-400 hover:text-white transition ml-2"
-              >
-                {showBalance ? <Eye size={15} /> : <EyeOff size={15} />}
-              </button>
-            </div>
-            <div className="flex space-x-1 mt-5">
-              <p>{showBalance ? "$32,121.52" : "******"}</p>
-            </div>
-          </div>
-          <button className="bg-transparent currency-display text-gray-400 text-xs py-1 px-3 rounded -mt-7">
-            Deposit
-          </button>
-        </div>
-        <p className="text-[#A4A4A4] text-[13px] sm:text-[16px] mt-10">no active subscription</p>
-    </div>
-  )
-}
+    <div className="bg-gradient-to-b from-[#141E323D] to-[#141E32] p-6 rounded-lg h-auto min-h-[170px">
+       <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center gap-2">
+        <span className="text-gray-400">Balance:</span>
+        <span className="font-medium">
+          {showBalance ? formatCurrency(balance) : "••••••"}
+        </span>
+        <button
+          onClick={() => setShowBalance(!showBalance)}
+          className="text-gray-400 hover:text-white transition"
+          aria-label={showBalance ? "Hide balance" : "Show balance"}
+        >
+          {showBalance ? <Eye size={16} /> : <EyeOff size={16} />}
+        </button>
+      </div>
 
-export default SubWallet
+      <Link href='/deposit'
+        className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white text-sm py-1 px-3 rounded-md transition"
+      >
+        <Plus size={14} />
+        Deposit
+      </Link>
+    </div>
+    </div>
+   
+  );
+};
+
+export default SubWallet;

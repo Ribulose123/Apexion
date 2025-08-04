@@ -3,14 +3,16 @@ import { ArrowRight } from "lucide-react";
 import { FaRegStar } from "react-icons/fa";
 import { CgArrowsExchangeV } from "react-icons/cg";
 import { API_ENDPOINTS } from "../config/api";
+import Link from "next/link";
 
 interface BackendTransaction {
   id: string;
   platformAssetId: string;
   amount: number;
-  type: string;
+  type: string; // 'DEPOSIT', 'WITHDRAWAL', 'TRADE', etc.
   status: string;
   createdAt: string;
+  price?: number; // Added price field
 }
 
 interface BackendAsset {
@@ -18,6 +20,7 @@ interface BackendAsset {
   symbol: string;
   name: string;
   image?: string;
+  currentPrice?: number; // Added current price
 }
 
 interface EnhancedTransaction {
@@ -29,6 +32,8 @@ interface EnhancedTransaction {
   status: string;
   price: string;
   img: string;
+  transactionType: string; // Added transaction type
+  value: string; // Added calculated value
 }
 
 export default function Transactions() {
@@ -45,7 +50,7 @@ export default function Transactions() {
           throw new Error('Authentication token not found');
         }
 
-        // Fetch assets
+        // Fetch assets with current prices
         const assetsResponse = await fetch(API_ENDPOINTS.ASSET.ASSET_LIST, {
           method: 'GET',
           headers: {
@@ -77,18 +82,18 @@ export default function Transactions() {
         const transactionsData = await transactionsResponse.json();
         const backendTransactions = transactionsData?.data || [];
 
-        // Enhance transactions with asset info
+        // Enhance transactions with asset info and calculate values
         const enhancedTransactions = backendTransactions.map((tx: BackendTransaction) => {
           const asset = assets.find((a: BackendAsset) => a.id === tx.platformAssetId) || {
             symbol: 'UNKN',
             name: 'Unknown Asset',
-            image: '/img/default-crypto.png'
+            image: '/img/default-crypto.png',
+            currentPrice: 0
           };
 
-          // Safely format amount
-          const amount = typeof tx.amount === 'number' 
-            ? tx.amount.toFixed(8) 
-            : '0.00000000';
+          const amount = typeof tx.amount === 'number' ? tx.amount.toFixed(8) : '0.00000000';
+          const price = tx.price || asset.currentPrice || 0;
+          const value = (parseFloat(amount) * price).toFixed(2);
 
           return {
             id: tx.id,
@@ -97,8 +102,10 @@ export default function Transactions() {
             amount: amount,
             date: tx.createdAt ? new Date(tx.createdAt).toLocaleDateString() : 'N/A',
             status: tx.status || 'UNKNOWN',
-            price: '0.00', // Default price (you'll need to fetch real prices)
-            img: asset.image || '/img/default-crypto.png'
+            price: price.toFixed(2),
+            img: asset.image || '/img/default-crypto.png',
+            transactionType: tx.type || 'UNKNOWN',
+            value: value
           };
         });
 
@@ -113,6 +120,16 @@ export default function Transactions() {
 
     fetchData();
   }, []);
+
+  const getTypeBadgeColor = (type: string) => {
+    switch(type.toUpperCase()) {
+      case 'DEPOSIT': return 'bg-blue-900/30 text-blue-400';
+      case 'WITHDRAWAL': return 'bg-purple-900/30 text-purple-400';
+      case 'TRADE': return 'bg-indigo-900/30 text-indigo-400';
+      case 'STAKING': return 'bg-green-900/30 text-green-400';
+      default: return 'bg-gray-700 text-gray-400';
+    }
+  };
 
   if (isLoading) {
     return (
@@ -134,9 +151,9 @@ export default function Transactions() {
     <div className="px-3 sm:border sm:border-[#141E32] rounded-xl p-6">
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-xl font-semibold">Recent Transactions</h3>
-        <button className="sm:bg-[#6967AE] sm:text-white text-[#F2AF29] px-3 py-2 rounded-lg text-sm flex items-center gap-1">
+        <Link href='/fund' className="sm:bg-[#6967AE] sm:text-white text-[#F2AF29] px-3 py-2 rounded-lg text-sm flex items-center gap-1">
           View All <ArrowRight size={18}/>
-        </button>
+        </Link>
       </div>
       <div className="rounded-xl overflow-hidden">
         <table className="w-full">
@@ -144,22 +161,22 @@ export default function Transactions() {
             <tr className="text-gray-400 text-sm">
               <th className="p-2"></th>
               <th className="text-left p-2">Transaction</th>
+              <th className="text-left p-2">Type</th>
               <th className="text-left p-2">Amount</th>
               <th className="p-4 table-cell sm:hidden">
                 <div className="flex flex-col">
                   <span className="flex items-center gap-1">Date <CgArrowsExchangeV size={15}/></span>
-                  <span className="flex items-center gap-1">Amount <CgArrowsExchangeV size={15}/></span>
+                  <span className="flex items-center gap-1">Status <CgArrowsExchangeV size={15}/></span>
                 </div>
               </th>
               <th className="text-left p-2 hidden sm:table-cell">Date</th>
-              <th className="text- p-2 hidden sm:table-cell">Status</th>
-             
+              <th className=" p-2 hidden sm:table-cell text-center">Status</th>
             </tr>
           </thead>
           <tbody>
             {transactions.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-8 text-gray-500">
+                <td colSpan={9} className="text-center py-8 text-gray-500">
                   No transactions found
                 </td>
               </tr>
@@ -174,25 +191,38 @@ export default function Transactions() {
                   </td>
                   <td className="p-2">
                     <div className="flex items-center space-x-2">
-                     
+                      
                       <div>
                         <div className="text-xs sm:text-sm">{transaction.type}</div>
-                        <div className="text-xs sm:text-sm text-gray-400">{transaction.sign}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="p-2">${transaction.price}</td>
+                  <td className="p-2">
+                    <span className={`px-2 py-1 text-xs rounded-full ${getTypeBadgeColor(transaction.transactionType)}`}>
+                      {transaction.transactionType}
+                    </span>
+                  </td>
+                  <td className="p-2">
+                    {transaction.amount} {transaction.sign}
+                  </td>
                   <td className="p-2 table-cell sm:hidden">
                     <div className="flex flex-col">
                       <span className="text-xs">{transaction.date}</span>
-                      <span className="text-xs">{transaction.amount} {transaction.sign}</span>
+                      <span className={`text-xs ${
+                        transaction.status === 'COMPLETED' ? 'text-green-400' :
+                        transaction.status === 'PENDING' ? 'text-yellow-400' :
+                        transaction.status === 'FAILED' ? 'text-red-400' :
+                        'text-gray-400'
+                      }`}>
+                        {transaction.status}
+                      </span>
                     </div>
                   </td>
                   <td className="p-2 hidden sm:table-cell">{transaction.date}</td>
                   <td className="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap text-center hidden sm:table-cell">
                     <span
                       className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        transaction.status === 'COMPLETED' ? 'bg-green-900/30 text-xl text-green-400' :
+                        transaction.status === 'COMPLETED' ? 'bg-green-900/30 text-green-400' :
                         transaction.status === 'PENDING' ? 'bg-yellow-900/30 text-yellow-400' :
                         transaction.status === 'FAILED' ? 'bg-red-900/30 text-red-400' :
                         'bg-gray-700 text-gray-400'
@@ -200,11 +230,6 @@ export default function Transactions() {
                     >
                       {transaction.status}
                     </span>
-                  </td>
-                  <td className="p-2 text-right sm:hidden">
-                    <button className="rounded-full text-white">
-                      ...
-                    </button>
                   </td>
                 </tr>
               ))
