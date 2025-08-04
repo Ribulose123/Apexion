@@ -32,7 +32,7 @@ interface TransactionRequest {
   platformAssetId: string;
   amount: number;
   type: TransactionType;
-  signalId: string;
+  signal: string;
 }
 
 const SYMBOL_TO_COINGECKO_ID: Record<string, string> = {
@@ -178,7 +178,7 @@ const SignalCard: React.FC<SignalProps> = ({
         platformAssetId: selectedAssetId,
         amount: purchaseAmount,
         type: TransactionType.signal,
-        signalId: id
+        signal:id,
       };
 
       console.log('Transaction data being sent:', transactionData); // Debug log
@@ -346,6 +346,7 @@ const SignalGrid: React.FC = () => {
         }
 
         const result = await response.json();
+        console.log(result)
         setSignals(result.data);
       } catch (err) {
         console.error("Error fetching signals:", err);

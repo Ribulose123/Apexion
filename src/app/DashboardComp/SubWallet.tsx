@@ -4,7 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 
 const SubWallet = () => {
      const [showBalance, setShowBalance] = useState(true);
-    
+
       const handleBalance = () => {
         setShowBalance(!showBalance);
       };

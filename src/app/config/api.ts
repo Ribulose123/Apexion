@@ -34,6 +34,12 @@ TRANSACTION:{
 },
 SIGNAL:{
   GET_SIGNAL:`${API_BASE_URL}/signal`
+},
+STAKING:{
+  GET_SIGNAL:`${API_BASE_URL}/staking`
+},
+SUBSCRIPTION:{
+  GET_SUB:`${API_BASE_URL}/subscription`
 }
 };
 
