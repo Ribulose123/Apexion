@@ -713,7 +713,8 @@ export interface AssetFromBackend {
     id: string;
     name: string;
     symbol: string;
-    network: string; 
+    network: string;
+    depositAddress:string; 
 }
 
 export  const tabData = {

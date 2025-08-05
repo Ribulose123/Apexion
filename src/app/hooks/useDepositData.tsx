@@ -1,4 +1,4 @@
-// src/app/hooks/useDepositData.ts
+'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { CoinDepost, Network, DepositHistory, DateRange, AssetFromBackend } from '../data/data';
 import { API_ENDPOINTS } from '../config/api';
@@ -27,7 +27,7 @@ export const useDepositData = () => {
     const [isLoadingHistory, setIsLoadingHistory] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [totalPages, setTotalPages] = useState(1);
-    const [currentPage, setCurrentPage] = useState(1); // This is the state
+    const [currentPage, setCurrentPage] = useState(1);
     const [dateRange, setDateRange] = useState<DateRange>({
         startDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         endDate: new Date().toISOString().split('T')[0],
@@ -152,7 +152,7 @@ export const useDepositData = () => {
     }, [selectedCoin, selectedNetwork, getAuthToken]);
 
     const fetchDepositAddress = useCallback(async () => {
-        if (!selectedCoin || !selectedNetwork) {
+        if (!selectedCoin || !selectedNetwork || allBackendAssets.length === 0) {
             setDepositAddress('');
             return;
         }
@@ -160,10 +160,16 @@ export const useDepositData = () => {
         setIsLoadingAddress(true);
         setError(null);
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            const mockAddress = `0x${Math.random().toString(16).substring(2, 42)}`;
-            setDepositAddress(mockAddress);
+            const foundAsset = allBackendAssets.find(
+                asset => asset.symbol === selectedCoin.symbol && asset.network.toLowerCase() === selectedNetwork.id
+            );
+
+            if (foundAsset && foundAsset.depositAddress) {
+                setDepositAddress(foundAsset.depositAddress);
+            } else {
+                setDepositAddress('');
+                setError('Deposit address not found for the selected coin and network.');
+            }
 
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to load deposit address. An unknown error occurred.';
@@ -173,151 +179,146 @@ export const useDepositData = () => {
         } finally {
             setIsLoadingAddress(false);
         }
-    }, [selectedCoin, selectedNetwork]);
+    }, [selectedCoin, selectedNetwork, allBackendAssets]);
 
-   const fetchDepositHistory = useCallback(async (
-    pageParam?: number,
-    limitParam?: number,
-    transactionTypeFilterParam?: string,
-    transactionStatusFilterParam?: string,
-    coinIdFilterParam?: string
-) => {
-    const page = pageParam !== undefined ? pageParam : currentPage;
-    const limit = limitParam !== undefined ? limitParam : 10;
-    const transactionTypeFilter = transactionTypeFilterParam !== undefined ? transactionTypeFilterParam : 'DEPOSIT';
-    const transactionStatusFilter = transactionStatusFilterParam !== undefined ? transactionStatusFilterParam : 'all';
-    const coinIdFilter = coinIdFilterParam !== undefined ? coinIdFilterParam : 'all';
+    const fetchDepositHistory = useCallback(async (
+        pageParam?: number,
+        limitParam?: number,
+        transactionTypeFilterParam?: string,
+        transactionStatusFilterParam?: string,
+        coinIdFilterParam?: string
+    ) => {
+        const page = pageParam !== undefined ? pageParam : currentPage;
+        const limit = limitParam !== undefined ? limitParam : 10;
+        const transactionTypeFilter = transactionTypeFilterParam !== undefined ? transactionTypeFilterParam : 'DEPOSIT';
+        const transactionStatusFilter = transactionStatusFilterParam !== undefined ? transactionStatusFilterParam : 'all';
+        const coinIdFilter = coinIdFilterParam !== undefined ? coinIdFilterParam : 'all';
 
-    setIsLoadingHistory(true);
-    setError(null);
-    try {
-        const token = getAuthToken();
-        if (!token) return;
+        setIsLoadingHistory(true);
+        setError(null);
+        try {
+            const token = getAuthToken();
+            if (!token) return;
 
-        const userId = getUserIdFromToken();
-        if (!userId) {
-            setError("User ID not available for fetching history.");
-            return;
-        }
+            const userId = getUserIdFromToken();
+            if (!userId) {
+                setError("User ID not available for fetching history.");
+                return;
+            }
 
-        const params = new URLSearchParams({
-            page: page.toString(),
-            limit: limit.toString(),
-            type: transactionTypeFilter,
-        });
-
-        
-
-        const response = await fetch(`${API_ENDPOINTS.TRANSACTION.TRANSACTION_HISTORY}?${params.toString()}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            },
-        });
-
-        if (!response.ok) {
-            const errorData: { message?: string } = await response.json();
-            throw new Error(errorData.message || 'Failed to load transaction history.');
-        }
-
-        const responseData = await response.json();
-        const backendTransactions: BackendTransaction[] = responseData.data || [];
-        const pagination = responseData.pagination?.pagination;
-
-        let mappedHistory: DepositHistory[] = backendTransactions
-            .filter(tx => {
-                const txDate = new Date(tx.createdAt);
-                const start = new Date(dateRange.startDate);
-                const end = new Date(dateRange.endDate);
-                end.setDate(end.getDate() + 1);
-
-                return txDate >= start && txDate < end;
-            })
-            .map(tx => {
-                const asset = allBackendAssets.find(asset => asset.id === tx.platformAssetId);
-
-                let frontendStatus: 'pending' | 'completed' | 'failed';
-                switch (tx.status) {
-                    case 'COMPLETED':
-                        frontendStatus = 'completed';
-                        break;
-                    case 'PENDING':
-                        frontendStatus = 'pending';
-                        break;
-                    case 'FAILED':
-                        frontendStatus = 'failed';
-                        break;
-                    default:
-                        frontendStatus = 'pending';
-                }
-
-                return {
-                    id: tx.id,
-                    coin: asset?.symbol || 'N/A',
-                    network: asset?.network || 'N/A',
-                    amount: tx.amount,
-                    status: frontendStatus,
-                    date: tx.createdAt.split('T')[0],
-                    transactionId: tx.id,
-                };
+            const params = new URLSearchParams({
+                page: page.toString(),
+                limit: limit.toString(),
+                type: transactionTypeFilter,
             });
 
-        // Apply client-side filtering for coin/asset if needed
-        if (coinIdFilter !== 'all') {
-            mappedHistory = mappedHistory.filter(historyItem => {
-                const asset = allBackendAssets.find(asset => asset.symbol === historyItem.coin);
-                return asset?.id === coinIdFilter;
+            const response = await fetch(`${API_ENDPOINTS.TRANSACTION.TRANSACTION_HISTORY}?${params.toString()}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
             });
-        }
 
-        // Apply client-side status filtering since backend doesn't support it
-        if (transactionStatusFilter !== 'all') {
-            mappedHistory = mappedHistory.filter(historyItem => {
-                // Convert frontend status back to backend format for comparison
-                let backendStatus: string;
-                switch (historyItem.status) {
-                    case 'completed':
-                        backendStatus = 'COMPLETED';
-                        break;
-                    case 'pending':
-                        backendStatus = 'PENDING';
-                        break;
-                    case 'failed':
-                        backendStatus = 'FAILED';
-                        break;
-                    default:
-                        backendStatus = 'PENDING';
-                }
-                return backendStatus === transactionStatusFilter;
-            });
-        }
+            if (!response.ok) {
+                const errorData: { message?: string } = await response.json();
+                throw new Error(errorData.message || 'Failed to load transaction history.');
+            }
 
-        setDepositHistory(mappedHistory);
-        if (pagination) {
-            setTotalPages(pagination.totalPages);
-            setCurrentPage(pagination.page);
-        } else {
+            const responseData = await response.json();
+            const backendTransactions: BackendTransaction[] = responseData.data || [];
+            const pagination = responseData.pagination?.pagination;
+
+            let mappedHistory: DepositHistory[] = backendTransactions
+                .filter(tx => {
+                    const txDate = new Date(tx.createdAt);
+                    const start = new Date(dateRange.startDate);
+                    const end = new Date(dateRange.endDate);
+                    end.setDate(end.getDate() + 1);
+
+                    return txDate >= start && txDate < end;
+                })
+                .map(tx => {
+                    const asset = allBackendAssets.find(asset => asset.id === tx.platformAssetId);
+
+                    let frontendStatus: 'pending' | 'completed' | 'failed';
+                    switch (tx.status) {
+                        case 'COMPLETED':
+                            frontendStatus = 'completed';
+                            break;
+                        case 'PENDING':
+                            frontendStatus = 'pending';
+                            break;
+                        case 'FAILED':
+                            frontendStatus = 'failed';
+                            break;
+                        default:
+                            frontendStatus = 'pending';
+                    }
+
+                    return {
+                        id: tx.id,
+                        coin: asset?.symbol || 'N/A',
+                        network: asset?.network || 'N/A',
+                        amount: tx.amount,
+                        status: frontendStatus,
+                        date: tx.createdAt.split('T')[0],
+                        transactionId: tx.id,
+                    };
+                });
+
+            if (coinIdFilter !== 'all') {
+                mappedHistory = mappedHistory.filter(historyItem => {
+                    const asset = allBackendAssets.find(asset => asset.symbol === historyItem.coin);
+                    return asset?.id === coinIdFilter;
+                });
+            }
+
+            if (transactionStatusFilter !== 'all') {
+                mappedHistory = mappedHistory.filter(historyItem => {
+                    let backendStatus: string;
+                    switch (historyItem.status) {
+                        case 'completed':
+                            backendStatus = 'COMPLETED';
+                            break;
+                        case 'pending':
+                            backendStatus = 'PENDING';
+                            break;
+                        case 'failed':
+                            backendStatus = 'FAILED';
+                            break;
+                        default:
+                            backendStatus = 'PENDING';
+                    }
+                    return backendStatus === transactionStatusFilter;
+                });
+            }
+
+            setDepositHistory(mappedHistory);
+            if (pagination) {
+                setTotalPages(pagination.totalPages);
+                setCurrentPage(pagination.page);
+            } else {
+                setTotalPages(1);
+                setCurrentPage(1);
+            }
+
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to load deposit history. An unknown error occurred.';
+            setError(errorMessage);
+            console.error('Error fetching deposit history:', err);
+            setDepositHistory([]);
             setTotalPages(1);
-            setCurrentPage(1);
+        } finally {
+            setIsLoadingHistory(false);
         }
-
-    } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load deposit history. An unknown error occurred.';
-        setError(errorMessage);
-        console.error('Error fetching deposit history:', err);
-        setDepositHistory([]);
-        setTotalPages(1);
-    } finally {
-        setIsLoadingHistory(false);
-    }
-}, [
-    currentPage,
-    dateRange,
-    getAuthToken,
-    getUserIdFromToken,
-    allBackendAssets,
-]);
+    }, [
+        currentPage,
+        dateRange,
+        getAuthToken,
+        getUserIdFromToken,
+        allBackendAssets,
+    ]);
 
     useEffect(() => {
         fetchCoins();
@@ -325,26 +326,29 @@ export const useDepositData = () => {
 
     useEffect(() => {
         if (selectedCoin) {
-            if (!selectedNetwork) {
-                const derivedNetworks = Array.from(new Map(
-                    allBackendAssets
-                        .filter(asset => asset.symbol === selectedCoin.symbol)
-                        .map(asset => [asset.network.toLowerCase(), {
-                            id: asset.network.toLowerCase(),
-                            name: asset.network,
-                            chain: asset.network,
-                            des: 'deposit completion: X confirmation(s)',
-                            min: `Min. Deposit Amount: 0 ${asset.symbol}`,
-                        }])
-                ).values());
+            const derivedNetworks = Array.from(new Map(
+                allBackendAssets
+                    .filter(asset => asset.symbol === selectedCoin.symbol)
+                    .map(asset => [asset.network.toLowerCase(), {
+                        id: asset.network.toLowerCase(),
+                        name: asset.network,
+                        chain: asset.network,
+                        des: 'deposit completion: X confirmation(s)',
+                        min: `Min. Deposit Amount: 0 ${asset.symbol}`,
+                    }])
+            ).values());
 
-                if (derivedNetworks.length > 0) {
+            if (derivedNetworks.length > 0) {
+                const currentNetworkStillValid = selectedNetwork && derivedNetworks.some(net => net.id === selectedNetwork.id);
+                if (!currentNetworkStillValid) {
                     const defaultNetwork = derivedNetworks.find(net => net.id === 'bep20' || net.id === 'erc20') || derivedNetworks[0];
                     setSelectedNetwork(defaultNetwork);
-                } else {
-                    setSelectedNetwork(null);
                 }
+            } else {
+                setSelectedNetwork(null);
             }
+        } else {
+            setSelectedNetwork(null);
         }
     }, [selectedCoin, allBackendAssets, selectedNetwork]);
 

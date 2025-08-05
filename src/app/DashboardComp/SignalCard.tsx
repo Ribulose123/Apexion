@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useEffect, useCallback } from 'react';
 import { API_ENDPOINTS } from '../config/api';
 import { TransactionType } from '../data/data';
@@ -17,6 +17,7 @@ interface PlatformAsset {
   name: string;
   symbol: string;
   networkId?: string;
+  depositAddress?: string; // Added depositAddress
 }
 
 interface TransactionRequest {
@@ -36,6 +37,16 @@ interface CoinGeckoPriceResponse {
 interface AssetCalculation {
   amountInAsset: number;
   assetSymbol: string;
+}
+
+interface TransactionResponseData {
+  id: string;
+  status: string;
+}
+
+interface TransactionResponse {
+  message: string;
+  data: TransactionResponseData;
 }
 
 const SYMBOL_TO_COINGECKO_ID: Record<string, string> = {
@@ -90,7 +101,11 @@ const SignalCard: React.FC<SignalProps> = ({
   strength,
   price = 0,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // New state variables for the three modals
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [isPendingModalOpen, setIsPendingModalOpen] = useState(false);
+
   const [platformAssets, setPlatformAssets] = useState<PlatformAsset[]>([]);
   const [selectedAssetId, setSelectedAssetId] = useState('');
   const [purchaseAmount, setPurchaseAmount] = useState(price ?? 0);
@@ -99,8 +114,10 @@ const SignalCard: React.FC<SignalProps> = ({
   const [userId, setUserId] = useState<string>('');
   const [assetPrices, setAssetPrices] = useState<CoinGeckoPriceResponse>({});
   const [calculation, setCalculation] = useState<AssetCalculation | null>(null);
+  const [transactionData, setTransactionData] = useState<TransactionResponseData | null>(null); // To store transaction ID and status
 
-  const fetchPlatformAssetsWithPrices = async () => {
+  // Function to fetch assets and open the FIRST modal (deposit address)
+  const fetchAssetsAndOpenDepositModal = async () => {
     setIsLoading(true);
     setError('');
 
@@ -115,9 +132,9 @@ const SignalCard: React.FC<SignalProps> = ({
 
       const res = await fetch(API_ENDPOINTS.ASSET.ASSET_LIST, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!res.ok) throw new Error('Failed to fetch platform assets');
@@ -127,10 +144,10 @@ const SignalCard: React.FC<SignalProps> = ({
       if (assets.length === 0) throw new Error('No assets available for purchase');
 
       setPlatformAssets(assets);
-      setSelectedAssetId(assets[0]?.id || '');
+      setSelectedAssetId(assets[0]?.id || ''); // Select the first asset by default
 
       const coinGeckoIds = assets
-        .map(a => getCoinGeckoId(a))
+        .map((a) => getCoinGeckoId(a))
         .filter(Boolean)
         .join(',');
 
@@ -140,51 +157,36 @@ const SignalCard: React.FC<SignalProps> = ({
       );
 
       setAssetPrices(pricesRes.data);
-      setIsModalOpen(true);
+      setIsDepositModalOpen(true); // Open the first modal
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to initiate purchase');
-      setIsModalOpen(false);
+      setIsDepositModalOpen(false);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getAssetPrice = useCallback((assetId: string): number => {
-    const asset = platformAssets.find(a => a.id === assetId);
-    if (!asset) return 0;
-    const coinGeckoId = getCoinGeckoId(asset);
-    return assetPrices[coinGeckoId]?.usd || 0;
-  }, [platformAssets, assetPrices]);
+  // Function to proceed from Deposit Modal to Confirmation Modal
+  const handleProceedToPurchase = () => {
+    setIsDepositModalOpen(false); // Close first modal
+    setIsConfirmationModalOpen(true); // Open second modal
+  };
 
-  useEffect(() => {
-    if (selectedAssetId && purchaseAmount > 0) {
-      const asset = platformAssets.find(a => a.id === selectedAssetId);
-      if (asset) {
-        const assetPrice = getAssetPrice(asset.id);
-        if (assetPrice > 0) {
-          const amountInAsset = purchaseAmount / assetPrice;
-          setCalculation({
-            amountInAsset,
-            assetSymbol: asset.symbol
-          });
-          return;
-        }
-      }
-    }
-    setCalculation(null);
-  }, [selectedAssetId, purchaseAmount, platformAssets, getAssetPrice]);
-
-  const handlePurchase = async () => {
+  // Function for the final purchase confirmation
+  const handlePurchaseConfirmation = async () => {
     setIsLoading(true);
     setError('');
 
     try {
+      if (purchaseAmount <= 0 || purchaseAmount > price) {
+        throw new Error(`Amount must be greater than 0 and not exceed $${price.toFixed(2)}`);
+      }
       const token = localStorage.getItem('authToken');
       if (!token) throw new Error('Authentication required');
 
       if (!userId) throw new Error('User ID not found');
 
-      const transactionData: TransactionRequest = {
+      const transactionDataRequest: TransactionRequest = {
         userId: userId,
         platformAssetId: selectedAssetId,
         amount: purchaseAmount,
@@ -196,9 +198,9 @@ const SignalCard: React.FC<SignalProps> = ({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(transactionData)
+        body: JSON.stringify(transactionDataRequest),
       });
 
       if (!res.ok) {
@@ -207,8 +209,12 @@ const SignalCard: React.FC<SignalProps> = ({
         throw new Error(errorData.message || 'Purchase failed');
       }
 
-      setIsModalOpen(false);
-      alert(`Successfully purchased ${name} signal for $${purchaseAmount.toFixed(2)}!`);
+      const result: TransactionResponse = await res.json();
+      setTransactionData(result.data); // Store transaction ID and status
+
+      setIsConfirmationModalOpen(false); // Close second modal
+      setIsPendingModalOpen(true); // Open third modal
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Purchase failed');
     } finally {
@@ -216,32 +222,56 @@ const SignalCard: React.FC<SignalProps> = ({
     }
   };
 
+  const getAssetPrice = useCallback((assetId: string): number => {
+    const asset = platformAssets.find((a) => a.id === assetId);
+    if (!asset) return 0;
+    const coinGeckoId = getCoinGeckoId(asset);
+    return assetPrices[coinGeckoId]?.usd || 0;
+  }, [platformAssets, assetPrices]);
+
+  useEffect(() => {
+    if (selectedAssetId && purchaseAmount > 0) {
+      const asset = platformAssets.find((a) => a.id === selectedAssetId);
+      if (asset) {
+        const assetPrice = getAssetPrice(asset.id);
+        if (assetPrice > 0) {
+          const amountInAsset = purchaseAmount / assetPrice;
+          setCalculation({
+            amountInAsset,
+            assetSymbol: asset.symbol,
+          });
+          return;
+        }
+      }
+    }
+    setCalculation(null);
+  }, [selectedAssetId, purchaseAmount, platformAssets, getAssetPrice]);
+
+  const selectedAsset = platformAssets.find((a) => a.id === selectedAssetId);
+
   return (
     <>
+      {/* Existing SignalCard UI */}
       <div className="rounded-2xl p-[1px] bg-gradient-to-b from-[#06023daf] via-[#240a6b] to-[#644ca1] shadow-lg h-[250px] sm:w-[365px]">
         <div className="rounded-2xl p-4 h-full flex flex-col justify-between gradient-border">
           <div>
             <h2 className="text-[#D2D1EE] sm:text-[20px] text-[16px] font-medium mb-8">{name}</h2>
-
             <div className="flex justify-between text-[12px] border-b border-[#6967AE29] font-semibold sm:text-[16px] text-[#C4C4C4] mb-2">
               <span>Amount</span>
               <span className="text-white text-[12px] font-semibold sm:text-[16px]">{amount}</span>
             </div>
-
             <div className="flex justify-between text-xs text-gray-400 mb-2">
               <span className='text-[12px] font-semibold sm:text-[16px]'>Signal Strength</span>
               <span className="text-[#00F66C] text-[12px] font-semibold sm:text-[14px]">{strength}</span>
             </div>
-
             <div className="flex justify-between text-xs text-gray-400 currency-display rounded-lg">
               <span className='text-[12px] font-semibold sm:text-[16px] text-white'>Price</span>
               <span className="text-white">${price.toFixed(2)}</span>
             </div>
           </div>
-
           <button
             className="w-full bg-gradient-to-b from-[#6967AE]/30 to-[#6967AE]/10 text-white py-2 rounded-lg text-sm hover:opacity-80 transition cursor-pointer"
-            onClick={fetchPlatformAssetsWithPrices}
+            onClick={fetchAssetsAndOpenDepositModal} // Call the new function
             disabled={isLoading}
           >
             {isLoading ? <LoadingSpinner /> : `Buy`}
@@ -249,21 +279,82 @@ const SignalCard: React.FC<SignalProps> = ({
         </div>
       </div>
 
-      {isModalOpen && (
+      {/* NEW: First Modal (Deposit Address) */}
+      {isDepositModalOpen && (
+        <div className="fixed inset-0 bg-black/55 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-b from-white to-purple-50 rounded-2xl p-6 w-full max-w-md border border-purple-200 shadow-lg text-black text-center">
+            <h3 className="text-xl font-bold mb-4">Deposit Address for Signal Purchase</h3>
+            <p className="mb-4">
+              Please choose your preferred deposit asset.
+            </p>
+            <div className="mb-4">
+              <label className="block text-sm mb-2">
+                Select Asset
+              </label>
+              <select
+                value={selectedAssetId}
+                onChange={(e) => setSelectedAssetId(e.target.value)}
+                className="w-full border rounded-lg p-3 focus:outline-none"
+              >
+                {platformAssets.map(asset => (
+                  <option key={asset.id} value={asset.id}>
+                    {asset.name} ({asset.symbol})
+                  </option>
+                ))}
+              </select>
+            </div>
+            {selectedAsset && selectedAsset.depositAddress ? (
+              <div className="bg-gray-100 p-4 rounded-lg mb-6 text-left">
+                <p className="text-sm font-semibold mb-2">Deposit Address ({selectedAsset.symbol}):</p>
+                <p className="break-words font-mono bg-white p-2 rounded border border-gray-300">
+                  {selectedAsset.depositAddress}
+                </p>
+                <button
+                  onClick={() => navigator.clipboard.writeText(selectedAsset.depositAddress as string)}
+                  className="mt-2 text-sm text-blue-600 hover:text-blue-800"
+                >
+                  Copy Address
+                </button>
+              </div>
+            ) : (
+              <p className="text-red-500 mb-4">Deposit address not available for this asset.</p>
+            )}
+            {error && (
+              <div className="text-red-500 text-sm mb-4 p-2 bg-red-900/30 rounded">
+                {error}
+              </div>
+            )}
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setIsDepositModalOpen(false)}
+                className="px-4 py-2 border rounded-lg transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleProceedToPurchase}
+                className="px-4 py-2 bg-purple-800 text-white rounded-lg hover:opacity-90 transition"
+              >
+                Proceed to Purchase
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Second Modal (Confirmation) */}
+      {isConfirmationModalOpen && (
         <div className="fixed inset-0 bg-black/55 bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-gradient-to-b from-white to-purple-50 rounded-2xl p-6 w-full max-w-md border border-purple-200 shadow-lg">
             <h3 className="text-purple-900 text-xl font-bold mb-4">Confirm Purchase</h3>
-
             <div className="mb-6">
               <p className="text-purple-700 mb-1">You are purchasing:</p>
               <p className="text-purple-900 font-medium text-lg">{name}</p>
-
               <div className="flex justify-between mt-4">
                 <span className="text-purple-700">Signal Price:</span>
                 <span className="text-purple-900 font-bold">${price.toFixed(2)} USD</span>
               </div>
             </div>
-
             <div className="mb-4">
               <label className="block text-purple-700 text-sm mb-2">Purchase Amount (USD)</label>
               <input
@@ -277,7 +368,6 @@ const SignalCard: React.FC<SignalProps> = ({
               />
               <p className="text-xs text-purple-500 mt-1">Max: ${price.toFixed(2)}</p>
             </div>
-
             {calculation && calculation.amountInAsset && (
               <div className="mb-4 p-3 bg-purple-50 rounded-lg">
                 <p className="text-purple-700 text-sm">
@@ -285,51 +375,62 @@ const SignalCard: React.FC<SignalProps> = ({
                 </p>
               </div>
             )}
-
             <div className="mb-6">
-              <label className="block text-purple-700 text-sm mb-2">Select Payment Asset</label>
-              <select
-                value={selectedAssetId}
-                onChange={(e) => setSelectedAssetId(e.target.value)}
-                className="w-full bg-white border border-purple-300 text-purple-900 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-purple-500"
-              >
-                {platformAssets.map(asset => {
-                  const assetPrice = getAssetPrice(asset.id);
-                  return (
-                    <option
-                      key={asset.id}
-                      value={asset.id}
-                      className="bg-white text-purple-900"
-                    >
-                      {asset.name} ({asset.symbol}) - ${assetPrice.toFixed(2)}/coin
-                    </option>
-                  );
-                })}
-              </select>
+              <label className="block text-purple-700 text-sm mb-2">Payment Asset</label>
+              <div className="w-full border rounded-lg p-3 bg-gray-100">
+                {selectedAsset ? `${selectedAsset.name} (${selectedAsset.symbol})` : 'No asset selected'}
+              </div>
             </div>
-
             {error && (
               <div className="text-red-500 text-sm mb-4 p-2 bg-red-100 rounded">
                 {error}
               </div>
             )}
-
             <div className="flex justify-end gap-3">
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => setIsConfirmationModalOpen(false)}
                 disabled={isLoading}
                 className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
-                onClick={handlePurchase}
+                onClick={handlePurchaseConfirmation} // Call the new confirmation function
                 disabled={isLoading || purchaseAmount <= 0 || purchaseAmount > price}
                 className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center min-w-[120px]"
               >
-                {isLoading ? <LoadingSpinner /> : 'Deposit'}
+                {isLoading ? <LoadingSpinner /> : 'Confirm Purchase'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* NEW: Third Modal (Pending Status) */}
+      {isPendingModalOpen && transactionData && (
+        <div className="fixed inset-0 bg-black/55 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-b from-white to-purple-50 rounded-2xl p-6 w-full max-w-md border border-purple-200 shadow-lg text-black text-center">
+            <h3 className="text-xl font-bold mb-4">Purchase Initiated</h3>
+            <p className="mb-2">
+              Your signal purchase request has been submitted.
+            </p>
+            <div className="bg-gray-100 p-4 rounded-lg mb-4 text-left">
+              <p className="text-sm font-semibold">Transaction ID:</p>
+              <p className="break-words font-mono text-xs">{transactionData.id}</p>
+              <p className="text-sm font-semibold mt-2">Status:</p>
+              <p className="text-lg font-bold text-yellow-600">
+                {transactionData.status}
+              </p>
+            </div>
+            <p className="text-sm text-gray-700">
+              An administrator will review and approve your transaction shortly. You will be notified when the status changes to Success.
+            </p>
+            <button
+              onClick={() => setIsPendingModalOpen(false)}
+              className="mt-6 w-full bg-purple-800 text-white py-2 rounded-lg hover:opacity-90 transition"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
@@ -393,8 +494,8 @@ const SignalGrid: React.FC = () => {
         <p>{error}</p>
       </div>
     );
-  }
-  
+    }
+
   return (
     <div className="mt-6">
       <h2 className="text-white text-lg font-medium mb-4">Signals</h2>

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useEffect, useState, useCallback } from 'react';
 import { API_ENDPOINTS } from '../config/api';
 import { TransactionType } from '../data/data';
@@ -17,6 +17,7 @@ interface PlatformAsset {
   name: string;
   symbol: string;
   networkId?: string;
+  depositAddress?: string; // Added depositAddress for consistency
 }
 
 interface TransactionRequest {
@@ -39,6 +40,16 @@ interface CoinGeckoPriceResponse {
 interface AssetCalculation {
   amountInAsset: number;
   assetSymbol: string;
+}
+
+interface TransactionResponseData {
+  id: string;
+  status: string;
+}
+
+interface TransactionResponse {
+  message: string;
+  data: TransactionResponseData;
 }
 
 const SYMBOL_TO_COINGECKO_ID: Record<string, string> = {
@@ -87,7 +98,11 @@ const getUserIdFromToken = (token: string): string | null => {
 };
 
 const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // New state variables for the three modals
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [isPendingModalOpen, setIsPendingModalOpen] = useState(false);
+
   const [platformAssets, setPlatformAssets] = useState<PlatformAsset[]>([]);
   const [selectedAssetId, setSelectedAssetId] = useState('');
   const [stakeAmount, setStakeAmount] = useState(price ?? 0);
@@ -96,8 +111,10 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
   const [userId, setUserId] = useState<string>('');
   const [assetPrices, setAssetPrices] = useState<CoinGeckoPriceResponse>({});
   const [calculation, setCalculation] = useState<AssetCalculation | null>(null);
+  const [transactionData, setTransactionData] = useState<TransactionResponseData | null>(null); // To store transaction ID and status
 
-  const fetchPlatformAssetsWithPrices = async () => {
+  // Function to fetch assets and open the FIRST modal (deposit address)
+  const fetchAssetsAndOpenDepositModal = async () => {
     setIsLoading(true);
     setError('');
 
@@ -112,9 +129,9 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
 
       const res = await fetch(API_ENDPOINTS.ASSET.ASSET_LIST, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (!res.ok) throw new Error('Failed to fetch platform assets');
@@ -124,10 +141,10 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
       if (assets.length === 0) throw new Error('No assets available for staking');
 
       setPlatformAssets(assets);
-      setSelectedAssetId(assets[0]?.id || '');
+      setSelectedAssetId(assets[0]?.id || ''); // Select the first asset by default
 
       const coinGeckoIds = assets
-        .map(a => getCoinGeckoId(a))
+        .map((a) => getCoinGeckoId(a))
         .filter(Boolean)
         .join(',');
 
@@ -137,47 +154,29 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
       );
 
       setAssetPrices(pricesRes.data);
-      setIsModalOpen(true);
+      setIsDepositModalOpen(true); // Open the first modal
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to initiate staking');
-      setIsModalOpen(false);
+      setIsDepositModalOpen(false);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getAssetPrice = useCallback((assetId: string): number => {
-    const asset = platformAssets.find(a => a.id === assetId);
-    if (!asset) return 0;
-    const coinGeckoId = getCoinGeckoId(asset);
-    return assetPrices[coinGeckoId]?.usd || 0;
-  }, [platformAssets, assetPrices]);
+  // Function to proceed from Deposit Modal to Confirmation Modal
+  const handleProceedToStake = () => {
+    setIsDepositModalOpen(false); // Close first modal
+    setIsConfirmationModalOpen(true); // Open second modal
+  };
 
-  useEffect(() => {
-    if (selectedAssetId && stakeAmount > 0) {
-      const asset = platformAssets.find(a => a.id === selectedAssetId);
-      if (asset) {
-        const assetPrice = getAssetPrice(asset.id);
-        if (assetPrice > 0) {
-          const amountInAsset = stakeAmount / assetPrice;
-          setCalculation({
-            amountInAsset,
-            assetSymbol: asset.symbol
-          });
-          return;
-        }
-      }
-    }
-    setCalculation(null);
-  }, [selectedAssetId, stakeAmount, platformAssets, getAssetPrice]); // Changed purchaseAmount to stakeAmount
-
-  const handleStake = async () => {
+  // Function for the final stake confirmation
+  const handleStakeConfirmation = async () => {
     setIsLoading(true);
     setError('');
 
     try {
       if (stakeAmount < min || stakeAmount > max) {
-        throw new Error(`Amount must be between ${min} and ${max}`);
+        throw new Error(`Amount must be between ${min.toFixed(2)} and ${max.toFixed(2)}`);
       }
 
       const token = localStorage.getItem('authToken');
@@ -185,24 +184,24 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
 
       if (!userId) throw new Error('User ID not found');
 
-      const transactionData: TransactionRequest = {
+      const transactionDataRequest: TransactionRequest = {
         userId: userId,
         amount: stakeAmount,
         platformAssetId: selectedAssetId,
         type: TransactionType.stake,
         staking: {
           id: id,
-          amount: stakeAmount
-        }
+          amount: stakeAmount,
+        },
       };
 
       const res = await fetch(API_ENDPOINTS.TRANSACTION.CREATE_TRANCSACTION, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(transactionData)
+        body: JSON.stringify(transactionDataRequest),
       });
 
       if (!res.ok) {
@@ -211,8 +210,12 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
         throw new Error(errorData.message || 'Staking failed');
       }
 
-      setIsModalOpen(false);
-      alert(`Successfully staked $${stakeAmount.toFixed(2)} in pool ${id}!`); // Added pool ID to alert
+      const result: TransactionResponse = await res.json();
+      setTransactionData(result.data); // Store transaction ID and status
+
+      setIsConfirmationModalOpen(false); // Close second modal
+      setIsPendingModalOpen(true); // Open third modal
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Staking failed');
     } finally {
@@ -220,8 +223,36 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
     }
   };
 
+  const getAssetPrice = useCallback((assetId: string): number => {
+    const asset = platformAssets.find((a) => a.id === assetId);
+    if (!asset) return 0;
+    const coinGeckoId = getCoinGeckoId(asset);
+    return assetPrices[coinGeckoId]?.usd || 0;
+  }, [platformAssets, assetPrices]);
+
+  useEffect(() => {
+    if (selectedAssetId && stakeAmount > 0) {
+      const asset = platformAssets.find((a) => a.id === selectedAssetId);
+      if (asset) {
+        const assetPrice = getAssetPrice(asset.id);
+        if (assetPrice > 0) {
+          const amountInAsset = stakeAmount / assetPrice;
+          setCalculation({
+            amountInAsset,
+            assetSymbol: asset.symbol,
+          });
+          return;
+        }
+      }
+    }
+    setCalculation(null);
+  }, [selectedAssetId, stakeAmount, platformAssets, getAssetPrice]);
+
+  const selectedAsset = platformAssets.find((a) => a.id === selectedAssetId);
+
   return (
     <>
+      {/* Existing PoolCard UI */}
       <div className="rounded-xl bg-gradient-to-b from-[#06023daf] from-25% via-[#240a6b] to-[#644ca1] overflow-hidden p-4 flex flex-col">
         <div className="flex items-center mb-4 gap-3">
           <span>Price</span>
@@ -246,7 +277,7 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
         </div>
 
         <button
-          onClick={fetchPlatformAssetsWithPrices} // Corrected function name
+          onClick={fetchAssetsAndOpenDepositModal} // Call the new function
           disabled={isLoading}
           className="w-full mt-4 bg-indigo-700/50 hover:bg-indigo-700/70 text-white py-2 rounded-md text-sm transition disabled:opacity-50"
         >
@@ -254,15 +285,77 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
         </button>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/55  flex items-center justify-center z-50 p-4">
+      {/* NEW: First Modal (Deposit Address) */}
+      {isDepositModalOpen && (
+        <div className="fixed inset-0 bg-black/55 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-b from-white to-purple-50 rounded-2xl p-6 w-full max-w-md border border-purple-200 shadow-lg text-black text-center">
+            <h3 className="text-xl font-bold mb-4">Deposit Address for Staking</h3>
+            <p className="mb-4">
+              Please choose your preferred deposit asset.
+            </p>
+            <div className="mb-4">
+              <label className="block text-sm mb-2">
+                Select Asset
+              </label>
+              <select
+                value={selectedAssetId}
+                onChange={(e) => setSelectedAssetId(e.target.value)}
+                className="w-full border rounded-lg p-3 focus:outline-none"
+              >
+                {platformAssets.map(asset => (
+                  <option key={asset.id} value={asset.id}>
+                    {asset.name} ({asset.symbol})
+                  </option>
+                ))}
+              </select>
+            </div>
+            {selectedAsset && selectedAsset.depositAddress ? (
+              <div className="bg-gray-100 p-4 rounded-lg mb-6 text-left">
+                <p className="text-sm font-semibold mb-2">Deposit Address ({selectedAsset.symbol}):</p>
+                <p className="break-words font-mono bg-white p-2 rounded border border-gray-300">
+                  {selectedAsset.depositAddress}
+                </p>
+                <button
+                  onClick={() => navigator.clipboard.writeText(selectedAsset.depositAddress as string)}
+                  className="mt-2 text-sm text-blue-600 hover:text-blue-800"
+                >
+                  Copy Address
+                </button>
+              </div>
+            ) : (
+              <p className="text-red-500 mb-4">Deposit address not available for this asset.</p>
+            )}
+            {error && (
+              <div className="text-red-500 text-sm mb-4 p-2 bg-red-900/30 rounded">
+                {error}
+              </div>
+            )}
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setIsDepositModalOpen(false)}
+                className="px-4 py-2 border rounded-lg transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleProceedToStake}
+                className="px-4 py-2 bg-purple-800 text-white rounded-lg hover:opacity-90 transition"
+              >
+                Proceed to Stake
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Second Modal (Confirmation) */}
+      {isConfirmationModalOpen && (
+        <div className="fixed inset-0 bg-black/55 flex items-center justify-center z-50 p-4">
           <div className="bg-gradient-to-b from-white to-purple-50 rounded-2xl p-6 w-full max-w-md border border-purple-200 shadow-lg">
             <h3 className="text-black text-xl font-bold mb-4">Confirm Stake</h3>
-
             <div className="mb-6">
               <p className="text-black mb-1">You are staking in:</p>
-              <p className="text-black font-medium text-lg">Pool ID: {id}</p> {/* Display pool ID */}
-
+              <p className="text-black font-medium text-lg">Pool ID: {id}</p>
               <div className="mt-4 space-y-2">
                 <div className="flex justify-between">
                   <span className="text-black">Minimum:</span>
@@ -278,7 +371,6 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
                 </div>
               </div>
             </div>
-
             <div className="mb-4">
               <label className="block text-black text-sm mb-2">
                 Stake Amount (USD)
@@ -288,18 +380,17 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
                 value={stakeAmount}
                 onChange={(e) => {
                   const value = Number(e.target.value);
-                  setStakeAmount(value); // Let the disabled state handle min/max
+                  setStakeAmount(value);
                 }}
                 min={min}
                 max={max}
                 step="0.01"
-                className="w-full border  text-black rounded-lg p-2 focus:outline-none"
+                className="w-full border text-black rounded-lg p-2 focus:outline-none"
               />
               <p className="text-xs text-gray-400 mt-1">
                 Must be between ${min.toFixed(2)} and ${max.toFixed(2)}
               </p>
             </div>
-
             {calculation && calculation.amountInAsset && (
               <div className="mb-4 p-3 bg-white/10 rounded-lg">
                 <p className="text-black text-sm">
@@ -307,52 +398,64 @@ const PoolCard: React.FC<PoolCardProps> = ({ id, min, max, cycle, price = 0 }) =
                 </p>
               </div>
             )}
-
             <div className="mb-6">
               <label className="block text-black text-sm mb-2">
-                Select Payment Asset
+                Payment Asset
               </label>
-              <select
-                value={selectedAssetId}
-                onChange={(e) => setSelectedAssetId(e.target.value)}
-                className="w-full border border-black text-black rounded-lg p-2 focus:outline-none"
-              >
-                {platformAssets.map(asset => {
-                  const assetPrice = getAssetPrice(asset.id);
-                  return (
-                    <option
-                      key={asset.id}
-                      value={asset.id}
-                    >
-                      {asset.name} ({asset.symbol}) - ${assetPrice.toFixed(2)}/coin
-                    </option>
-                  );
-                })}
-              </select>
+              <div className="w-full border rounded-lg p-3 bg-gray-100">
+                {selectedAsset ? `${selectedAsset.name} (${selectedAsset.symbol})` : 'No asset selected'}
+              </div>
             </div>
-
             {error && (
               <div className="text-red-500 text-sm mb-4 p-2 bg-red-900/30 rounded">
                 {error}
               </div>
             )}
-
             <div className="flex justify-end gap-3">
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => setIsConfirmationModalOpen(false)}
                 disabled={isLoading}
-                className="px-4 py-2 border  text-black rounded-lg  transition disabled:opacity-50"
+                className="px-4 py-2 border text-black rounded-lg transition disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
-                onClick={handleStake}
+                onClick={handleStakeConfirmation} // Call the new confirmation function
                 disabled={isLoading || stakeAmount < min || stakeAmount > max}
                 className="px-4 py-2 bg-purple-950 text-white rounded-lg hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center min-w-[120px]"
               >
                 {isLoading ? <LoadingSpinner /> : 'Confirm Stake'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* NEW: Third Modal (Pending Status) */}
+      {isPendingModalOpen && transactionData && (
+        <div className="fixed inset-0 bg-black/55 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-b from-white to-purple-50 rounded-2xl p-6 w-full max-w-md border border-purple-200 shadow-lg text-black text-center">
+            <h3 className="text-xl font-bold mb-4">Staking Initiated</h3>
+            <p className="mb-2">
+              Your staking request has been submitted.
+            </p>
+            <div className="bg-gray-100 p-4 rounded-lg mb-4 text-left">
+              <p className="text-sm font-semibold">Transaction ID:</p>
+              <p className="break-words font-mono text-xs">{transactionData.id}</p>
+              <p className="text-sm font-semibold mt-2">Status:</p>
+              <p className="text-lg font-bold text-yellow-600">
+                {transactionData.status}
+              </p>
+            </div>
+            <p className="text-sm text-gray-700">
+              An administrator will review and approve your transaction shortly. You will be notified when the status changes to Success.
+            </p>
+            <button
+              onClick={() => setIsPendingModalOpen(false)}
+              className="mt-6 w-full bg-purple-800 text-white py-2 rounded-lg hover:opacity-90 transition"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}
