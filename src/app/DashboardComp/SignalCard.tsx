@@ -250,7 +250,7 @@ const SignalCard: React.FC<SignalProps> = ({
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/65 bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/55 bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-gradient-to-b from-white to-purple-50 rounded-2xl p-6 w-full max-w-md border border-purple-200 shadow-lg">
             <h3 className="text-purple-900 text-xl font-bold mb-4">Confirm Purchase</h3>
 
