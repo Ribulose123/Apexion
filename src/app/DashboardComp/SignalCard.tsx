@@ -1,6 +1,5 @@
 'use client'
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { API_ENDPOINTS } from '../config/api';
 import { TransactionType } from '../data/data';
 import axios from 'axios';
@@ -20,19 +19,23 @@ interface PlatformAsset {
   networkId?: string;
 }
 
-interface UserAsset {
-  platformAssetId: string;
-  platformAsset: PlatformAsset;
-  balance: number;
-  usdValue: number;
-}
-
 interface TransactionRequest {
-  userId: string; 
+  userId: string;
   platformAssetId: string;
   amount: number;
   type: TransactionType;
   signal: string;
+}
+
+interface CoinGeckoPriceResponse {
+  [coinId: string]: {
+    usd: number;
+  };
+}
+
+interface AssetCalculation {
+  amountInAsset: number;
+  assetSymbol: string;
 }
 
 const SYMBOL_TO_COINGECKO_ID: Record<string, string> = {
@@ -70,7 +73,6 @@ const LoadingSpinner = () => (
   </div>
 );
 
-// Helper function to decode JWT token and extract userId
 const getUserIdFromToken = (token: string): string | null => {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -86,67 +88,58 @@ const SignalCard: React.FC<SignalProps> = ({
   name,
   amount,
   strength,
-  price
+  price = 0,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userAssets, setUserAssets] = useState<UserAsset[]>([]);
+  const [platformAssets, setPlatformAssets] = useState<PlatformAsset[]>([]);
   const [selectedAssetId, setSelectedAssetId] = useState('');
-  const [purchaseAmount, setPurchaseAmount] = useState(price);
+  const [purchaseAmount, setPurchaseAmount] = useState(price ?? 0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [userId, setUserId] = useState<string>('');
+  const [assetPrices, setAssetPrices] = useState<CoinGeckoPriceResponse>({});
+  const [calculation, setCalculation] = useState<AssetCalculation | null>(null);
 
-  const fetchUserAssetsWithPrices = async () => {
+  const fetchPlatformAssetsWithPrices = async () => {
     setIsLoading(true);
     setError('');
-    
+
     try {
       const token = localStorage.getItem('authToken');
       if (!token) throw new Error('Please login to purchase signals');
 
-      // Extract userId from token
       const extractedUserId = getUserIdFromToken(token);
       if (!extractedUserId) throw new Error('Invalid authentication token');
-      
+
       setUserId(extractedUserId);
 
-      // Fetch user assets
-      const res = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
-        headers: { 
+      const res = await fetch(API_ENDPOINTS.ASSET.ASSET_LIST, {
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
-      if (!res.ok) throw new Error('Failed to fetch assets');
-      
+
+      if (!res.ok) throw new Error('Failed to fetch platform assets');
+
       const data = await res.json();
-      const assets: UserAsset[] = data.data.userAssets || [];
+      const assets: PlatformAsset[] = data.data || [];
       if (assets.length === 0) throw new Error('No assets available for purchase');
 
-      // Get current prices from CoinGecko
+      setPlatformAssets(assets);
+      setSelectedAssetId(assets[0]?.id || '');
+
       const coinGeckoIds = assets
-        .map(a => getCoinGeckoId(a.platformAsset))
+        .map(a => getCoinGeckoId(a))
         .filter(Boolean)
         .join(',');
 
-      const pricesRes = await axios.get(
+      const pricesRes = await axios.get<CoinGeckoPriceResponse>(
         `https://api.coingecko.com/api/v3/simple/price?ids=${coinGeckoIds}&vs_currencies=usd`,
         { timeout: 5000 }
       );
 
-      // Calculate USD value for each asset
-      const assetsWithUsd = assets.map(asset => {
-        const coinGeckoId = getCoinGeckoId(asset.platformAsset);
-        const usdPrice = pricesRes.data[coinGeckoId]?.usd || 0;
-        return {
-          ...asset,
-          usdValue: usdPrice * asset.balance
-        };
-      });
-
-      setUserAssets(assetsWithUsd);
-      setSelectedAssetId(assetsWithUsd[0]?.platformAssetId || '');
+      setAssetPrices(pricesRes.data);
       setIsModalOpen(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to initiate purchase');
@@ -155,6 +148,31 @@ const SignalCard: React.FC<SignalProps> = ({
       setIsLoading(false);
     }
   };
+
+  const getAssetPrice = useCallback((assetId: string): number => {
+    const asset = platformAssets.find(a => a.id === assetId);
+    if (!asset) return 0;
+    const coinGeckoId = getCoinGeckoId(asset);
+    return assetPrices[coinGeckoId]?.usd || 0;
+  }, [platformAssets, assetPrices]);
+
+  useEffect(() => {
+    if (selectedAssetId && purchaseAmount > 0) {
+      const asset = platformAssets.find(a => a.id === selectedAssetId);
+      if (asset) {
+        const assetPrice = getAssetPrice(asset.id);
+        if (assetPrice > 0) {
+          const amountInAsset = purchaseAmount / assetPrice;
+          setCalculation({
+            amountInAsset,
+            assetSymbol: asset.symbol
+          });
+          return;
+        }
+      }
+    }
+    setCalculation(null);
+  }, [selectedAssetId, purchaseAmount, platformAssets, getAssetPrice]);
 
   const handlePurchase = async () => {
     setIsLoading(true);
@@ -166,22 +184,13 @@ const SignalCard: React.FC<SignalProps> = ({
 
       if (!userId) throw new Error('User ID not found');
 
-      const selectedAsset = userAssets.find(a => a.platformAssetId === selectedAssetId);
-      if (!selectedAsset) throw new Error('Selected asset not found');
-
-      if (selectedAsset.usdValue < purchaseAmount) {
-        throw new Error(`Insufficient ${selectedAsset.platformAsset.symbol} balance`);
-      }
-
       const transactionData: TransactionRequest = {
-        userId: userId, 
+        userId: userId,
         platformAssetId: selectedAssetId,
         amount: purchaseAmount,
         type: TransactionType.signal,
-        signal:id,
+        signal: id,
       };
-
-      console.log('Transaction data being sent:', transactionData); // Debug log
 
       const res = await fetch(API_ENDPOINTS.TRANSACTION.CREATE_TRANCSACTION, {
         method: 'POST',
@@ -194,7 +203,7 @@ const SignalCard: React.FC<SignalProps> = ({
 
       if (!res.ok) {
         const errorData = await res.json();
-        console.error('API Error:', errorData); // Debug log
+        console.error('API Error:', errorData);
         throw new Error(errorData.message || 'Purchase failed');
       }
 
@@ -213,26 +222,26 @@ const SignalCard: React.FC<SignalProps> = ({
         <div className="rounded-2xl p-4 h-full flex flex-col justify-between gradient-border">
           <div>
             <h2 className="text-[#D2D1EE] sm:text-[20px] text-[16px] font-medium mb-8">{name}</h2>
-      
+
             <div className="flex justify-between text-[12px] border-b border-[#6967AE29] font-semibold sm:text-[16px] text-[#C4C4C4] mb-2">
               <span>Amount</span>
               <span className="text-white text-[12px] font-semibold sm:text-[16px]">{amount}</span>
             </div>
-      
+
             <div className="flex justify-between text-xs text-gray-400 mb-2">
               <span className='text-[12px] font-semibold sm:text-[16px]'>Signal Strength</span>
               <span className="text-[#00F66C] text-[12px] font-semibold sm:text-[14px]">{strength}</span>
             </div>
-      
+
             <div className="flex justify-between text-xs text-gray-400 currency-display rounded-lg">
               <span className='text-[12px] font-semibold sm:text-[16px] text-white'>Price</span>
               <span className="text-white">${price.toFixed(2)}</span>
             </div>
           </div>
-      
-          <button 
+
+          <button
             className="w-full bg-gradient-to-b from-[#6967AE]/30 to-[#6967AE]/10 text-white py-2 rounded-lg text-sm hover:opacity-80 transition cursor-pointer"
-            onClick={fetchUserAssetsWithPrices}
+            onClick={fetchPlatformAssetsWithPrices}
             disabled={isLoading}
           >
             {isLoading ? <LoadingSpinner /> : `Buy`}
@@ -241,22 +250,22 @@ const SignalCard: React.FC<SignalProps> = ({
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-b from-[#06023d] to-[#240a6b] rounded-2xl p-6 w-full max-w-md border border-[#6967AE]">
-            <h3 className="text-white text-xl font-bold mb-4">Confirm Purchase</h3>
-            
+        <div className="fixed inset-0 bg-black/65 bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-b from-white to-purple-50 rounded-2xl p-6 w-full max-w-md border border-purple-200 shadow-lg">
+            <h3 className="text-purple-900 text-xl font-bold mb-4">Confirm Purchase</h3>
+
             <div className="mb-6">
-              <p className="text-gray-300 mb-1">You are purchasing:</p>
-              <p className="text-white font-medium text-lg">{name}</p>
-              
+              <p className="text-purple-700 mb-1">You are purchasing:</p>
+              <p className="text-purple-900 font-medium text-lg">{name}</p>
+
               <div className="flex justify-between mt-4">
-                <span className="text-gray-300">Signal Price:</span>
-                <span className="text-white font-bold">${price.toFixed(2)} USD</span>
+                <span className="text-purple-700">Signal Price:</span>
+                <span className="text-purple-900 font-bold">${price.toFixed(2)} USD</span>
               </div>
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-300 text-sm mb-2">Purchase Amount (USD)</label>
+              <label className="block text-purple-700 text-sm mb-2">Purchase Amount (USD)</label>
               <input
                 type="number"
                 value={purchaseAmount}
@@ -264,32 +273,43 @@ const SignalCard: React.FC<SignalProps> = ({
                 min={0.01}
                 step={0.01}
                 max={price}
-                className="w-full bg-[#06023d] border border-[#6967AE] text-white rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-[#6967AE]"
+                className="w-full bg-white border border-purple-300 text-purple-900 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-purple-500"
               />
-              <p className="text-xs text-gray-400 mt-1">Max: ${price.toFixed(2)}</p>
+              <p className="text-xs text-purple-500 mt-1">Max: ${price.toFixed(2)}</p>
             </div>
 
+            {calculation && calculation.amountInAsset && (
+              <div className="mb-4 p-3 bg-purple-50 rounded-lg">
+                <p className="text-purple-700 text-sm">
+                  ${purchaseAmount.toFixed(2)} USD = {calculation.amountInAsset.toFixed(8)} {calculation.assetSymbol}
+                </p>
+              </div>
+            )}
+
             <div className="mb-6">
-              <label className="block text-gray-300 text-sm mb-2">Select Payment Asset</label>
+              <label className="block text-purple-700 text-sm mb-2">Select Payment Asset</label>
               <select
                 value={selectedAssetId}
                 onChange={(e) => setSelectedAssetId(e.target.value)}
-                className="w-full bg-[#06023d] border border-[#6967AE] text-white rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-[#6967AE]"
+                className="w-full bg-white border border-purple-300 text-purple-900 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-purple-500"
               >
-                {userAssets.map(asset => (
-                  <option 
-                    key={asset.platformAssetId} 
-                    value={asset.platformAssetId}
-                    className="bg-[#06023d]"
-                  >
-                    {asset.platformAsset.name} ({asset.platformAsset.symbol}) - Balance: ${asset.usdValue.toFixed(2)}
-                  </option>
-                ))}
+                {platformAssets.map(asset => {
+                  const assetPrice = getAssetPrice(asset.id);
+                  return (
+                    <option
+                      key={asset.id}
+                      value={asset.id}
+                      className="bg-white text-purple-900"
+                    >
+                      {asset.name} ({asset.symbol}) - ${assetPrice.toFixed(2)}/coin
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
             {error && (
-              <div className="text-red-500 text-sm mb-4 p-2 bg-red-900/30 rounded">
+              <div className="text-red-500 text-sm mb-4 p-2 bg-red-100 rounded">
                 {error}
               </div>
             )}
@@ -298,16 +318,16 @@ const SignalCard: React.FC<SignalProps> = ({
               <button
                 onClick={() => setIsModalOpen(false)}
                 disabled={isLoading}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition disabled:opacity-50"
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handlePurchase}
                 disabled={isLoading || purchaseAmount <= 0 || purchaseAmount > price}
-                className="px-4 py-2 bg-gradient-to-r from-[#6967AE] to-[#644ca1] text-white rounded-lg hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center min-w-[120px]"
+                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg hover:opacity-90 transition disabled:opacity-50 flex items-center justify-center min-w-[120px]"
               >
-                {isLoading ? <LoadingSpinner /> : 'Confirm'}
+                {isLoading ? <LoadingSpinner /> : 'Deposit'}
               </button>
             </div>
           </div>
@@ -346,7 +366,6 @@ const SignalGrid: React.FC = () => {
         }
 
         const result = await response.json();
-        console.log(result)
         setSignals(result.data);
       } catch (err) {
         console.error("Error fetching signals:", err);
