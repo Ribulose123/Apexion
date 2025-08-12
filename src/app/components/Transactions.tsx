@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { FaRegStar } from "react-icons/fa";
-import { CgArrowsExchangeV } from "react-icons/cg";
 import { API_ENDPOINTS } from "../config/api";
 import Link from "next/link";
 
@@ -155,7 +154,7 @@ export default function Transactions() {
           View All <ArrowRight size={18}/>
         </Link>
       </div>
-      <div className="rounded-xl overflow-hidden">
+      <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="text-gray-400 text-sm">
@@ -163,14 +162,9 @@ export default function Transactions() {
               <th className="text-left p-2">Transaction</th>
               <th className="text-left p-2">Type</th>
               <th className="text-left p-2">Amount</th>
-              <th className="p-4 table-cell sm:hidden">
-                <div className="flex flex-col">
-                  <span className="flex items-center gap-1">Date <CgArrowsExchangeV size={15}/></span>
-                  <span className="flex items-center gap-1">Status <CgArrowsExchangeV size={15}/></span>
-                </div>
-              </th>
-              <th className="text-left p-2 hidden sm:table-cell">Date</th>
-              <th className=" p-2 hidden sm:table-cell text-center">Status</th>
+              
+              <th className="text-left p-2 ">Date</th>
+              <th className=" p-2  text-center">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -191,9 +185,10 @@ export default function Transactions() {
                   </td>
                   <td className="p-2">
                     <div className="flex items-center space-x-2">
-                      
+                     
                       <div>
                         <div className="text-xs sm:text-sm">{transaction.type}</div>
+                        <div className="text-xs text-gray-400">{transaction.sign}</div>
                       </div>
                     </div>
                   </td>
@@ -205,21 +200,9 @@ export default function Transactions() {
                   <td className="p-2">
                     {transaction.amount} {transaction.sign}
                   </td>
-                  <td className="p-2 table-cell sm:hidden">
-                    <div className="flex flex-col">
-                      <span className="text-xs">{transaction.date}</span>
-                      <span className={`text-xs ${
-                        transaction.status === 'COMPLETED' ? 'text-green-400' :
-                        transaction.status === 'PENDING' ? 'text-yellow-400' :
-                        transaction.status === 'FAILED' ? 'text-red-400' :
-                        'text-gray-400'
-                      }`}>
-                        {transaction.status}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="p-2 hidden sm:table-cell">{transaction.date}</td>
-                  <td className="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap text-center hidden sm:table-cell">
+                 
+                  <td className="p-2">{transaction.date}</td>
+                  <td className="px-3 py-2 sm:px-4 sm:py-3 whitespace-nowrap text-center">
                     <span
                       className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         transaction.status === 'COMPLETED' ? 'bg-green-900/30 text-green-400' :

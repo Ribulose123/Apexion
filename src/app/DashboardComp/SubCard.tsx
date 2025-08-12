@@ -451,7 +451,7 @@ const SubCard: React.FC<SubProps> = ({
             <p className="mb-2">
               Your subscription request has been submitted.
             </p>
-            <div className="bg-gray-100 p-4 rounded-lg mb-4 text-left">
+            <div className="bg-gray-100 p-4 rounded-lg mb-4 text-left text-black">
               <p className="text-sm font-semibold">Transaction ID:</p>
               <p className="break-words font-mono text-xs">{transactionData.id}</p>
               <p className="text-sm font-semibold mt-2">Status:</p>
