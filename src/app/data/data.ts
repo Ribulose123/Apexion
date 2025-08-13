@@ -197,7 +197,7 @@ import { IoCopy, IoSettingsOutline } from "react-icons/io5";
     { name: 'Subscribe', icon: Radiation, href: '/subscription' },
     { name: 'Signal', icon: Radio, href: '/signal' },
     { name: 'Staking', icon: Coins, href: '/stake' },
-    { name: 'Referrals', icon: User, href: '#' },
+    { name: 'Referrals', icon: User, href: '/referral' },
     { name: 'connect Wallet', icon:Link, href: '#' },
     { name: 'Copy', icon: IoCopy, href: '/copy' },
     { name: 'Settings', icon: IoSettingsOutline, href: '/security' },

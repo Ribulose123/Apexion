@@ -1,17 +1,65 @@
 'use client'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Copy, Check } from 'lucide-react'
+import { API_ENDPOINTS } from '@/app/config/api'
 
+
+interface UserProfileData{
+  referralCode: string;
+}
 const Main = () => {
 const [copyCode, setCopyCode] = useState(false)
 const [copyLink, setCopyLink] = useState(false)
+const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
 
- const referralCode = 'UxFYqiZ'
-  const referralLink = 'https://www.bidvest.com/invite?ref=UxFYqiZ'
+ const referralCode = userProfile?.referralCode
+  const referralLink = `https://www.bidvest.com/invite?ref=${referralCode}`
 
+useEffect(()=>{
+   const fetchUserProfile = async () => {
+      setLoading(true);
+      setFetchError(null);
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+        const response = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.message || "Failed to fetch profile");
+        }
+  
+        setUserProfile(result.data);
+        
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setFetchError(err instanceof Error ? err.message : "An unknown error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserProfile();
+},[])
+
+  
 const handleCopyCode = async ()=>{
+    if (!referralCode) {
+    console.error('No referral code available to copy');
+    return;
+  }
 
     try{
        await navigator.clipboard.writeText(referralCode)
@@ -25,6 +73,10 @@ const handleCopyCode = async ()=>{
     
 }
 const handleCopyLinK = async()=>{
+   if (!referralLink) {
+    console.error('No referral link available to link');
+    return;
+  }
     try{
          navigator.clipboard.writeText(referralLink)
     setCopyLink(true)
@@ -60,7 +112,15 @@ const handleCopyLinK = async()=>{
           <div className="">
             <h3 className="text-white text-lg font-semibold mb-4">My Referral Code:</h3>
             <div className="flex items-center justify-between bg-[#080A1A] rounded-lg p-3">
-              <span className="text-white font-mono">{referralCode}</span>
+               {loading ? (
+              <span className="text-base text-gray-200">Loading...</span>
+            ) : fetchError ? (
+              <span className="text-base text-red-700">{fetchError}</span>
+            ) : referralCode ? (
+              <span data-testid="referral-code">{referralCode}</span>
+            ) : (
+              "No referral code available"
+            )}
               <button className="text-white hover:text-purple-300 transition-colors" onClick={handleCopyCode}>
 
                 {copyCode ? <Check className='text-green-600'/> : <Copy/>}                
