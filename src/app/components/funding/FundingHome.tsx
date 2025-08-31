@@ -2,15 +2,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, ChevronDown, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { API_ENDPOINTS } from "@/app/config/api"; // Assuming this path is correct
+import { API_ENDPOINTS } from "@/app/config/api"; 
 
-// Define the types based on your schema
+
 interface BackendTransaction {
   id: string;
-  userId: string; // Still exists in the backend response interface
+  userId: string; 
   platformAssetId: string;
   amount: number;
-  type: "DEPOSIT" | "WITHDRAWAL" | "INTEREST" | "TRADE";
+  type: "DEPOSIT" | "WITHDRAWAL" | "INTEREST" | "TRADE" | "STAKING" | "SUBSCRIPTION" | "SIGNAL";
   status: "PENDING" | "COMPLETED" | "FAILED" | "PROCESSING";
   createdAt: string;
 }
@@ -44,7 +44,6 @@ interface AssetApiResponse {
   data: BackendAsset[];
 }
 
-// Enhanced transaction interface with asset information for display
 interface EnhancedTransaction extends BackendTransaction {
   coinSymbol: string;
   coinName: string;
@@ -56,20 +55,12 @@ interface DateRange {
   endDate: string;
 }
 
-// Type for coin options in the filter dropdown
 interface CoinFilterOption {
   id: string;
   symbol: string;
   name: string;
 }
 
-// API endpoints configuration - use the imported one
-// const INTERNAL_API_ENDPOINTS = {
-//   TRANSACTION: {
-//     TRANSACTION_HISTORY: '/api/transactions'
-//   },
-//   ASSETS: '/api/assets'
-// };
 
 const FundingHome: React.FC = () => {
   const router = useRouter();
@@ -89,7 +80,7 @@ const FundingHome: React.FC = () => {
 
   // Filter state
   const [transactionTypeFilter, setTransactionTypeFilter] = useState<
-    "DEPOSIT" | "WITHDRAWAL" | "INTEREST" | "TRADE" | "ALL"
+    "DEPOSIT" | "WITHDRAWAL" | "INTEREST" | "TRADE" | "STAKING" | "SUBSCRIPTION" | "SIGNAL" | "ALL"
   >("DEPOSIT");
 
   const [transactionStatusFilter, setTransactionStatusFilter] = useState<
@@ -113,7 +104,6 @@ const FundingHome: React.FC = () => {
     setIsLoadingAssets(true);
     try {
       const token = getAuthToken();
-      // Use API_ENDPOINTS.ASSETS from the imported config
       const response = await fetch(API_ENDPOINTS.ASSET.ASSET_LIST, {
         method: 'GET',
         headers: {
@@ -151,13 +141,11 @@ const FundingHome: React.FC = () => {
 
     try {
       const token = getAuthToken();
-      // const userId = getUserIdFromToken(); // This line is now removed
 
       // Build query parameters
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: limit.toString(),
-        // userId: userId, // REMOVED: Do not send userId as a query parameter
       });
 
       if (transactionTypeFilter !== "ALL") {
@@ -176,7 +164,6 @@ const FundingHome: React.FC = () => {
         params.append('endDate', dateRange.endDate);
       }
 
-      // Use API_ENDPOINTS.TRANSACTION.TRANSACTION_HISTORY from the imported config
       const response = await fetch(`${API_ENDPOINTS.TRANSACTION.TRANSACTION_HISTORY}?${params.toString()}`, {
         method: 'GET',
         headers: {
@@ -243,7 +230,6 @@ const FundingHome: React.FC = () => {
     dateRange.endDate,
     selectedHistoryCoinId,
     getAuthToken,
-    // getUserIdFromToken, // This dependency is also removed
     allBackendAssets,
     isLoadingAssets
   ]);
@@ -268,7 +254,7 @@ const FundingHome: React.FC = () => {
   };
 
   const handleTypeFilterChange = (
-    type: "DEPOSIT" | "WITHDRAWAL" | "INTEREST" | "TRADE" | "ALL"
+    type: "DEPOSIT" | "WITHDRAWAL" | "INTEREST" | "TRADE" | "STAKING" | "SUBSCRIPTION" | "SIGNAL" | "ALL"
   ) => {
     setTransactionTypeFilter(type);
     setCurrentPage(1);
@@ -345,7 +331,7 @@ const FundingHome: React.FC = () => {
           {transactionTypeTabs.map((tab) => (
             <button
               key={tab}
-              onClick={() => handleTypeFilterChange(tab as "DEPOSIT" | "WITHDRAWAL" | "INTEREST" | "TRADE" | "ALL")}
+              onClick={() => handleTypeFilterChange(tab as "DEPOSIT" | "WITHDRAWAL" | "INTEREST" | "TRADE" | "STAKING" | "SUBSCRIPTION" | "SIGNAL" |  "ALL")}
               className={`pb-2 transition-colors whitespace-nowrap text-sm md:text-base ${
                 transactionTypeFilter === tab
                   ? "border-b-2 border-[#439A86]"

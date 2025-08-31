@@ -24,10 +24,6 @@ const ToggleBotton:React.FC<ToggleSwitchProps> = ({id, checked, onChange, disabl
               checked 
                 ? 'bg-[#439A86] shadow-lg' 
                 : 'bg-gray-300'
-            } ${
-              disabled 
-                ? 'opacity-50 cursor-not-allowed' 
-                : 'hover:shadow-md'
             }`}
           ></div>
           <div
@@ -35,6 +31,7 @@ const ToggleBotton:React.FC<ToggleSwitchProps> = ({id, checked, onChange, disabl
               checked ? 'transform translate-x-6' : ''
             }`}
           ></div>
+
         </div>
       </label>
 

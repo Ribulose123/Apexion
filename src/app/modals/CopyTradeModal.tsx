@@ -5,15 +5,34 @@ import React, { useState } from "react";
 
 interface CopyTradeModalProps {
   traderName: string;
+  minAmount: number;
+  maxAmount: number;
+  commissionRate: number;
   onClose: () => void;
+  onConfirmCopy: (copySettings: {
+    copyAmount: number;
+    copyRatio: number;
+    stopLossEnabled: boolean;
+    stopLossPercent: number;
+    takeProfitEnabled: boolean;
+    takeProfitPercent: number;
+  }) => void;
 }
 
 const CopyTradeModal: React.FC<CopyTradeModalProps> = ({
   traderName,
+  minAmount,
+  maxAmount,
+  commissionRate,
   onClose,
+  onConfirmCopy,
 }) => {
-  const [investment, setInvestment] = useState("100");
-  const [trailingStop, setTrailingStop] = useState("");
+  const [investment, setInvestment] = useState(minAmount.toString());
+  const [copyRatio, setCopyRatio] = useState("1");
+  const [stopLossEnabled, setStopLossEnabled] = useState(false);
+  const [stopLossPercent, setStopLossPercent] = useState("10");
+  const [takeProfitEnabled, setTakeProfitEnabled] = useState(false);
+  const [takeProfitPercent, setTakeProfitPercent] = useState("20");
   const [maxPositionMargin, setMaxPositionMargin] = useState("");
   const [maxDailyLimit, setMaxDailyLimit] = useState("");
   const [isMoreSettingsOpen, setIsMoreSettingsOpen] = useState(false);
@@ -24,13 +43,13 @@ const CopyTradeModal: React.FC<CopyTradeModalProps> = ({
       <div className="flex md:flex-row flex-col bg-[#E8E8E8] rounded-xl max-w-4xl w-full shadow-xl max-h-[90vh] mt-15 md:mt-0 overflow-y-auto">
         {/* Left Side - Trader Profile */}
         <div className="bg-gradient-to-b from-[#04022E] via-[#05052D] to-[#090B1D] p-3 relative h-full py-7 rounded-tl-xl md:rounded-bl-xl md:rounded-tr-none">
-             <button 
-                onClick={onClose}
-                className="text-[#d4d7e2] hover:text-white transition-colors text-xl z-10 absolute right-3 md:hidden"
-              >
-                ✕
-              </button>
-            
+          <button 
+            onClick={onClose}
+            className="text-[#d4d7e2] hover:text-white transition-colors text-xl z-10 absolute right-3 md:hidden"
+          >
+            ✕
+          </button>
+          
           <div className="flex flex-col justify-center items-center gap-4 p-4">
             <div>
               <Image
@@ -96,7 +115,7 @@ const CopyTradeModal: React.FC<CopyTradeModalProps> = ({
                   <Wallet size={13} />
                   Profit sharing ratio
                 </p>
-                <p className="text-[#E8E8E8] text-[15px] text-center">10%</p>
+                <p className="text-[#E8E8E8] text-[15px] text-center">{commissionRate}%</p>
               </div>
             </div>
           </div>
@@ -110,7 +129,6 @@ const CopyTradeModal: React.FC<CopyTradeModalProps> = ({
                 {traderName}
               </h2>
               
-              {/* Close button for modal */}
               <button 
                 onClick={onClose}
                 className="text-[#01040F] hover:text-white transition-colors text-xl z-10 hidden md:block"
@@ -127,7 +145,7 @@ const CopyTradeModal: React.FC<CopyTradeModalProps> = ({
               <div className="flex items-center">
                 <div className="flex-1 relative">
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">
-                    Min: 100
+                    Min: {minAmount}
                   </span>
                   <input
                     type="text"
@@ -153,23 +171,74 @@ const CopyTradeModal: React.FC<CopyTradeModalProps> = ({
               </div>
             </div>
 
-            {/* Trailing Stop */}
+            {/* Copy Ratio */}
             <div className="mb-6">
               <label className="block text-[17px] font-semibold text-[#01040F] mb-2">
-                Trailing Stop
+                Copy Ratio
               </label>
               <div className="flex items-center relative">
                 <input
                   type="text"
-                  value={trailingStop}
-                  onChange={(e) => setTrailingStop(e.target.value)}
-                  placeholder="Please Enter Value Between 5 And 99"
-                  className="flex-1 bg-[#E2E6F9] border-0 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xl text-[#01040F3D]"
+                  value={copyRatio}
+                  onChange={(e) => setCopyRatio(e.target.value)}
+                  placeholder="Enter copy ratio (e.g., 1 for 1:1)"
+                  className="flex-1 bg-[#E2E6F9] border-0 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xl"
                 />
-                <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg font-medium text-[#F2AF29]">
-                  %
-                </span>
               </div>
+            </div>
+
+            {/* Stop Loss */}
+            <div className="mb-6">
+              <label className="flex items-center text-[17px] font-semibold text-[#01040F] mb-2">
+                <input
+                  type="checkbox"
+                  checked={stopLossEnabled}
+                  onChange={(e) => setStopLossEnabled(e.target.checked)}
+                  className="mr-2"
+                />
+                Enable Stop Loss
+              </label>
+              {stopLossEnabled && (
+                <div className="flex items-center relative">
+                  <input
+                    type="text"
+                    value={stopLossPercent}
+                    onChange={(e) => setStopLossPercent(e.target.value)}
+                    placeholder="Stop Loss Percentage"
+                    className="flex-1 bg-[#E2E6F9] border-0 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xl"
+                  />
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg font-medium text-[#F2AF29]">
+                    %
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Take Profit */}
+            <div className="mb-6">
+              <label className="flex items-center text-[17px] font-semibold text-[#01040F] mb-2">
+                <input
+                  type="checkbox"
+                  checked={takeProfitEnabled}
+                  onChange={(e) => setTakeProfitEnabled(e.target.checked)}
+                  className="mr-2"
+                />
+                Enable Take Profit
+              </label>
+              {takeProfitEnabled && (
+                <div className="flex items-center relative">
+                  <input
+                    type="text"
+                    value={takeProfitPercent}
+                    onChange={(e) => setTakeProfitPercent(e.target.value)}
+                    placeholder="Take Profit Percentage"
+                    className="flex-1 bg-[#E2E6F9] border-0 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xl"
+                  />
+                  <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg font-medium text-[#F2AF29]">
+                    %
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* More Settings */}
@@ -200,7 +269,7 @@ const CopyTradeModal: React.FC<CopyTradeModalProps> = ({
                         type="text"
                         value={maxPositionMargin}
                         onChange={(e) => setMaxPositionMargin(e.target.value)}
-                        placeholder="Please Enter An Amount Between 0～30000 USDT"
+                        placeholder={`Please Enter An Amount Between ${minAmount}～${maxAmount} USDT`}
                         className="flex-1 bg-[#E2E6F9] shadow-xl text-[#01040F3D] border-0 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                       <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg font-medium text-[#01040F]">
@@ -219,7 +288,7 @@ const CopyTradeModal: React.FC<CopyTradeModalProps> = ({
                         type="text"
                         value={maxDailyLimit}
                         onChange={(e) => setMaxDailyLimit(e.target.value)}
-                        placeholder="Please Enter An Amount Between 0～30000 USDT"
+                        placeholder={`Please Enter An Amount Between ${minAmount}～${maxAmount} USDT`}
                         className="flex-1 bg-[#E2E6F9] shadow-xl text-[#01040F3D] border-0 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                       <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-lg font-medium text-[#01040F]">
@@ -249,7 +318,14 @@ const CopyTradeModal: React.FC<CopyTradeModalProps> = ({
               <button
                 onClick={() => {
                   if (agreedToTerms) {
-                    alert("Copy trade started!");
+                    onConfirmCopy({
+                      copyAmount: Number(investment),
+                      copyRatio: Number(copyRatio),
+                      stopLossEnabled,
+                      stopLossPercent: Number(stopLossPercent),
+                      takeProfitEnabled,
+                      takeProfitPercent: Number(takeProfitPercent),
+                    });
                   } else {
                     alert("Please agree to the terms first");
                   }
