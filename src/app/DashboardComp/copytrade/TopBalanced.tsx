@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -164,7 +165,7 @@ const TopBalanced = () => {
       }
 
       const result = await res.json();
-      
+      console.log('api response', result)
       if (result.success) {
         setTraders(prevTraders => 
           prevTraders.map(trader => 
@@ -188,6 +189,63 @@ const TopBalanced = () => {
   const closeModal = () => {
     setShowModal(false);
     setSelectedTrader(null);
+  };
+
+  const handleFavourite = async (traderId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      setError('Authentication failed: No token found. Please login again.');
+      
+      return;
+    }
+
+    try {
+      setTraders(prevTraders => 
+        prevTraders.map(trader => 
+          trader.id === traderId 
+            ? { ...trader, isFavorited: !trader.isFavorited } 
+            : trader
+        )
+      );
+
+      const resFavourite = await fetch(API_ENDPOINTS.TRADERS.COPY_FAVOURITE, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ traderId })
+      });
+
+      if (!resFavourite.ok) {
+        // Revert UI if API call fails
+        setTraders(prevTraders => 
+          prevTraders.map(trader => 
+            trader.id === traderId 
+              ? { ...trader, isFavorited: !trader.isFavorited } 
+              : trader
+          )
+        );
+        throw new Error(`Failed to favorite trader: ${resFavourite.status}`);
+      }
+
+      const result = await resFavourite.json();
+      
+      if (result.success) {
+        setTraders(prevTraders => 
+          prevTraders.map(trader => 
+            trader.id === traderId 
+              ? { ...trader, isFavorited: result.data.isFavorited } 
+              : trader
+          )
+        );
+      }
+    } catch (err) {
+      console.error('Favorite toggle failed:', err);
+      setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+    }
   };
 
   const handleNavigation = (traderId: string) => {
@@ -294,8 +352,14 @@ const TopBalanced = () => {
                           <h3 className="text-white text-sm font-medium truncate hover:text-[#F2AF29] transition-colors">
                             {trader.username}
                           </h3>
-                          <button className={`${trader.isFavorited ? 'text-yellow-400' : 'text-gray-400'} hover:text-yellow-400 transition-colors flex-shrink-0`}>
-                            <Star size={16} fill={trader.isFavorited ? "currentColor" : "none"} />
+                          <button 
+                            onClick={(e) => handleFavourite(trader.id, e)}
+                            className={`${trader.isFavorited ? 'text-yellow-400' : 'text-gray-400'} hover:text-yellow-400 transition-colors flex-shrink-0`}
+                          >
+                            <Star 
+                              size={16} 
+                              fill={trader.isFavorited ? "currentColor" : "none"} 
+                            />
                           </button>
                         </div>
 
