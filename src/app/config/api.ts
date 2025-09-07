@@ -45,7 +45,8 @@ TRADERS:{
   GET_ALL_TRADERS:`${API_BASE_URL}/trade/user/traders`,
   GET_ALL_TRADERS_DETAILS:`${API_BASE_URL}/trade/user/trader/{traderId}`,
   COPY_TRADER: `${API_BASE_URL}/trade/copy`,
-  COPY_FAVOURITE: `${API_BASE_URL}/trade/favorites`
+  COPY_FAVOURITE: `${API_BASE_URL}/trade/favorites`,
+  CREATE_TRADE:`${API_BASE_URL}/trade/user/create`
 }, 
 
 };
