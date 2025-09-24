@@ -75,10 +75,6 @@ const CopyDetails = () => {
                 // FIX: Add a cache-busting parameter to the URL to avoid 304 status
                 const url = `${baseUrl}?t=${new Date().getTime()}`;
                 
-                console.log("Fetching trader details...");
-                console.log("Trader ID:", traderId);
-                console.log("Request URL:", url);
-                console.log("Authorization Token:", token ? "Token Found" : "Token Missing");
 
                 const response = await fetch(url, {
                     method: "GET",

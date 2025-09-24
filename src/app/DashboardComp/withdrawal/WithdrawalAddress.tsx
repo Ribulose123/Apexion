@@ -31,7 +31,7 @@ const WithdrawalAddress: React.FC<DepositAddressProps> = ({
   return (
     <div>
       <div>
-        <h3 className="text-[#E8E8E8]">Deposit Address</h3>
+        <h3 className="text-[#E8E8E8]">Withdrawal Address</h3>
         <div className="rounded-lg p-4 mb-4 border border-[#439A8633] mt-3 flex justify-between items-center cursor-pointer">
           {isLoading ? (
             <div className="animate-pulse h-6 w-full bg-gray-700 rounded"></div>
