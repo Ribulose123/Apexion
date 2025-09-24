@@ -33,7 +33,7 @@ interface TradeCreateData {
   notes?: string;
 }
 
-interface TradeResponse {
+/* interface TradeResponse {
   id: string;
   userId: string;
   tradePair: string;
@@ -49,7 +49,7 @@ interface TradeResponse {
   notes?: string;
   createdAt: string;
   updatedAt: string;
-}
+} */
 
 const SYMBOL_TO_COINGECKO_ID: Record<string, string> = {
   BTC: "bitcoin",
@@ -270,6 +270,16 @@ const TradingInterface: React.FC<TradingProps> = () => {
     return () => clearInterval(interval);
   }, [fetchAllPrices]);
 
+
+   useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess("");
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
   useEffect(() => {
     const fromId = SYMBOL_TO_COINGECKO_ID[amountUnit];
     const toId = SYMBOL_TO_COINGECKO_ID[priceUnit];
@@ -437,8 +447,8 @@ const TradingInterface: React.FC<TradingProps> = () => {
         );
       }
 
-      const tradeResult: TradeResponse = await response.json();
-      setSuccess(`Trade executed successfully! ID: ${tradeResult.id}`);
+      
+      setSuccess("Trade executed successfully");
 
       fetchUserAssets();
     } catch (err: unknown) {
