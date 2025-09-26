@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { API_ENDPOINTS } from "@/app/config/api";
 import axios from "axios";
+import TradeHistory from "./TradeHistory";
 
 type TradingProps = unknown;
 
@@ -482,7 +483,7 @@ const TradingInterface: React.FC<TradingProps> = () => {
         return;
       }
 
-      // Check if prices for conversion are available
+      
       const fromPrice = prices[SYMBOL_TO_COINGECKO_ID[amountUnit]]?.usd;
       const toPrice = prices[SYMBOL_TO_COINGECKO_ID[priceUnit]]?.usd;
       if (!fromPrice || !toPrice) {
@@ -507,19 +508,15 @@ const TradingInterface: React.FC<TradingProps> = () => {
         return;
       }
 
-      // 2. Perform the conversion calculation locally
+      
       const convertedAmount = (amountNum * fromPrice) / toPrice;
 
-      // 3. Update the user's assets locally
-      // This part is the crucial change. Instead of calling a non-existent API,
-      // you update the state to reflect the conversion.
+
       const updatedUserAssets = userAssets.map((asset) => {
         if (asset.platformAsset.symbol === amountUnit) {
-          // Deduct the 'from' asset
           return { ...asset, balance: asset.balance - amountNum };
         }
         if (asset.platformAsset.symbol === priceUnit) {
-          // Add the 'to' asset
           return { ...asset, balance: asset.balance + convertedAmount };
         }
         return asset;
@@ -565,8 +562,9 @@ const TradingInterface: React.FC<TradingProps> = () => {
     .filter((symbol, index, self) => self.indexOf(symbol) === index);
 
   return (
-    <div className="md:flex flex-col hidden text-white w-full max-w-sm mx-auto space-y-1">
-      <div className="space-y-4 bg-[#141E323D] p-4 rounded-lg">
+   <div className=" gap-3">
+     <div className="md:flex flex-col hidden text-white w-full h-full max-w-sm mx-auto space-y-1 bg-[#141E323D] rounded-lg ">
+      <div className="space-y-4  p-4 rounded-lg h-full">
         <div className="flex border-b border-gray-800 mb-4">
           {["buy", "sell", "convert"].map((tab) => (
             <button
@@ -725,7 +723,7 @@ const TradingInterface: React.FC<TradingProps> = () => {
           {getActionButtonText()}
         </button>
       </div>
-      <div className="space-y-4 bg-[#141E323D] p-4 rounded-lg">
+      <div className="space-y-4 bg-[#141E323D] p-4 rounded-lg pt-23">
         <h3 className="text-lg font-medium">Your Assets</h3>
         <div className="space-y-2">
           {userAssets
@@ -745,6 +743,10 @@ const TradingInterface: React.FC<TradingProps> = () => {
         <div>Total Portfolio Value: ${_totalBalance.toFixed(2)}</div>
       </div>
     </div>
+    <div className="pt-3 ">
+      <TradeHistory/>
+    </div>
+   </div>
   );
 };
 

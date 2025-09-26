@@ -9,6 +9,7 @@ import { BiSolidUpArrow } from "react-icons/bi";
 import { useRouter } from 'next/navigation';
 import CopyTradeModal from "@/app/modals/CopyTradeModal";
 import { API_ENDPOINTS } from "@/app/config/api";
+import CopySuccess from "@/app/modals/CopySuccess";
 
 interface ChartData {
   minValue: number;
@@ -64,6 +65,9 @@ const TopBalanced = () => {
   const [traders, setTraders] = useState<TradersProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+
 
   useEffect(() => {
     const fetchTraders = async () => {
@@ -166,7 +170,7 @@ const TopBalanced = () => {
 
       const result = await res.json();
       console.log('api response', result)
-      if (result.success) {
+      if (result.status === 201 || result.message ==="Successfully started copying trader") {
         setTraders(prevTraders => 
           prevTraders.map(trader => 
             trader.id === selectedTrader 
@@ -175,6 +179,8 @@ const TopBalanced = () => {
           )
         );
         setShowModal(false);
+        setSuccessMessage(result.message || 'Successfully started copying trader');
+        setError(null)
       } else {
         throw new Error(result.message || 'Failed to copy trader');
       }
@@ -295,6 +301,10 @@ const TopBalanced = () => {
           onClose={closeModal}
           onConfirmCopy={handleConfirmCopy}
         />
+      )}
+
+      {successMessage && (
+        <CopySuccess message ={successMessage} onClose ={()=> setSuccessMessage(null)}/>
       )}
       
       <div className="md:flex justify-between items-center hidden">

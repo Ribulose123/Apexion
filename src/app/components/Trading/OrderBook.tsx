@@ -17,7 +17,7 @@ const OrderBook: React.FC<OrderBookProps> = ({ orderBook, currentPrice, priceCha
     const [activeTab, setActiveTab] = useState('orderbook');
 
   return (
-    <div className="flex flex-col bg-[#01040F] border py-1 px-2.5  border-[#1E1E2F] rounded-lg h-full overflow-hidden -mt-4 ">
+    <div className="flex flex-col bg-[#01040F] py-1 px-2.5   h-full overflow-hidden -mt-4 ">
       {/* Tabs */}
       <div className="flex border-b border-[#1E1E2F] p-1">
         <button
