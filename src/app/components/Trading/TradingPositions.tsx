@@ -83,7 +83,7 @@ const TradingPositions = () => {
   }
 
   return (
-    <div className="bg-[#0a0e17] text-white md:max-w-6xl w-full rounded-lg py-2 px-2 md:px-4 -ml-0 md:-ml-0 mt-2 border border-[#1E1E2F]">
+    <div className="bg-[#0a0e17] text-white  w-full rounded-lg py-2 px-2 md:px-4 -ml-0 md:-ml-0 mt-2 border border-[#1E1E2F]">
       {/* Header Tabs - Scrollable on mobile */}
       <div className=" border-b border-gray-800 flex">
         {tabs.map((tab) => (

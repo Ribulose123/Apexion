@@ -5,10 +5,8 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import TimeframeSelector from "./TimeframeSelector ";
-import ChartSidebar from "./ChartSidebar";
 import OrderBook from "./OrderBook";
-import SimpleCandlestickChart from "./CandlestickChart";
+import TradingChartApex from "./TradingChart1";
 
 interface Candle {
   time: string;
@@ -31,7 +29,6 @@ interface TradingPlatformProps {
   data: Candle[];
   priceRange: { min: number; max: number };
   setPriceRange: React.Dispatch<React.SetStateAction<{ min: number; max: number }>>;
-  chartMode: "candlestick" | "line";
   selectedTool: string;
   setSelectedTool: React.Dispatch<React.SetStateAction<string>>;
   setMousePosition: React.Dispatch<React.SetStateAction<{ x: number; y: number } | null>>;
@@ -44,8 +41,7 @@ interface TradingPlatformProps {
 const TradingPlatform: React.FC<TradingPlatformProps> = ({
   data,
   setPriceRange,
-  selectedTool,
-  setSelectedTool,
+  
 }) => {
   const [orderBook, setOrderBook] = useState<{
     asks: { price: number; amount: number; total: number }[];
@@ -196,25 +192,10 @@ const TradingPlatform: React.FC<TradingPlatformProps> = ({
   
 
   return (
-    <div className="flex gap-2 h-full">
-      <div className="border border-[#1E1E2F] rounded-lg bg-[#01040F] flex flex-col h-full w-[70%] p-2">
-        <div className="flex flex-col flex-1">
-          <div className="ml-5">
-            <TimeframeSelector />
-          </div>
-          <div className="flex flex-1 min-h-0"> {/* Added min-h-0 for proper flex sizing */}
-            <div className="flex space-x-4 h-full w-full">
-              <ChartSidebar selectedTool={selectedTool} setSelectedTool={setSelectedTool} />
-              <div className="flex-1"> {/* Wrapper div for proper chart sizing */}
-               
-                <SimpleCandlestickChart/>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="grid md:grid-cols-2 grid-cols-1 gap-3 p-3 md:p-0 md:ml-0 -ml-2">
       
-      <div className="w-[30%] pt-4 py-5 min-h-0 border-[#1E1E2F] border rounded-lg ">
+      <TradingChartApex/>
+      <div className=" pt-4 py-5 min-h-0 border-[#1E1E2F] border rounded-lg ">
         <OrderBook
           orderBook={orderBook}
           trades={trades}

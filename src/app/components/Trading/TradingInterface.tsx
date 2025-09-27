@@ -562,8 +562,8 @@ const TradingInterface: React.FC<TradingProps> = () => {
     .filter((symbol, index, self) => self.indexOf(symbol) === index);
 
   return (
-   <div className=" gap-3">
-     <div className="md:flex flex-col hidden text-white w-full h-full max-w-sm mx-auto space-y-1 bg-[#141E323D] rounded-lg ">
+   <div className=" gap-3 grid md:grid-cols-2 pt-3">
+     <div className="md:flex flex-col hidden text-white w-full h-full  space-y-1 bg-[#141E323D] rounded-lg ">
       <div className="space-y-4  p-4 rounded-lg h-full">
         <div className="flex border-b border-gray-800 mb-4">
           {["buy", "sell", "convert"].map((tab) => (
@@ -743,7 +743,7 @@ const TradingInterface: React.FC<TradingProps> = () => {
         <div>Total Portfolio Value: ${_totalBalance.toFixed(2)}</div>
       </div>
     </div>
-    <div className="pt-3 ">
+    <div className="md:block hidden" >
       <TradeHistory/>
     </div>
    </div>

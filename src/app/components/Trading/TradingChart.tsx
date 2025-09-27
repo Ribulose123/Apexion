@@ -1,13 +1,9 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import Header from "./Header";
-import { Info, BarChart2, TrendingUp, CornerDownRight} from 'lucide-react';
 
 import TradingPlatform from "./TradingPlatform";
-import TradingSelect from "./TradingSelect";
-import TradingPositions from "./TradingPositions";
 import TradingInterface from "./TradingInterface";
-import MobileTrading from "./MobileTrading";
+import TradingPositions from "./TradingPositions";
 
 
 
@@ -62,25 +58,14 @@ const TradingChart = () => {
   const [selectedTool, setSelectedTool] = useState('crosshair');
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
   const [drawnLines, setDrawnLines] = useState<DrawnLine[]>([]);
-  const [chartMode, setChartMode] = useState<'candlestick' | 'line'>('candlestick');
   const [data, setData] = useState<ProcessedKlineData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [priceRange, setPriceRange] = useState({ min: 25000, max: 35000 });
   const [apiError, setApiError] = useState<string | null>(null);
   
-  type SelectButton = {
-    id: string;
-    label: string;
-    svg: React.ReactElement;
-  };
+ 
   
-  const [selectButtons, setSelectButtons] = useState<SelectButton[]>([
-    { id: 'indicator', label: 'Indicator', svg: <BarChart2 size={16} /> },
-    { id: 'strategy', label: 'Strategy', svg: <TrendingUp size={16} /> },
-    { id: 'candlestick', label: 'Candlestick', svg: <Info size={16} /> },
-    { id: 'line', label: 'Line', svg: <Info size={16} /> },
-    { id: 'order', label: 'Order', svg: <CornerDownRight size={16} /> },
-  ]);
+ 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -159,35 +144,18 @@ const TradingChart = () => {
   const candleData = convertToCandleData(data);
 
   return (
-    <div className=" md:px-2 w-full bg-[#01040F] text-white mx-auto">
-      <div className="">
-        <div className="md:-ml-5">
-          <Header />
-        </div>
-
-        {apiError && (
+    <div className=" md:px-2 w-full bg-[#01040F] text-white ">
+         {apiError && (
           <div className="mx-4 mt-4 p-3 bg-yellow-900 border border-yellow-700 rounded-lg text-yellow-200">
             {apiError}
           </div>
         )}
-
-        <div className="mt-4">
-          <TradingSelect 
-            chartMode={chartMode} 
-            setChartMode={setChartMode} 
-            selectButtons={selectButtons} 
-            setSelectButtons={setSelectButtons} 
-          />
-        </div>
-        
-        <div className="flex flex-col md:flex-row mt-4 md:ml-2 w-full gap-3">
-          <div className="md:w-[80%] w-full">
-            <div className="hidden md:block">
-             <TradingPlatform 
+      <div>
+        <div >
+         <TradingPlatform 
           data={candleData}
           priceRange={priceRange} 
-          setPriceRange={setPriceRange}
-          chartMode={chartMode} 
+          setPriceRange={setPriceRange} 
           selectedTool={selectedTool} 
           setMousePosition={setMousePosition} 
           mousePosition={mousePosition}
@@ -196,17 +164,11 @@ const TradingChart = () => {
           isLoading={isLoading}
           setSelectedTool={setSelectedTool}
         />
-            </div>
-            <div className="block md:hidden">
-              <MobileTrading/>
-            </div>
-            <div className="ml md:ml-0">
-              <TradingPositions />
-            </div>
-          </div>
-          <div className="md:w-[30%] w-full h-full ">
-            <TradingInterface/>
-          </div>
+
+       <div className="p-3 md:p-0 pt-6 -ml-2 md:-ml-0">
+         <TradingPositions/>
+       </div>
+        <TradingInterface/>
         </div>
       </div>
     </div>
@@ -214,3 +176,6 @@ const TradingChart = () => {
 };
 
 export default TradingChart;
+
+
+      
