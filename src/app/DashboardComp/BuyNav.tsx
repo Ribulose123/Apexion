@@ -13,7 +13,6 @@ const BuyNav = () => {
         if(pathname?.includes('/buy/credit-card')) setActiveNavTab('credit-debit')
         else if (pathname?.includes('/buy/p2p')) setActiveNavTab('p2p')
         else if (pathname?.includes('/buy/fast-otc')) setActiveNavTab('fast-otc')
-        else if (pathname?.includes('/buy/quick-buy')) setActiveNavTab('quick-buy')
         else if (pathname?.includes('/buy/card')) setActiveNavTab('card')
         else if (pathname?.includes('/buy/third-party')) setActiveNavTab('third-party')
     }, [pathname])
@@ -43,12 +42,7 @@ const BuyNav = () => {
                         Fast OTC
                     </Link>
                     
-                    <Link href="/buy/quick-buy"
-                        className={`pb-2 ${activeNavTab === 'quick-buy' ? 'border-b-2 border-blue-500 text-white' : 'text-gray-400'} hover:text-white transition-colors  text-[13px] sm:text-[18px]`}
-                        onClick={() => setActiveNavTab('quick-buy')}
-                    >
-                        Quick buy
-                    </Link>
+                   
                     
                     <Link href="/buy/card"
                         className={`pb-2 ${activeNavTab === 'card' ? 'border-b-2 border-blue-500 text-white' : 'text-gray-400'} hover:text-white transition-colors text-[13px] sm:text-[18px]`}

@@ -67,7 +67,7 @@ const VeriAuth = () => {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 md:gap-15 mt-4 md:ml-3">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-15 mt-4 md:ml-3 ">
         {/* Left section - Content changes based on active tab */}
         <div className="w-full md:w-1/2 p-4 border-b-2 border-white/10 md:border-b-0">
           {activeTab === "individual" ? (

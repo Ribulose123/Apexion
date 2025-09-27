@@ -25,12 +25,6 @@ interface UserData {
 
 const countryOptions = [
   { code: "gb", name: "English" },
-  { code: "us", name: "English" },
-  { code: "fr", name: "Français" },
-  { code: "de", name: "Deutsch" },
-  { code: "ng", name: "Nigerian Pidgin" },
-  { code: "es", name: "Español (International)" },
-  { code: "pt", name: "Português (International)" },
 ];
 
 const Navbar = () => {
@@ -315,10 +309,10 @@ const Navbar = () => {
             {activeDropdown === "tools" && isAuthenticated && (
               <div className="absolute top-full left-0 mt-3 w-[500px] bg-[#0D1B2A] text-white rounded-xl shadow-xl z-50 p-4 flex gap-4">
                 <div className="w-1/2 space-y-4">
-                  <div className="p-4 rounded-lg transition cursor-pointer bg-[#152232]">
-                    <p className="font-semibold flex items-center gap-2">
+                  <div className="p-4 rounded-lg transition cursor-pointer ">
+                    <Link href='/copy' className="font-semibold flex items-center gap-2" onClick={handleProtectedNavigation('/copy')}>
                       🔥 Copy Trading
-                    </p>
+                    </Link>
                     <p className="text-gray-400 text-xs">
                       Follow top trading experts
                     </p>
@@ -366,7 +360,7 @@ const Navbar = () => {
                     Support
                   </Link>
                   <Link
-                    href="/copy"
+                    href="/blog"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
                   >
                     Blog
@@ -408,9 +402,9 @@ const Navbar = () => {
               <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
                 <div className="py-1">
                   <Link
-                    href="/profile"
+                    href="security/verfication"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation('/profile')}
+                    onClick={handleProtectedNavigation('security/verfication')}
                   >
                     My Profile
                   </Link>
@@ -422,9 +416,9 @@ const Navbar = () => {
                     Security
                   </Link>
                   <Link
-                    href="/settings"
+                    href="security/settings"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation('/settings')}
+                    onClick={handleProtectedNavigation('security/settings')}
                   >
                     Settings
                   </Link>
@@ -568,9 +562,9 @@ const Navbar = () => {
               <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
                 <div className="py-1">
                   <Link
-                    href="/profile"
+                    href="security/verfication"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation('/profile')}
+                    onClick={handleProtectedNavigation('security/verfication')}
                   >
                     My Profile
                   </Link>
@@ -582,9 +576,9 @@ const Navbar = () => {
                     Security
                   </Link>
                   <Link
-                    href="/settings"
+                    href="security/settings"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation('/settings')}
+                    onClick={handleProtectedNavigation('security/settings')}
                   >
                     Settings
                   </Link>

@@ -102,9 +102,9 @@ const handleCopyLinK = async()=>{
         </div>
 
         <div className='flex flex-col md:flex-row justify-center items-center gap-6'>
-            <Image src='/img/Card.png' alt='card' width={300} height={300}/>
-            <Image src='/img/Card.png' alt='card' width={300} height={300}/>
-            <Image src='/img/Card.png' alt='card' width={300} height={300}/>
+            <Image src='/img/card14.jpg' alt='card' width={300} height={300}/>
+            <Image src='/img/card14.jpg' alt='card' width={300} height={300}/>
+            <Image src='/img/card14.jpg' alt='card' width={300} height={300}/>
         </div>
 
           {/* Referral Info Section */}

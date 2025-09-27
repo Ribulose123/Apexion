@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { featuredCoins, newlyListedCoins } from "../data/data";
 
@@ -9,11 +9,87 @@ const CryptoInterface = () => {
   const [receiveAmount, setReceiveAmount] = useState("0.7751");
   const [selectedFiat, setSelectedFiat] = useState("USD");
   const [selectedCrypto, setSelectedCrypto] = useState("USDT");
+  const [showRegionModal, setShowRegionModal] = useState(true);
+  const [countdown, setCountdown] = useState(5); 
+
+  // Countdown timer for automatic redirect
+  useEffect(() => {
+    if (showRegionModal) {
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+           
+            window.history.back(); 
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [showRegionModal]);
+
+  const handleCloseModal = () => {
+    setShowRegionModal(false);
+    window.history.back(); 
+  };
+
+  if (showRegionModal) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-[#141E32] border border-[#439A8633] rounded-xl p-8 max-w-md w-full mx-auto text-center">
+          {/* Warning Icon */}
+          <div className="mx-auto w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mb-4">
+            <svg 
+              className="w-8 h-8 text-white" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z" 
+              />
+            </svg>
+          </div>
+          
+          {/* Modal Title */}
+          <h2 className="text-2xl font-bold text-white mb-3">
+            NOT AVAILABLE IN YOUR REGION
+          </h2>
+          
+          {/* Modal Message */}
+          <p className="text-gray-300 mb-6 leading-relaxed">
+            This service is currently not available in your geographic region. 
+            Please check back later or contact support for more information.
+          </p>
+          
+          {/* Countdown Timer */}
+          <div className="text-sm text-gray-400 mb-6">
+            Redirecting in <span className="text-[#439A86] font-bold">{countdown}</span> seconds...
+          </div>
+          
+          {/* Action Button */}
+          <button
+            onClick={handleCloseModal}
+            className="w-full bg-[#439A86] hover:bg-teal-600 text-white rounded-md py-3 transition duration-200 font-medium"
+          >
+            Go Back Now
+          </button>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="text-white w-full">
       {/* Main Content */}
-      <div className=" mx-auto max-w-7xl w-full py-8 ">
+      <div className="mx-auto max-w-7xl w-full py-8">
         <div className="mb-8 md:ml-28">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 text-center md:text-left">
             Buy Crypto Instantly In
@@ -29,9 +105,9 @@ const CryptoInterface = () => {
 
         {/* Responsive layout - reversed on desktop */}
         <div className="flex flex-col md:flex-row md:items-start md:space-x-8">
-          {/* Featured/Newly Listed Section - First on desktop, Second on mobile */}
+          {/* Featured/Newly Listed Section */}
           <div className="w-full md:w-1/2 order-2 md:order-1 mb-8 md:mb-0 md md:-mt-5 md:ml-28">
-            <div className="flex flex-col  border border-[#141E32] text-white rounded-lg overflow-hidden w-full max-w-md mx-auto md:mx-0 shadow-lg">
+            <div className="flex flex-col border border-[#141E32] text-white rounded-lg overflow-hidden w-full max-w-md mx-auto md:mx-0 shadow-lg">
               <div className="flex flex-col md:flex-row">
                 {/* Featured Column */}
                 <div className="md:w-1/2 w-full border-r border-gray-800 p-4">
@@ -62,7 +138,7 @@ const CryptoInterface = () => {
                 </div>
 
                 {/* Newly Listed Column */}
-                <div className="md:w-1/2 w-full p-4 ">
+                <div className="md:w-1/2 w-full p-4">
                   <h3 className="text-gray-400 mb-4 text-sm font-medium">
                     Newly Listed
                   </h3>
@@ -92,7 +168,7 @@ const CryptoInterface = () => {
             </div>
           </div>
 
-          {/* Buy/Sell Form - Second on desktop, First on mobile */}
+          {/* Buy/Sell Form */}
           <div className="w-full md:w-1/2 order-1 md:order-2 mb-8 md:mb-0 md:-mt-42">
             <div className="bg-linear-to-b from-[#141E323D] to-[#141E32] text-white w-full max-w-md mx-auto md:mx-0 p-6 rounded-lg shadow-lg">
               {/* Tab buttons */}
@@ -186,13 +262,13 @@ const CryptoInterface = () => {
         </div>
 
         {/* How To Buy Crypto Section */}
-        <div className="mt-16 md:mt-24 ">
+        <div className="mt-16 md:mt-24">
           <h2 className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-center md:text-left md:ml-28">
             How To Buy Crypto Instantly?
           </h2>
-          <div className="flex flex-col md:flex-row justify-evenly gap-6 md:gap-8 border  md:border-0 border-[#439A8633] py-3 rounded-lg">
+          <div className="flex flex-col md:flex-row justify-evenly gap-6 md:gap-8 border md:border-0 border-[#439A8633] py-3 rounded-lg">
             {/* Step 1 */}
-            <div className="text-center mb-6 md:mb-0 flex flex-col items-center ">
+            <div className="text-center mb-6 md:mb-0 flex flex-col items-center">
               <div className="mb-4 flex justify-center">
                 <Image
                   src="/img/step1.png"

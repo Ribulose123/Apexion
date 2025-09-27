@@ -68,18 +68,21 @@ const UnifiedVerificationModal = ({ isOpen = true, onClose }: UnifiedVerificatio
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="max-w-md w-full bg-white text-black rounded-2xl shadow-xl overflow-hidden relative">
+    <div className="fixed inset-0 bg-black/75 bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="max-w-md w-full bg-white text-black rounded-2xl shadow-xl min-h-[400px] h-auto max-h-[90vh] overflow-y-auto">
+        <div className='px-9 py-2 flex justify-between items-center'>
+           <h2 className="text-xl font-semibold text-gray-900 ">Identity Verification</h2>
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 z-10 p-2 text-gray-400 hover:text-gray-600 transition-colors"
+          className=""
         >
           <X size={20} />
         </button>
+        </div>
 
         {currentStep === 1 && (
           <div className="px-8 py-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Identity Verification</h2>
+           
             
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">

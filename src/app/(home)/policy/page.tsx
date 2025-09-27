@@ -15,12 +15,12 @@ export default function PrivacyPage(){
           <section>
             <h2 className="text-2xl font-semibold text-white mb-4">Who Are We (Owner And Data Controller)?</h2>
             <p className="text-gray-300 mb-4 leading-relaxed">
-              Octa Markets Incorporated — First Floor, Meridian Place, Choc Estate, Castries, Saint Lucia.
+              Bidvest Incorporated — First Floor, Meridian Place, Choc Estate, Castries, Saint Lucia.
             </p>
             <div className="flex items-center space-x-2 text-blue-400 hover:text-blue-300 transition-colors">
               
-              <a href="mailto:Support@Octabroker.Com" className="text-sm">
-                Contact Email: Support@Octabroker.Com
+              <a href="support@bidvest-trades.com" className="text-sm">
+                Contact Email: support@bidvest-trades.com
               </a>
             </div>
             <p className="text-gray-300 mt-4 leading-relaxed">

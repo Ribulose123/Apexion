@@ -103,6 +103,9 @@ const ApexoionCard = () => {
             <p className="text-[#C1C1C1] text-[13px]">
               Spend with your Bybit Card to earn 10% cashback, up to $300.
             </p>
+            <p className="text-[#C1C1C1] text-[13px]">
+              Your Asset, Our Protection With Bybit&apos;s cutting-edge protections, you can personalize your settings to maintain total control over your account.”
+            </p>
             <Link
               href="#"
               className="text-[#439A86] text-[13px] font-semibold flex items-center"

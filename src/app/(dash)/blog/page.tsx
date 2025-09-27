@@ -1,9 +1,7 @@
-
-import BuyNav from "@/app/DashboardComp/BuyNav";
+'use client'
 import React, { useEffect, useState } from "react";
-
-export default function Buy(){
-    const [showRegionModal, setShowRegionModal] = useState(true);
+export default function Blog(){
+ const [showRegionModal, setShowRegionModal] = useState(true);
         const [countdown, setCountdown] = useState(5); 
      // Countdown timer for automatic redirect
         useEffect(() => {
@@ -77,13 +75,7 @@ export default function Buy(){
             </div>
           );
         }
-    
     return(
-        <div className="flex flex-1 flex-col p-2 sm:p-4">
-        <div>
-        <BuyNav/>
-        </div>
-        
-    </div>
+        <div>Blog page</div>
     )
 }
