@@ -1,4 +1,4 @@
-
+'use client'
 import BuyNav from "@/app/DashboardComp/BuyNav";
 import React, { useEffect, useState } from "react";
 

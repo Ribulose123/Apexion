@@ -285,10 +285,9 @@ export const useWithdrawal = () => {
                 });
             }
     
-            // Apply client-side status filtering since backend doesn't support it
+            
             if (transactionStatusFilter !== 'all') {
                 mappedHistory = mappedHistory.filter(historyItem => {
-                    // Convert frontend status back to backend format for comparison
                     let backendStatus: string;
                     switch (historyItem.status) {
                         case 'completed':
@@ -365,7 +364,7 @@ export const useWithdrawal = () => {
         fetchDepositAddress();
     }, [fetchDepositAddress]);
 
-  // You should return the state and setters you want to use outside this hook
+
   return {
   coins,
         networks,
