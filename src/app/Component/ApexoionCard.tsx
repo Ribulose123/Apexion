@@ -101,10 +101,10 @@ const ApexoionCard = () => {
               10% cashback
             </h2>
             <p className="text-[#C1C1C1] text-[13px]">
-              Spend with your Bybit Card to earn 10% cashback, up to $300.
+              Spend with your Bidvest Card to earn 10% cashback, up to $300.
             </p>
             <p className="text-[#C1C1C1] text-[13px]">
-              Your Asset, Our Protection With Bybit&apos;s cutting-edge protections, you can personalize your settings to maintain total control over your account.”
+              Your Asset, Our Protection With Bidvest&apos;s cutting-edge protections, you can personalize your settings to maintain total control over your account.”
             </p>
             <Link
               href="#"
@@ -268,7 +268,7 @@ const ApexoionCard = () => {
                 Your Asset, Our Protection
               </h2>
               <p className="text-[#9E9FA1] text-[14px] mb-12 leading-relaxed">
-                With Bybit&#39;s cutting-edge protections, you can personalize your settings to 
+                With Bidvest&#39;s cutting-edge protections, you can personalize your settings to 
                 maintain total control over your account.
               </p>
               
@@ -302,7 +302,7 @@ const ApexoionCard = () => {
                     <Lock className="w-8 h-8 text-white" />
                   </div>
                   <p className="text-[#C1C1C1] font-semibold mb-2 text-[11px] text-start">
-                    Card freezing or unfreezing is possible anytime with just a few taps on the Bybit App.
+                    Card freezing or unfreezing is possible anytime with just a few taps on the Bidvest App.
                   </p>
                 </div>
               </div>
@@ -341,7 +341,7 @@ const ApexoionCard = () => {
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Step 1</h3>
-                    <p className="text-gray-400 text-[13px]">Create a Bybit account in just a few minutes.</p>
+                    <p className="text-gray-400 text-[13px]">Create a Bidvest account in just a few minutes.</p>
                   </div>
                 </div>
                 
@@ -367,7 +367,7 @@ const ApexoionCard = () => {
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Step 3</h3>
-                    <p className="text-gray-400 text-[13px]">Once approved, start using your Bybit Virtual Card immediately.</p>
+                    <p className="text-gray-400 text-[13px]">Once approved, start using your Bidvest Virtual Card immediately.</p>
                   </div>
                 </div>
               </div>

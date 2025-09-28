@@ -261,7 +261,7 @@ const Chart = () => {
             <Link href='/deposit' className="bg-purple-600 text-white px-4 py-1 rounded-md text-sm hover:bg-purple-700 transition-colors">
               {hasAssets ? 'Deposit' : 'Get Started'}
             </Link>
-            <Link href='#' className="bg-gray-800 text-white px-4 py-1 rounded-md text-sm hover:bg-gray-700 transition-colors">
+            <Link href='/buy/coin' className="bg-gray-800 text-white px-4 py-1 rounded-md text-sm hover:bg-gray-700 transition-colors">
               {hasAssets ? 'Buy Crypto' : 'Learn More'}
             </Link>
           </div>

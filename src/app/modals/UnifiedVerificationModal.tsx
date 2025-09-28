@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, Cloud, Camera, Hourglass, X } from 'lucide-react';
 import ReactCountryFlag from "react-country-flag";
 
@@ -13,24 +13,74 @@ interface Country {
   name: string;
 }
 
-const countries: Country[] = [
-  { code: 'US', name: 'United States' },
-  { code: 'GB', name: 'United Kingdom' },
-  { code: 'CA', name: 'Canada' },
-  { code: 'IN', name: 'India' },
-  { code: 'ZA', name: 'South Africa' },
-  { code: 'GH', name: 'Ghana' },
-  { code: 'KE', name: 'Kenya' }
-];
+// Interface for the API response
+interface CountryApiResponse {
+  cca2: string;
+  name: {
+    common: string;
+  };
+}
+
+// Custom hook to fetch countries
+const useCountries = () => {
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2');
+        const data: CountryApiResponse[] = await response.json();
+        
+        const formattedCountries: Country[] = data
+          .map((country: CountryApiResponse) => ({
+            code: country.cca2,
+            name: country.name.common
+          }))
+          .sort((a: Country, b: Country) => a.name.localeCompare(b.name));
+        
+        setCountries(formattedCountries);
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+        // Fallback to some common countries if API fails
+        setCountries([
+          { code: 'US', name: 'United States' },
+          { code: 'GB', name: 'United Kingdom' },
+          { code: 'CA', name: 'Canada' },
+          { code: 'IN', name: 'India' },
+          { code: 'ZA', name: 'South Africa' },
+          { code: 'GH', name: 'Ghana' },
+          { code: 'KE', name: 'Kenya' }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+
+  return { countries, loading };
+};
 
 const UnifiedVerificationModal = ({ isOpen = true, onClose }: UnifiedVerificationModalProps) => {
+  const { countries, loading } = useCountries();
   const [currentStep, setCurrentStep] = useState(1);
-  const [countryOfResidence, setCountryOfResidence] = useState<Country>(countries[0]);
-  const [issuingCountry, setIssuingCountry] = useState<Country>(countries[0]);
+  const [countryOfResidence, setCountryOfResidence] = useState<Country | null>(null);
+  const [issuingCountry, setIssuingCountry] = useState<Country | null>(null);
   const [idType, setIdType] = useState<'National ID' | 'BVN' | 'Passport' | 'Driver License'>('National ID');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [showIssuingDropdown, setShowIssuingDropdown] = useState(false);
+  const [showRegionModal, setShowRegionModal] = useState(false);
+
+  // Set default countries once loaded
+  useEffect(() => {
+    if (countries.length > 0 && !countryOfResidence) {
+      setCountryOfResidence(countries[0]);
+      setIssuingCountry(countries[0]);
+    }
+  }, [countries, countryOfResidence]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -38,11 +88,12 @@ const UnifiedVerificationModal = ({ isOpen = true, onClose }: UnifiedVerificatio
   };
 
   const handleStepOneNext = () => {
-    if (idType === 'National ID') {
+    // Only allow National ID and Driver License to proceed to upload
+    if (idType === 'National ID' || idType === 'Driver License') {
       setCurrentStep(2);
     } else {
-      alert(`Redirecting to enter ${idType} number...`);
-      if (onClose) onClose();
+      // Show modal for other ID types
+      setShowRegionModal(true);
     }
   };
 
@@ -65,25 +116,35 @@ const UnifiedVerificationModal = ({ isOpen = true, onClose }: UnifiedVerificatio
     if (onClose) onClose();
   };
 
+  const handleCloseRegionModal = () => {
+    setShowRegionModal(false);
+  };
+
   if (!isOpen) return null;
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-black/75 bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="max-w-md w-full bg-white text-black rounded-2xl shadow-xl p-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading countries...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/75 bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="max-w-md w-full bg-white text-black rounded-2xl shadow-xl min-h-[400px] h-auto max-h-[90vh] overflow-y-auto">
         <div className='px-9 py-2 flex justify-between items-center'>
-           <h2 className="text-xl font-semibold text-gray-900 ">Identity Verification</h2>
-        <button
-          onClick={handleClose}
-          className=""
-        >
-          <X size={20} />
-        </button>
+          <h2 className="text-xl font-semibold text-gray-900">Identity Verification</h2>
+          <button onClick={handleClose} className="">
+            <X size={20} />
+          </button>
         </div>
 
         {currentStep === 1 && (
           <div className="px-8 py-8">
-           
-            
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Country/Region of Residence:
@@ -94,13 +155,17 @@ const UnifiedVerificationModal = ({ isOpen = true, onClose }: UnifiedVerificatio
                   className="w-full px-4 py-3 text-left bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent flex items-center justify-between"
                 >
                   <div className="flex items-center">
-                    <ReactCountryFlag 
-                      countryCode={countryOfResidence.code} 
-                      svg 
-                      className="mr-2 w-5 h-5"
-                      title={countryOfResidence.code}
-                    />
-                    <span className="text-gray-900">{countryOfResidence.name}</span>
+                    {countryOfResidence && (
+                      <ReactCountryFlag 
+                        countryCode={countryOfResidence.code} 
+                        svg 
+                        className="mr-2 w-5 h-5"
+                        title={countryOfResidence.code}
+                      />
+                    )}
+                    <span className="text-gray-900">
+                      {countryOfResidence ? countryOfResidence.name : 'Select country...'}
+                    </span>
                   </div>
                   <ChevronDown className={`text-gray-400 transition-transform ${showCountryDropdown ? 'rotate-180' : ''}`} size={20} />
                 </button>
@@ -113,7 +178,7 @@ const UnifiedVerificationModal = ({ isOpen = true, onClose }: UnifiedVerificatio
                           setCountryOfResidence(country);
                           setShowCountryDropdown(false);
                         }}
-                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center ${countryOfResidence.code === country.code ? 'bg-gray-100' : ''}`}
+                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center ${countryOfResidence?.code === country.code ? 'bg-gray-100' : ''}`}
                       >
                         <ReactCountryFlag 
                           countryCode={country.code} 
@@ -139,13 +204,17 @@ const UnifiedVerificationModal = ({ isOpen = true, onClose }: UnifiedVerificatio
                   className="w-full px-4 py-3 text-left bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent flex items-center justify-between"
                 >
                   <div className="flex items-center">
-                    <ReactCountryFlag 
-                      countryCode={issuingCountry.code} 
-                      svg 
-                      className="mr-2 w-5 h-5"
-                      title={issuingCountry.code}
-                    />
-                    <span className="text-gray-900">{issuingCountry.name}</span>
+                    {issuingCountry && (
+                      <ReactCountryFlag 
+                        countryCode={issuingCountry.code} 
+                        svg 
+                        className="mr-2 w-5 h-5"
+                        title={issuingCountry.code}
+                      />
+                    )}
+                    <span className="text-gray-900">
+                      {issuingCountry ? issuingCountry.name : 'Select country...'}
+                    </span>
                   </div>
                   <ChevronDown className={`text-gray-400 transition-transform ${showIssuingDropdown ? 'rotate-180' : ''}`} size={20} />
                 </button>
@@ -158,7 +227,7 @@ const UnifiedVerificationModal = ({ isOpen = true, onClose }: UnifiedVerificatio
                           setIssuingCountry(country);
                           setShowIssuingDropdown(false);
                         }}
-                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center ${issuingCountry.code === country.code ? 'bg-gray-100' : ''}`}
+                        className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center ${issuingCountry?.code === country.code ? 'bg-gray-100' : ''}`}
                       >
                         <ReactCountryFlag 
                           countryCode={country.code} 
@@ -390,6 +459,32 @@ const UnifiedVerificationModal = ({ isOpen = true, onClose }: UnifiedVerificatio
             >
               Continue
             </button>
+          </div>
+        )}
+
+        {/* Region Not Available Modal */}
+        {showRegionModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="max-w-sm w-full bg-white rounded-2xl shadow-xl p-6">
+              <div className="text-center">
+                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                  <X className="h-6 w-6 text-red-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Not Available in Your Region
+                </h3>
+                <p className="text-gray-600 text-sm mb-6">
+                  {idType} verification is not currently available in your region. 
+                  Please select National ID or Driver&apos;s License to proceed with document upload.
+                </p>
+                <button
+                  onClick={handleCloseRegionModal}
+                  className="w-full py-3 px-4 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

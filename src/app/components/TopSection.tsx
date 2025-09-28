@@ -87,7 +87,7 @@ const TopSection: React.FC = () => {
 
   const links = [
     { name: "Deposit", herf: '/deposit' },
-    { name: "Buy Crypto", herf: '#' },
+    { name: "Buy Crypto", herf: '/buy/coin' },
     { name: "Convert", herf: '/conversion' },
     { name: "Withdraw", herf: '/withdrawal' },
   ];

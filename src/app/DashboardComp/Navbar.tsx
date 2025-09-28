@@ -227,7 +227,7 @@ const Navbar = () => {
                     </p>
                   </Link>
 
-                  <Link href="/buy/quick" className="block" onClick={handleProtectedNavigation('/buy/quick')}>
+                  <Link href="/buy/coin" className="block" onClick={handleProtectedNavigation('/buy/coin')}>
                     <div>
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
                         <Image

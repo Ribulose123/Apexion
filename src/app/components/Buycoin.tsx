@@ -59,10 +59,10 @@ const Buycoin = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Simple Header */}
         <div className="text-center mb-12">
-          <h3 className="font-semibold text-blue-300">Security First</h3>
-                <p className="text-sm text-blue-200">
-                  Always verify youre on the official website. These links open directly to verified platforms.
-                </p>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-2">Buy Crypto</h1>
+          <p className="text-gray-400">Choose a platform to get started</p>
+        </div>
         </div>
 
         {/* Clean Grid */}

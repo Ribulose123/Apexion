@@ -11,7 +11,7 @@ const products = [
     title: "Crypto",
     description:
       "Trade and Mine Bitcoin and Other Leading Crypto Currencies with Decentralized Finance",
-      link:'/coping'
+      link:'/mining'
   },
   {
     icon: <FaCopy size={28} className="text-gray-800" />,

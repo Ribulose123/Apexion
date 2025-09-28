@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 
 export default function Buy(){
     const [showRegionModal, setShowRegionModal] = useState(true);
-        const [countdown, setCountdown] = useState(5); 
+        const [countdown, setCountdown] = useState(2); 
      // Countdown timer for automatic redirect
         useEffect(() => {
           if (showRegionModal) {
@@ -31,7 +31,7 @@ export default function Buy(){
       
         if (showRegionModal) {
           return (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50 p-4">
               <div className="bg-[#141E32] border border-[#439A8633] rounded-xl p-8 max-w-md w-full mx-auto text-center">
                 {/* Warning Icon */}
                 <div className="mx-auto w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mb-4">

@@ -86,7 +86,7 @@ const Footer = () => {
                 <li><a href="/pricing">Stock</a></li>
                 <li><a href="/pricing">Forex</a></li>
                 <li><a href="/pricing">Crypto</a></li>
-                <li><Link href="/copy">Copy</Link></li>
+                <li><Link href="/copying">Copy</Link></li>
               </ul>
             </div>
             
