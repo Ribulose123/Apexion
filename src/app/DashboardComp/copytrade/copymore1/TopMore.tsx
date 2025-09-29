@@ -2,29 +2,42 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 import LeaderContentMore from "./LeaderContentMore";
+import AllTrades from "./AllTrades";
+import Subscribed from "./Subscribed";
 
 const TopMore = () => {
   const [leadeTrade, setLeaderTrade] = useState("🔥Leaderboard");
+  const [searchQuery, setSearchQuery] = useState("");
   const tabs = ["🔥Leaderboard", "All traders", "subscribed"];
+
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+    const clearSearch = () => {
+    setSearchQuery("");
+  };
+
 
   const renderCopyContent = () => {
     switch (leadeTrade) {
       case "🔥Leaderboard":
         return (
           <div>
-            <LeaderContentMore/>
+            <LeaderContentMore searchQuery={searchQuery}/>
           </div>
         );
       case "All traders":
         return (
           <div>
-            <h2>All traders</h2>
+           <AllTrades searchQuery={searchQuery}/>
           </div>
         );
       case "subscribed":
         return (
           <div>
-            <h2>subscribed</h2>
+           <Subscribed searchQuery={searchQuery} />
           </div>
         );
     }
@@ -56,12 +69,22 @@ const TopMore = () => {
             <input
               type="text"
               placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearch}
               className="bg-[#10131F]  px-3 py-2 pr-8 rounded-full text-sm text-gray-200 focus:outline-none placeholder:text-[#E8E8E8] placeholder:text-[14px]"
             />
             <Search
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[E8E8E8]"
               size={16}
             />
+             {searchQuery && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+              >
+                ×
+              </button>
+            )}
           </div>
           <button className="bg-linear-to-r from-[#439A86] to-[#283F3B] hover:bg-teal-700 text-white border border-[#439A8636] text-[12px] rounded-md px-3 py-2">
             Daily Picks

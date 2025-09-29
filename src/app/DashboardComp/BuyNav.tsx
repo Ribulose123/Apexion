@@ -35,12 +35,12 @@ const BuyNav = () => {
                         P2P trading
                     </Link>
                     
-                    <Link href="/buy/fast-otc"
+                   {/*  <Link href="/buy/fast-otc"
                         className={`pb-2 ${activeNavTab === 'fast-otc' ? 'border-b-2 border-blue-500 text-white' : 'text-gray-400'} hover:text-white transition-colors  text-[13px] sm:text-[18px]`}
                         onClick={() => setActiveNavTab('fast-otc')}
                     >
                         Fast OTC
-                    </Link>
+                    </Link> */}
                     
                    
                     

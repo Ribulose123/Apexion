@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 import LeaderContent from "./LeaderContent";
+import Alltraders from "./Alltraders";
+import Subscribed from "./Subscribed";
 
 const TopCopy = () => {
   const [leadeTrade, setLeaderTrade] = useState("🔥Leaderboard");
@@ -18,13 +20,13 @@ const TopCopy = () => {
       case "All traders":
         return (
           <div>
-            <h2>All traders</h2>
+            <Alltraders/>
           </div>
         );
       case "subscribed":
         return (
           <div>
-            <h2>subscribed</h2>
+           <Subscribed/>
           </div>
         );
     }

@@ -9,18 +9,17 @@ const CryptoInterface = () => {
   const [receiveAmount, setReceiveAmount] = useState("0.7751");
   const [selectedFiat, setSelectedFiat] = useState("USD");
   const [selectedCrypto, setSelectedCrypto] = useState("USDT");
-  const [showRegionModal, setShowRegionModal] = useState(true);
+  const [showRegionModal, setShowRegionModal] = useState(false); // Changed to false initially
   const [countdown, setCountdown] = useState(5); 
 
-  // Countdown timer for automatic redirect
+  // Countdown timer for automatic redirect (only when modal is shown)
   useEffect(() => {
     if (showRegionModal) {
       const timer = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
             clearInterval(timer);
-           
-            window.history.back(); 
+            handleCloseModal();
             return 0;
           }
           return prev - 1;
@@ -33,10 +32,17 @@ const CryptoInterface = () => {
 
   const handleCloseModal = () => {
     setShowRegionModal(false);
-    window.history.back(); 
+    setCountdown(5); // Reset countdown for next time
   };
 
-  if (showRegionModal) {
+  const handleBuyClick = () => {
+    setShowRegionModal(true);
+  };
+
+  // Modal component
+  const RegionModal = () => {
+    if (!showRegionModal) return null;
+
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div className="bg-[#141E32] border border-[#439A8633] rounded-xl p-8 max-w-md w-full mx-auto text-center">
@@ -83,11 +89,13 @@ const CryptoInterface = () => {
         </div>
       </div>
     );
-  }
-
+  };
 
   return (
     <div className="text-white w-full">
+      {/* Region Modal */}
+      <RegionModal />
+
       {/* Main Content */}
       <div className="mx-auto max-w-7xl w-full py-8">
         <div className="mb-8 md:ml-28">
@@ -253,8 +261,11 @@ const CryptoInterface = () => {
                 </div>
               </div>
 
-              {/* Buy button */}
-              <button className="w-full bg-[#439A86] hover:bg-teal-600 text-white rounded-md py-3 transition duration-200 font-medium">
+              {/* Buy button - Now triggers the modal */}
+              <button 
+                onClick={handleBuyClick}
+                className="w-full bg-[#439A86] hover:bg-teal-600 text-white rounded-md py-3 transition duration-200 font-medium"
+              >
                 Buy
               </button>
             </div>

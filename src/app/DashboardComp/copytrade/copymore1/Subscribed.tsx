@@ -31,7 +31,7 @@ interface TradersProps {
   commissionRate: number;
 }
 
-const LeaderContentMore = ({ searchQuery = "" }) => {
+const Subscribed = ({ searchQuery = "" }) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [selectedTrader, setSelectedTrader] = useState<string | null>(null);
@@ -103,7 +103,9 @@ const LeaderContentMore = ({ searchQuery = "" }) => {
         const result = await response.json();
 
         if (result.data && Array.isArray(result.data.traders)) {
-          const mappedTraders = result.data.traders.map(
+          const mappedTraders = result.data.traders
+          .filter((trader: TradersProps) => trader.favorited || trader.isFavorited)
+          .map(
             (trader: TradersProps) => ({
               ...trader,
               isCopied: trader.copied,
@@ -593,4 +595,4 @@ const LeaderContentMore = ({ searchQuery = "" }) => {
   );
 };
 
-export default LeaderContentMore;
+export default Subscribed;

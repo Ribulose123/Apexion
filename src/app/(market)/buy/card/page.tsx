@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 
 export default function CardOptions(){
-const [countdown, setCountdown] = useState(5);
+const [countdown, setCountdown] = useState(0);
 const [showRegionModal, setShowRegionModal] = useState(true);
 
  useEffect(() => {

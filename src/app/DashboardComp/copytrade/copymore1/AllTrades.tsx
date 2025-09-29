@@ -31,7 +31,7 @@ interface TradersProps {
   commissionRate: number;
 }
 
-const LeaderContentMore = ({ searchQuery = "" }) => {
+const AllTrades = ({ searchQuery = "" }) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [selectedTrader, setSelectedTrader] = useState<string | null>(null);
@@ -593,4 +593,4 @@ const LeaderContentMore = ({ searchQuery = "" }) => {
   );
 };
 
-export default LeaderContentMore;
+export default AllTrades;

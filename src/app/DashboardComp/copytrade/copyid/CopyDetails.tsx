@@ -121,7 +121,6 @@ const CopyDetails = () => {
         }
 
         const result = await response.json();
-        console.log("API Response:", result);
 
         if (result) {
           setTraderData(result.data);
@@ -150,51 +149,54 @@ const CopyDetails = () => {
     setShowModal(false);
   };
 
-  const handleConfirmCopy = async (copySettings: CopySettings) => {
-    if (!traderData) return;
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      alert("You must be logged in to copy a trader.");
-      router.push("/login");
-      return;
-    }
+const handleConfirmCopy = async (copySettings: CopySettings) => {
+  if (!traderData) return;
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    alert("You must be logged in to copy a trader.");
+    router.push("/login");
+    return;
+  }
 
-    try {
-      setCopying(true);
-      const response = await fetch(API_ENDPOINTS.TRADERS.COPY_TRADER, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          traderId: traderData.id,
-          amount: copySettings.copyAmount,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to copy trade");
-      }
-
-      const result = await response.json();
-      if (
-        result.status === 201 ||
-        result.message === "Successfully started copying trader"
-      ) {
-        setTraderData((prev) => (prev ? { ...prev, copied: true } : null));
-        setSuccessMessage("✅ Successfully started copying the trader!");
-      }
-      closeModal();
-
-      setTraderData((prev) => (prev ? { ...prev, copied: true } : null));
-    } catch (err) {
-      console.error("Error copying trade:", err);
-      alert("❌ Error copying trade. Please try again.");
-    } finally {
-      setCopying(false);
-    }
+  const requestBody = {
+    traderId: traderData.id,
+    copyAmount: copySettings.copyAmount,
   };
+  try {
+    setCopying(true);
+    const response = await fetch(API_ENDPOINTS.TRADERS.COPY_TRADER, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorDetail = await response.text();
+      console.error(`Copy trade failed with status ${response.status}: ${errorDetail}`);
+      throw new Error(`Failed to copy trade: ${errorDetail}`);
+    }
+
+    const result = await response.json();
+    if (
+      result.status === 201 ||
+      result.message === "Successfully started copying trader"
+    ) {
+      setTraderData((prev) => (prev ? { ...prev, copied: true } : null));
+      setSuccessMessage("✅ Successfully started copying the trader!");
+    }
+    closeModal();
+
+    setTraderData((prev) => (prev ? { ...prev, copied: true } : null));
+  } catch (err) {
+    console.error("Error copying trade:", err);
+    alert(`❌ Error copying trade. Please try again. Details: ${err instanceof Error ? err.message : "An unknown error occurred."}`);
+  } finally {
+    setCopying(false);
+  }
+};
 
   if (loading) {
     return (

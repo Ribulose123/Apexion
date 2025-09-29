@@ -2,6 +2,9 @@
 import React, { useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
 import TopBalanced from "./TopBalanced";
+import HighRio from "./HighRio";
+import MostCopied from "./MostCopied";
+import TotalPNL from "./TotalPNL";
 
 const LeaderContent = () => {
   const [activeTab, setActiveTab] = useState("Top Balanced Traders");
@@ -9,7 +12,6 @@ const LeaderContent = () => {
   const tabs = [
     "Top Balanced Traders",
     "High ROI",
-    "High yields",
     "Highest copiers'PnL",
     "Most Copied",
   ];
@@ -25,25 +27,19 @@ const LeaderContent = () => {
       case "High ROI":
         return (
           <div>
-            <h2>High ROI</h2>
-          </div>
-        );
-      case "High yields":
-        return (
-          <div>
-            <h2>High yields</h2>
+            <HighRio/>
           </div>
         );
       case "Highest copiers'PnL":
         return (
           <div>
-            <h2>Highest copiers&#39;PnL</h2>
+            <TotalPNL/>
           </div>
         );
       case "Most Copied":
         return (
           <div>
-            <h2>Most Copied</h2>
+            <MostCopied/>
           </div>
         );
     }
