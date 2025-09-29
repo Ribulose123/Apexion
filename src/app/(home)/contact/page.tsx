@@ -27,7 +27,7 @@ export default function Contact() {
         setSubmitStatus(null);
 
         try {
-            const response = await fetch('https://formspree.io/f/mgvyadyo', {  
+            const response = await fetch('https://formspree.io/f/xvgwknll', {  
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,7 +36,6 @@ export default function Contact() {
                     ...formData,
                     _subject: `${subject} - Contact Form Submission`,
                     _replyto: formData.email,
-                    _to: 'support@bidvest-trades.com'
                 }),
             });
 

@@ -547,7 +547,7 @@ const Subscribed = ({ searchQuery = "" }) => {
                       className="bg-[#6967AE36] border border-[#282740] text-[#6967AE] px-4 py-2 rounded text-sm font-medium transition-colors flex items-center space-x-2 mx-auto hover:bg-[#6967AE50]"
                     >
                       <Copy className="w-4 h-4" />
-                      <span>Copy</span>
+                      <span>{trader.isCopied ? 'Copied' : 'Copy'}</span>
                     </button>
                   </td>
                 </tr>
