@@ -197,7 +197,7 @@ const Navbar = () => {
                 </div>
 
                 <div className="space-y-4 text-sm">
-                  <Link href="/buy/p2p" className="block" onClick={handleProtectedNavigation('/buy/p2p')}>
+                  {/* <Link href="/buy/p2p" className="block" onClick={handleProtectedNavigation('/buy/p2p')}>
                     <div>
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
                         <Image
@@ -214,7 +214,7 @@ const Navbar = () => {
                       Buy crypto from verified merchants
                     </p>
                   </Link>
-
+ */}
                   <Link href="/Apexion" className="block" onClick={handleProtectedNavigation('/Apexion')}>
                     <div>
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
@@ -245,7 +245,7 @@ const Navbar = () => {
                     </p>
                   </Link>
 
-                  <Link href="/buy/credit-card" className="block" onClick={handleProtectedNavigation('/buy/credit-card')}>
+                  {/* <Link href="/buy/credit-card" className="block" onClick={handleProtectedNavigation('/buy/credit-card')}>
                     <div className="flex flex-col">
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
                         <Image
@@ -261,7 +261,7 @@ const Navbar = () => {
                     <p className="text-gray-400 text-xs ml-6">
                       Buy crypto via Visa or Mastercard
                     </p>
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             )}

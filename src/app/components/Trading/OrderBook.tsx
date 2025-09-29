@@ -17,7 +17,7 @@ const OrderBook: React.FC<OrderBookProps> = ({ orderBook, currentPrice, priceCha
     const [activeTab, setActiveTab] = useState('orderbook');
 
   return (
-    <div className="flex flex-col bg-[#01040F] py-1 px-2.5   h-full overflow-hidden -mt-4 ">
+    <div className="flex flex-col bg-[#01040F] p-4 sm:p-6   h-full overflow-hidden -mt-4 ">
       {/* Tabs */}
       <div className="flex border-b border-[#1E1E2F] p-1">
         <button
@@ -58,7 +58,7 @@ const OrderBook: React.FC<OrderBookProps> = ({ orderBook, currentPrice, priceCha
             </div>
 
             {/* Order book header */}
-            <div className="grid grid-cols-3 text-xs text-gray-400 px-4 py-1 border-b border-[#1E1E2F]">
+            <div className="grid grid-cols-3 text-xs text-gray-400 px-4 py-5 border-b border-[#1E1E2F]">
               <div>Price (USDT)</div>
               <div className="text-right">Quantity (BTC)</div>
               <div className="text-right">Total (BTC)</div>
@@ -69,7 +69,7 @@ const OrderBook: React.FC<OrderBookProps> = ({ orderBook, currentPrice, priceCha
               {/* Ask orders (sell) */}
               <div className="flex flex-col-reverse">
                 {orderBook.asks.slice(0, 7).map((ask, index) => (
-                  <div key={`ask-${index}`} className="grid grid-cols-3 text-xs px-4 py-[7px] relative">
+                  <div key={`ask-${index}`} className="grid grid-cols-3 text-xs px-4 py-4 relative">
                     <div className="text-red-500 z-10">{formatCurrency(ask.price)}</div>
                     <div className="text-right text-gray-300 z-10">{formatAmount(ask.amount)}</div>
                     <div className="text-right text-gray-300 z-10">{formatAmount(ask.total)}</div>
@@ -98,7 +98,7 @@ const OrderBook: React.FC<OrderBookProps> = ({ orderBook, currentPrice, priceCha
               {/* Bid orders (buy) */}
               <div>
                 {orderBook.bids.slice(0, 7).map((bid, index) => (
-                  <div key={`bid-${index}`} className="grid grid-cols-3 text-xs px-6 py-[3.7px] relative">
+                  <div key={`bid-${index}`} className="grid grid-cols-3 text-xs px-6 py-4 relative">
                     <div className="text-green-500 z-10">{formatCurrency(bid.price)}</div>
                     <div className="text-right text-gray-300 z-10">{formatAmount(bid.amount)}</div>
                     <div className="text-right text-gray-300 z-10">{formatAmount(bid.total)}</div>

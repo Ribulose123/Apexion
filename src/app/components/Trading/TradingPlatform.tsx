@@ -195,7 +195,7 @@ const TradingPlatform: React.FC<TradingPlatformProps> = ({
     <div className="grid md:grid-cols-2 grid-cols-1 gap-3 p-3 md:p-0 md:ml-0 -ml-2">
       
       <TradingChartApex/>
-      <div className=" pt-4 py-5 min-h-0 border-[#1E1E2F] border rounded-lg ">
+      <div className=" pt-4 py-5 min-h-0 border-[#1E1E2F] border rounded-lg h-full ">
         <OrderBook
           orderBook={orderBook}
           trades={trades}
