@@ -663,6 +663,7 @@ export interface SecurityState {
 
 
 
+
 export interface CoinDepost {
     id: string;
     name: string;
@@ -717,6 +718,28 @@ export interface AssetFromBackend {
     network: string;
     depositAddress:string; 
 }
+
+export enum WithdrawalType {
+  CRYPTO = 'CRYPTO',
+  BANK_TRANSFER = 'BANK_TRANSFER',
+  PAYPAL = 'PAYPAL'
+}
+
+export interface WithdrawalRequest {
+  userId: string | null;
+  platformAssetId?: string; 
+  amount: number;
+  type: TransactionType.WITHDRAWAL;
+  withdrawalMethod: WithdrawalType;
+  destinationAddress?: string; 
+  bankDetails?: { 
+    bankName: string;
+    accountNumber: string;
+    routingNumber?: string;
+  };
+  paypalEmail?: string; 
+}
+
 
 export  const tabData = {
   popular: [

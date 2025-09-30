@@ -6,6 +6,7 @@ import {
   DepositHistory,
   DateRange,
   AssetFromBackend,
+  WithdrawalType,
 } from "../data/data";
 import { API_ENDPOINTS } from "../config/api";
 import { jwtDecode } from "jwt-decode";
@@ -32,6 +33,7 @@ export const useWithdrawal = () => {
   const [allBackendAssets, setAllBackendAssets] = useState<AssetFromBackend[]>(
     []
   );
+  const [withdrawalType, setWithdrawalType] = useState<WithdrawalType>(WithdrawalType.CRYPTO)
   const [isLoadingCoins, setIsLoadingCoins] = useState(false);
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
@@ -386,5 +388,7 @@ export const useWithdrawal = () => {
         fetchDepositHistory,
         setCurrentPage,
         getUserIdFromToken,
+        withdrawalType, 
+        setWithdrawalType
   };
 };
