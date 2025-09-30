@@ -5,6 +5,7 @@ import { Copy, ChevronRight, ChevronLeft, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import CopySuccess from "@/app/modals/CopySuccess";
 import CopyTradeModal from "@/app/modals/CopyTradeModal";
+import UncopyConfirmModal from "@/app/modals/UncopyConfirmModal";
 
 interface TradersProps {
   id: string;
@@ -34,6 +35,7 @@ interface TradersProps {
 const LeaderContentMore = ({ searchQuery = "" }) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
+  const [showUncopyConfirm, setShowUncopyConfirm] = useState(false);
   const [selectedTrader, setSelectedTrader] = useState<string | null>(null);
   const [traders, setTraders] = useState<TradersProps[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -203,12 +205,21 @@ const LeaderContentMore = ({ searchQuery = "" }) => {
     return buttons;
   }, [currentPage, totalPages, handlePageChange]);
 
-  const handleCopyClick = (traderId: string, e: React.MouseEvent) => {
+  const handleCopyClick = (
+    traderId: string,
+    isCopied: boolean,
+    e: React.MouseEvent
+  ) => {
     e.stopPropagation();
     setSelectedTrader(traderId);
-    setShowModal(true);
+    if (isCopied) {
+      setShowUncopyConfirm(true);
+    } else {
+      setShowModal(true);
+    }
   };
 
+  // copy
   const handleConfirmCopy = async (copySettings: {
     copyAmount: number;
     copyRatio: number;
@@ -272,8 +283,61 @@ const LeaderContentMore = ({ searchQuery = "" }) => {
     }
   };
 
+  const handleUnCopy = async () => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token || !selectedTrader) return;
+
+    setShowUncopyConfirm(false);
+
+    try {
+      const response = await fetch(API_ENDPOINTS.TRADERS.UNCOPY_TRADER, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ traderId: selectedTrader }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to uncopy trader: ${response.status}`);
+      }
+      const result = await response.json();
+
+      if (
+        result.status === 201 ||
+        result.message === "Successfully started copying trader"
+      ) {
+        setTraders((prevTrader) =>
+          prevTrader.map((trader) =>
+            trader.id === selectedTrader
+              ? { ...trader, isCopied: false }
+              : trader
+          )
+        );
+      }
+      setSelectedTrader(null);
+      setSuccessMessage(
+        result.message ||
+          `Successfully stopped copying trader ${
+            selectedTraderData?.username || ""
+          }.`
+      );
+    } catch (err) {
+      console.error("Uncopy failed:", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An unknown error occurred during uncopy."
+      );
+    } finally {
+      setShowUncopyConfirm(false);
+    }
+  };
   const closeModal = () => {
     setShowModal(false);
+    setShowUncopyConfirm(false);
     setSelectedTrader(null);
   };
 
@@ -374,6 +438,15 @@ const LeaderContentMore = ({ searchQuery = "" }) => {
           commissionRate={selectedTraderData.commissionRate}
           onClose={closeModal}
           onConfirmCopy={handleConfirmCopy}
+        />
+      )}
+
+
+      {showUncopyConfirm && selectedTraderData && (
+        <UncopyConfirmModal
+          onClose={closeModal}
+          onConfirm={handleUnCopy}
+          traderName={selectedTraderData.username}
         />
       )}
 
@@ -541,11 +614,13 @@ const LeaderContentMore = ({ searchQuery = "" }) => {
 
                   <td className="px-4 py-4 text-center">
                     <button
-                      onClick={(e) => handleCopyClick(trader.id, e)}
+                      onClick={(e) =>
+                        handleCopyClick(trader.id, !!trader.isCopied, e)
+                      }
                       className="bg-[#6967AE36] border border-[#282740] text-[#6967AE] px-4 py-2 rounded text-sm font-medium transition-colors flex items-center space-x-2 mx-auto hover:bg-[#6967AE50]"
                     >
                       <Copy className="w-4 h-4" />
-                      <span>{trader.isCopied ? 'Copied' : 'Copy'}</span>
+                      {trader.isCopied ? "Copied" : "Copy"}
                     </button>
                   </td>
                 </tr>

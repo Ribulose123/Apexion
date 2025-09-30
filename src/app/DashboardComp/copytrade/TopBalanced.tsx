@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import CopyTradeModal from "@/app/modals/CopyTradeModal";
 import { API_ENDPOINTS } from "@/app/config/api";
 import CopySuccess from "@/app/modals/CopySuccess";
+import UncopyConfirmModal from "@/app/modals/UncopyConfirmModal";
 
 interface ChartData {
   minValue: number;
@@ -66,7 +67,7 @@ const TopBalanced = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
+  const [showUncopyConfirm, setShowUncopyConfirm] = useState(false);
 
 
   useEffect(() => {
@@ -129,10 +130,14 @@ const TopBalanced = () => {
     fetchTraders();
   }, [router]);
   
-  const handleCopyClick = (traderId: string, e: React.MouseEvent) => {
+  const handleCopyClick = (traderId: string, isCopied:boolean, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedTrader(traderId);
-    setShowModal(true);
+    if(isCopied){
+      setShowUncopyConfirm(true)
+    } else{
+      setShowModal(true);
+    }
   };
 
   const handleConfirmCopy = async (copySettings: {
@@ -169,7 +174,6 @@ const TopBalanced = () => {
       }
 
       const result = await res.json();
-      console.log('api response', result)
       if (result.status === 201 || result.message ==="Successfully started copying trader") {
         setTraders(prevTraders => 
           prevTraders.map(trader => 
@@ -192,10 +196,63 @@ const TopBalanced = () => {
     }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedTrader(null);
-  };
+  const handleUnCopy = async () => {
+            const token = localStorage.getItem("authToken");
+        
+            if (!token || !selectedTrader) return;
+        
+            setShowUncopyConfirm(false);
+        
+            try {
+              const response = await fetch(API_ENDPOINTS.TRADERS.UNCOPY_TRADER, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ traderId: selectedTrader }),
+              });
+        
+              if (!response.ok) {
+                throw new Error(`Failed to uncopy trader: ${response.status}`);
+              }
+              const result = await response.json();
+        
+              if (
+                result.status === 201 ||
+                result.message === "Successfully started copying trader"
+              ) {
+                setTraders((prevTrader) =>
+                  prevTrader.map((trader) =>
+                    trader.id === selectedTrader
+                      ? { ...trader, isCopied: false }
+                      : trader
+                  )
+                );
+              }
+              setSelectedTrader(null);
+              setSuccessMessage(
+                result.message ||
+                  `Successfully stopped copying trader ${
+                    selectedTraderData?.username || ""
+                  }.`
+              );
+            } catch (err) {
+              console.error("Uncopy failed:", err);
+              setError(
+                err instanceof Error
+                  ? err.message
+                  : "An unknown error occurred during uncopy."
+              );
+            } finally {
+              setShowUncopyConfirm(false);
+            }
+          };
+          const closeModal = () => {
+            setShowModal(false);
+            setShowUncopyConfirm(false);
+            setSelectedTrader(null);
+          };
 
   const handleFavourite = async (traderId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -303,6 +360,13 @@ const TopBalanced = () => {
         />
       )}
 
+      {showUncopyConfirm && selectedTraderData && (
+                    <UncopyConfirmModal
+                      onClose={closeModal}
+                      onConfirm={handleUnCopy}
+                      traderName={selectedTraderData.username}
+                    />
+        )}
       {successMessage && (
         <CopySuccess message ={successMessage} onClose ={()=> setSuccessMessage(null)}/>
       )}
@@ -326,7 +390,7 @@ const TopBalanced = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {traders.map((trader) => {
+            {traders.slice(0,6).map((trader) => {
               const currentValue = trader.profitPercentage || 0;
               const numericId = parseInt(trader.id) || 0;
               const { minValue, maxValue, dataPoints } = generateChartData(
@@ -503,7 +567,7 @@ const TopBalanced = () => {
 
                   <button
                     className={`w-full py-3 ${trader.isCopied ? 'bg-gray-600' : 'bg-[#439A86] hover:bg-[#3a8a77]'} text-white font-medium transition-colors rounded-md mt-4 cursor-pointer`}
-                    onClick={(e) => handleCopyClick(trader.id, e)}
+                    onClick={(e) => handleCopyClick(trader.id, !!trader.isCopied, e)}
                     disabled={trader.isCopied}
                   >
                     {trader.isCopied ? 'Copied' : 'Copy'}

@@ -5,6 +5,7 @@ import { Copy, ChevronRight, ChevronLeft, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import CopySuccess from "@/app/modals/CopySuccess";
 import CopyTradeModal from "@/app/modals/CopyTradeModal";
+import UncopyConfirmModal from "@/app/modals/UncopyConfirmModal";
 
 interface TradersProps {
   id: string;
@@ -39,7 +40,7 @@ const Subscribed = ({ searchQuery = "" }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
+  const [showUncopyConfirm, setShowUncopyConfirm] = useState(false); 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage] = useState<number>(14);
 
@@ -205,10 +206,14 @@ const Subscribed = ({ searchQuery = "" }) => {
     return buttons;
   }, [currentPage, totalPages, handlePageChange]);
 
-  const handleCopyClick = (traderId: string, e: React.MouseEvent) => {
+  const handleCopyClick = (traderId: string, isCopied:boolean, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedTrader(traderId);
-    setShowModal(true);
+    if(!isCopied){
+      setShowUncopyConfirm(true)
+    }else{
+      setShowModal(true)
+    }
   };
 
   const handleConfirmCopy = async (copySettings: {
@@ -274,10 +279,53 @@ const Subscribed = ({ searchQuery = "" }) => {
     }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setSelectedTrader(null);
-  };
+ const handleUnCopy=async()=>{
+    const token = localStorage.getItem("authToken");
+ 
+   if (!token || !selectedTrader) return;
+ 
+   // Close the confirmation modal immediately
+   setShowUncopyConfirm(false); 
+ 
+      try{
+       const response = await fetch (API_ENDPOINTS.TRADERS.UNCOPY_TRADER, {
+         method:'POST',
+         headers:{
+          "Content-Type": "application/json",
+           Authorization: `Bearer ${token}`, 
+         },
+         body:JSON.stringify({traderId:selectedTrader})
+       })
+ 
+        if (!response.ok) {
+       throw new Error(`Failed to uncopy trader: ${response.status}`);
+     }
+       const result = await response.json()
+ 
+       if( result.status === 201 ||
+         result.message === "Successfully started copying trader"){
+           setTraders((prevTrader)=>
+             prevTrader.map((trader)=>
+               trader.id === selectedTrader
+             ?{...trader, isCopied:false}
+             :trader
+             )
+           )
+         }
+          setSelectedTrader(null);
+     setSuccessMessage(result.message || `Successfully stopped copying trader ${selectedTraderData?.username || ''}.`)
+      }catch(err){
+       console.error('Uncopy failed:', err);
+     setError(err instanceof Error ? err.message : 'An unknown error occurred during uncopy.');
+      }finally{
+       setShowUncopyConfirm(false)
+      }
+   } 
+   const closeModal = () => {
+     setShowModal(false);
+     setShowUncopyConfirm(false)
+     setSelectedTrader(null);
+   };
 
   const handleFavourite = async (traderId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -377,6 +425,14 @@ const Subscribed = ({ searchQuery = "" }) => {
           onClose={closeModal}
           onConfirmCopy={handleConfirmCopy}
         />
+      )}
+
+      {showUncopyConfirm && selectedTraderData && (
+         <UncopyConfirmModal
+         onClose={closeModal}
+           onConfirm ={handleUnCopy}
+          traderName={selectedTraderData.username}
+         />
       )}
 
       {successMessage && (
@@ -543,7 +599,7 @@ const Subscribed = ({ searchQuery = "" }) => {
 
                   <td className="px-4 py-4 text-center">
                     <button
-                      onClick={(e) => handleCopyClick(trader.id, e)}
+                      onClick={(e) => handleCopyClick(trader.id, !!trader.isCopied, e)}
                       className="bg-[#6967AE36] border border-[#282740] text-[#6967AE] px-4 py-2 rounded text-sm font-medium transition-colors flex items-center space-x-2 mx-auto hover:bg-[#6967AE50]"
                     >
                       <Copy className="w-4 h-4" />
