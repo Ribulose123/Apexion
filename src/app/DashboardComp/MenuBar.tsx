@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Bell, ChevronDown, DollarSign, X } from 'lucide-react';
+import {  ChevronDown, DollarSign, X } from 'lucide-react';
 import Flag from 'react-world-flags';
 import {
   FaFacebookF,
@@ -13,7 +13,6 @@ import {
   FaYoutube,
   FaTiktok,
 } from 'react-icons/fa';
-
 const socialIcons = [
   { id: 'tiktok', icon: <FaTiktok />, alt: 'TikTok' },
   { id: 'youtube', icon: <FaYoutube />, alt: 'YouTube' },
@@ -41,7 +40,7 @@ const sidebarMenuItems = [
       { name: 'Subscribe',  href: '/subscription' },
       { name: 'Signal',  href: '/signal' },
       { name: 'Staking',  href: '/stake' },
-      { name: 'Referrals',  href: '#' },
+      { name: 'Referrals',  href: 'referral' },
       { name: 'connect Wallet',  href: '#' },
       { name: 'Copy',  href: '/copy' },
       { name: 'Settings',  href: '/security' },
@@ -184,7 +183,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
             </div>
 
             {/* User dropdown in mobile view */}
-            <div className="text-white py-2 border-b border-gray-800">
+           {/*  <div className="text-white py-2 border-b border-gray-800">
               <button
                 className="w-full flex justify-between items-center"
                 onClick={() => toggleDropdown('user')}
@@ -205,11 +204,22 @@ const MenuBar: React.FC<MenuBarProps> = ({
                   </Link>
                 </div>
               )}
-            </div>
+            </div> */}
 
             <div className="flex items-center text-white py-2 border-b border-gray-800">
+             {/*  <button onClick={() => {
+                setShowNotifications(!showNotifications);
+                if (!showNotifications && settings.hasUnreadNotifications) {
+                  markNotificationsAsRead();
+                }
+              }}></button>
               <Bell size={18} className="mr-3" />
-              <span className="font-medium">Notifications</span>
+               {settings.showBadge && settings.hasUnreadNotifications && (
+                <span className="-ml-3 block h-2 w-2 rounded-full bg-red-500"></span>
+              )}
+               {showNotifications && (
+              <NotificationModal onClose={() => setShowNotifications(false)} />
+            )} */}
             </div>
 
             {/* Language Selector */}

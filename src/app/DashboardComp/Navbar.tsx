@@ -1,10 +1,9 @@
-// components/Navbar.tsx
 'use client';
 
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Search, Bell, ChevronDown, CreditCard } from "lucide-react";
 import { FaTimes } from "react-icons/fa";
 import Flag from "react-world-flags";
@@ -38,8 +37,8 @@ const Navbar = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
+  const pathname = usePathname()
 
-  // Consume notification state from context
   const { settings, markNotificationsAsRead } = useNotifications();
 
   const checkAuthenticationAndRedirect = (): boolean => {
@@ -61,7 +60,6 @@ const Navbar = () => {
       if (!token) {
         setIsAuthenticated(false);
         setUserData(null);
-        // Don't redirect here as this might be a public page
         return;
       }
 
@@ -75,7 +73,6 @@ const Navbar = () => {
       });
 
       if (response.status === 401) {
-        // Token is invalid or expired
         localStorage.removeItem('authToken');
         setIsAuthenticated(false);
         setUserData(null);
@@ -119,7 +116,6 @@ const Navbar = () => {
     toast.success('Logged out successfully');
   };
 
-  // Protected navigation handler
   const handleProtectedNavigation = (path: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     if (checkAuthenticationAndRedirect()) {
@@ -127,7 +123,6 @@ const Navbar = () => {
     }
   };
 
-  // Fetch user data once when the component mounts
   useEffect(() => {
     const initializeAuth = async () => {
       await fetchUserData();
@@ -139,19 +134,23 @@ const Navbar = () => {
   const toggleModal = () => setShowModal(!showModal);
 
   const toggleDropdown = (menu: DropdownMenuType) => {
-  const protectedMenus: DropdownMenuType[] = ['buy', 'assest', 'tools', 'user'];
-  if (protectedMenus.includes(menu) && !userData) {
-    router.push('/login');
-    toast.info('Please login to access this feature');
-    return;
-  }
-  
-  setActiveDropdown((prev) => (prev === menu ? null : menu));
-};
+    const protectedMenus: DropdownMenuType[] = ['buy', 'assest', 'tools', 'user'];
+    if (protectedMenus.includes(menu) && !userData) {
+      router.push('/login');
+      toast.info('Please login to access this feature');
+      return;
+    }
+    
+    setActiveDropdown((prev) => (prev === menu ? null : menu));
+  };
 
+  useEffect(() => {
+  // Close mobile menu and reset dropdowns when route changes
+  setIsOpen(false);
+  setActiveDropdown(null);
+}, [pathname])
   return (
     <header className="bg-gray-900 border-b border-gray-800 py-3 px-6 flex items-center w-full fixed top-0 z-50">
-      {/* Logo - Left aligned */}
       <div className="flex-none">
         <Link
           href="/landingpage"
@@ -167,10 +166,8 @@ const Navbar = () => {
         </Link>
       </div>
 
-      {/* Nav Links - Center aligned */}
       <nav className="hidden md:flex flex-1 items-center justify-center">
         <div className="flex items-center space-x-8">
-          {/* Buy Crypto Dropdown */}
           <div className="relative">
             <button
               className="text-white font-medium flex items-center"
@@ -267,7 +264,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Market Link */}
           <Link 
             href="/market" 
             className="text-gray-300 hover:text-white"
@@ -276,7 +272,6 @@ const Navbar = () => {
             Market
           </Link>
 
-          {/* Assets Dropdown */}
           <div className="relative">
             <button
               className="text-gray-300 hover:text-white flex items-center"
@@ -288,7 +283,6 @@ const Navbar = () => {
             {activeDropdown === "assest" && isAuthenticated && <Overview/>}
           </div>
 
-          {/* Trade Link */}
           <Link 
             href="/trade" 
             className="text-gray-300 hover:text-white"
@@ -297,7 +291,6 @@ const Navbar = () => {
             Trade
           </Link>
 
-          {/* Tools Dropdown */}
           <div className="relative">
             <button
               className="text-gray-300 hover:text-white flex items-center"
@@ -335,7 +328,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* More Dropdown */}
           <div className="relative">
             <button
               className="text-gray-300 hover:text-white flex items-center"
@@ -380,6 +372,31 @@ const Navbar = () => {
         >
           <Search size={20} />
         </button>
+
+        {isAuthenticated && (
+          <div className="relative">
+            <button 
+              className="relative p-1 rounded-full hover:bg-gray-800"
+              onClick={() => {
+                setShowNotifications(!showNotifications);
+                if (!showNotifications && settings.hasUnreadNotifications) {
+                  markNotificationsAsRead();
+                }
+              }}
+            >
+              <Bell size={20} className="text-gray-300" />
+              {settings.showBadge && settings.hasUnreadNotifications && (
+                <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
+              )}
+            </button>
+
+            {showNotifications && (
+              <div className="fixed inset-0 z-40">
+                <NotificationModal onClose={() => setShowNotifications(false)} />
+              </div>
+            )}
+          </div>
+        )}
 
         {isAuthenticated && (
           <div className="relative">
@@ -454,7 +471,6 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Search Bar */}
       {showMobileSearch && (
         <div className="fixed top-16 left-0 right-0 bg-gray-900 p-4 z-30 md:hidden">
           <div className="relative">
@@ -476,7 +492,6 @@ const Navbar = () => {
 
       {/* Desktop Right Side */}
       <div className="hidden md:flex items-center space-x-4 flex-none">
-        {/* Search */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Search size={16} className="text-gray-400" />
@@ -488,21 +503,19 @@ const Navbar = () => {
           />
         </div>
 
-        {/* Language Selector */}
         <div className="relative">
           <div
             className="flex items-center cursor-pointer"
             onClick={toggleModal}
           >
             <Flag
-              code={country.toUpperCase()} // This is line 149
+              code={country.toUpperCase()} 
               style={{ width: 34, height: 18 }}
             />
             <ChevronDown size={16} className="ml-1 text-gray-400" />
           </div>
         </div>
 
-        {/* Notifications - Only show if authenticated */}
         {isAuthenticated && (
           <div className="relative">
             <button 
@@ -526,7 +539,6 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* User Profile */}
         {loading ? (
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-full bg-gray-700 animate-pulse"></div>
@@ -611,7 +623,6 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* Language Modal */}
       {showModal && (
         <div className="absolute top-14 right-0 bg-white rounded-md shadow-lg p-4 w-80 z-20">
           <div className="flex justify-between items-center pb-2 mb-2">
@@ -643,7 +654,6 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden">
           <MenuBar

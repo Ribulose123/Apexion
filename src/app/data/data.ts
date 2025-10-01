@@ -204,6 +204,7 @@ import { IoCopy, IoSettingsOutline } from "react-icons/io5";
     { name: 'Settings', icon: IoSettingsOutline, href: '/security' },
     { name: 'Support', icon:Headphones, href: '/contact' },
   ];
+  
 
 
   // src/data/coins.ts
