@@ -723,7 +723,7 @@ export interface AssetFromBackend {
 export enum WithdrawalType {
   CRYPTO = 'CRYPTO',
   BANK_TRANSFER = 'BANK_TRANSFER',
-  PAYPAL = 'PAYPAL'
+  PAYPAL = 'PAYPAL',
   CASHAPP = 'CASHAPP',
   GCASH = 'GCASH'
 }
