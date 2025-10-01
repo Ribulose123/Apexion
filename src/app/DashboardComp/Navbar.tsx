@@ -427,7 +427,7 @@ const Navbar = () => {
 
             {/* Notification Modal for Mobile */}
             {showNotifications && (
-              <div className="fixed top-6 -left-8 -right-4 w-full z-50 p-4">
+              <div className="fixed top-6 -left-8 -right-4 w-full z-50 p-4">a
                 <NotificationModal
                   onClose={() => setShowNotifications(false)}
                 />

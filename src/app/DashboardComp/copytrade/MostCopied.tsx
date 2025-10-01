@@ -85,6 +85,7 @@ const MostCopied = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          credentials: "include", // Added credentials for cookie handling if needed
         });
 
         if (!response.ok) {
@@ -235,7 +236,7 @@ const MostCopied = () => {
 
       if (
         result.status === 201 ||
-        result.message === "Successfully started copying trader"
+        result.message === "Successfully stopped copying trader"
       ) {
         setTraders((prevTrader) =>
           prevTrader.map((trader) =>
@@ -280,6 +281,7 @@ const MostCopied = () => {
     }
 
     try {
+      // Optimistic UI update
       setTraders((prevTraders) =>
         prevTraders.map((trader) =>
           trader.id === traderId
@@ -403,7 +405,8 @@ const MostCopied = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {traders.slice(0, 6).map((trader) => {
               const currentValue = trader.profitPercentage || 0;
-              const numericId = parseInt(trader.id) || 0;
+              // Assuming trader.id is a string that can be parsed as a number for generateChartData
+              const numericId = parseInt(trader.id) || 0; 
               const { minValue, maxValue, dataPoints } = generateChartData(
                 numericId,
                 currentValue
@@ -609,13 +612,12 @@ const MostCopied = () => {
                   <button
                     className={`w-full py-3 ${
                       trader.isCopied
-                        ? "bg-gray-600"
-                        : "bg-[#439A86] hover:bg-[#3a8a77]"
+                        ? "bg-gray-600 hover:bg-gray-500" // Button for uncopying (clickable)
+                        : "bg-[#439A86] hover:bg-[#3a8a77]" // Button for copying (clickable)
                     } text-white font-medium transition-colors rounded-md mt-4 cursor-pointer`}
                     onClick={(e) =>
                       handleCopyClick(trader.id, !!trader.isCopied, e)
                     }
-                    disabled={trader.isCopied}
                   >
                     {trader.isCopied ? "Copied" : "Copy"}
                   </button>

@@ -568,7 +568,6 @@ const TopBalanced = () => {
                   <button
                     className={`w-full py-3 ${trader.isCopied ? 'bg-gray-600' : 'bg-[#439A86] hover:bg-[#3a8a77]'} text-white font-medium transition-colors rounded-md mt-4 cursor-pointer`}
                     onClick={(e) => handleCopyClick(trader.id, !!trader.isCopied, e)}
-                    disabled={trader.isCopied}
                   >
                     {trader.isCopied ? 'Copied' : 'Copy'}
                   </button>

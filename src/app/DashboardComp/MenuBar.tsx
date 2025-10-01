@@ -133,22 +133,12 @@ const MenuBar: React.FC<MenuBarProps> = ({
               </button>
               {activeDropdown === 'tools' && (
                 <div className="mt-2 ml-4 text-sm text-gray-300 space-y-3">
-                  <div className="block py-2 hover:text-white">
+                  <Link href='/copy' onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">🔥 Copy Trading</p>
                     <p className="text-xs text-gray-400">Follow top trading experts</p>
                     
-                    <div className="mt-3 space-y-2">
-                      {[1, 2, 3].map((_, idx) => (
-                        <div key={idx} className="flex items-center justify-between py-1">
-                          <div className="flex items-center gap-2">
-                            <div className="w-5 h-5 rounded-full bg-orange-500"></div>
-                            <p className="text-sm">Mr_porFit</p>
-                          </div>
-                          <p className="text-green-400 text-sm">+129.7%</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                    
+                  </Link>
                   
                   <Link href="/tools/leaderboard" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">📊 Leaderboard</p>

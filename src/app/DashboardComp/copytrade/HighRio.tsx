@@ -620,7 +620,6 @@ const HighRio = () => {
                     onClick={(e) =>
                       handleCopyClick(trader.id, !!trader.isCopied, e)
                     }
-                    disabled={trader.isCopied}
                   >
                     {trader.isCopied ? "Copied" : "Copy"}
                   </button>
