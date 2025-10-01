@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useWithdrawal } from "@/app/hooks/useWithdrawal";
-import CoinSelector from "@/app/components/components-deposit/crypto-deposit/CoinSelector";
-import NetworkSelector from "@/app/components/components-deposit/crypto-deposit/NetworkSelector";
 import WithdrawalAddress from "./WithdrawalAddress";
 import WithdrawalTips from "./WithdrawalTips";
 import DepositFAQ from "@/app/components/components-deposit/crypto-deposit/DepositFAQ";
@@ -11,23 +9,15 @@ import { DateRange, TransactionType, WithdrawalRequest, WithdrawalType } from "@
 import WithdrawalStatusDemo from "@/app/modals/WithdrawalStatusModal";
 import WithdrwalHistory from "./WithdrwalHistory";
 import WithdrawalTypeSelector from "./WithdrawalTypeSelector";
+
 const CryptoWithdraw = () => {
   const {
-    coins,
-    networks,
     withdrawalHistory,
-    selectedCoin,
-    selectedNetwork,
-    depositAddress,
     dateRange,
     totalPages,
     currentPage,
-    isLoadingCoins,
-    isLoadingAddress,
     isLoadingHistory,
     error: useDepositDataError,
-    setSelectedCoin,
-    setSelectedNetwork,
     setDateRange,
     fetchDepositHistory,
     setCurrentPage,
@@ -65,10 +55,10 @@ const CryptoWithdraw = () => {
     // For crypto, ensure we have required fields
     if (
       withdrawalType === WithdrawalType.CRYPTO &&
-      (!selectedCoin || !destinationAddress)
+      !destinationAddress
     ) {
       setDepositSubmissionError(
-        "Please fill all required fields for crypto withdrawal"
+        "Please enter a destination address for crypto withdrawal"
       );
       return;
     }
@@ -92,7 +82,6 @@ const CryptoWithdraw = () => {
 
       // Add type-specific data
       if (withdrawalType === WithdrawalType.CRYPTO) {
-        withdrawalData.platformAssetId = selectedCoin!.id;
         withdrawalData.destinationAddress = destinationAddress;
       } else if (withdrawalType === WithdrawalType.BANK_TRANSFER) {
         withdrawalData.bankDetails = {
@@ -207,6 +196,7 @@ const CryptoWithdraw = () => {
     selectedHistoryCoinId,
     fetchDepositHistory,
   ]);
+
   return (
     <div className="text-gray-200 min-h-screen w-full">
       {useDepositDataError && (
@@ -228,30 +218,13 @@ const CryptoWithdraw = () => {
               onTypeChange={setWithdrawalType}
             />
 
-            {withdrawalType === WithdrawalType.CRYPTO && (
-              <>
-                <CoinSelector
-                  coins={coins}
-                  selectedCoin={selectedCoin}
-                  isloading={isLoadingCoins}
-                  onSelctCoin={setSelectedCoin}
-                />
-                <NetworkSelector
-                  networks={networks}
-                  selectedCoin={selectedCoin}
-                  selectedNetwork={selectedNetwork}
-                  isLoading={isLoadingCoins}
-                  onSelect={setSelectedNetwork}
-                />
-              </>
-            )}
             <WithdrawalAddress
-              withdrawalAddress={depositAddress}
-              selectedCoin={selectedCoin}
+              withdrawalAddress=""
+              selectedCoin={null}
               withdrawalType={withdrawalType}
               onNext={handleNextClick}
               isSubmitting={isSubmittingDeposit}
-              isLoading={isLoadingAddress}
+              isLoading={false}
             />
           </div>
 
@@ -264,7 +237,7 @@ const CryptoWithdraw = () => {
         <div>
           <WithdrwalHistory
             withdrawalHistory={withdrawalHistory}
-            selectedCoin={selectedCoin ? selectedCoin.id : ""}
+            selectedCoin=""
             dateRange={dateRange}
             isLoading={isLoadingHistory}
             totalPages={totalPages}
@@ -274,17 +247,16 @@ const CryptoWithdraw = () => {
             currentStatusFilter={transactionStatusFilter}
             onStatusFilterChange={handleTransactionStatusFilterChange}
             onPageChange={handlePageChange}
-            allCoins={coins}
+            allCoins={[]}
             selectedHistoryCoinId={selectedHistoryCoinId}
           />
         </div>
       </div>
-      {showDepositStatusModal && selectedCoin && (
+      {showDepositStatusModal && (
         <WithdrawalStatusDemo
           status={modalStatus}
           onClose={handleCloseModal}
           amount={submittedAmount}
-          selectedCoin={selectedCoin}
         />
       )}
     </div>

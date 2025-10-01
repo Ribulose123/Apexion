@@ -14,6 +14,8 @@ const WithdrawalTypeSelector: React.FC<WithdrawalTypeSelectorProps> = ({
     { value: WithdrawalType.CRYPTO, label: "Crypto" },
     { value: WithdrawalType.BANK_TRANSFER, label: "Bank Transfer" },
     { value: WithdrawalType.PAYPAL, label: "PayPal" },
+    { value: WithdrawalType.CASHAPP, label: "CashApp" },
+    { value: WithdrawalType.GCASH, label: "GCash" },
   ];
 
   return (

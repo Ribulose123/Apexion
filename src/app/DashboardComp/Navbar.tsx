@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Search, Bell, ChevronDown, CreditCard } from "lucide-react";
 import { FaTimes } from "react-icons/fa";
 import Flag from "react-world-flags";
@@ -12,7 +12,7 @@ import MenuBar, { DropdownMenuType } from "./MenuBar";
 import Overview from "./Overview";
 import { API_ENDPOINTS } from "../config/api";
 import { useNotifications } from "@/app/context/NotificationContext";
-import NotificationModal from "../modals/NotificationModal"; 
+import NotificationModal from "../modals/NotificationModal";
 
 interface UserData {
   id: string;
@@ -22,12 +22,12 @@ interface UserData {
   verificationStatus: string;
 }
 
-const countryOptions = [
-  { code: "gb", name: "English" },
-];
+const countryOptions = [{ code: "gb", name: "English" }];
 
 const Navbar = () => {
-  const [activeDropdown, setActiveDropdown] = useState<DropdownMenuType | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<DropdownMenuType | null>(
+    null
+  );
   const [country, setCountry] = useState("gb");
   const [showModal, setShowModal] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -37,15 +37,15 @@ const Navbar = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
-  const pathname = usePathname()
 
+  // Consume notification state from context
   const { settings, markNotificationsAsRead } = useNotifications();
 
   const checkAuthenticationAndRedirect = (): boolean => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem("authToken");
     if (!token) {
-      toast.warning('Please log in to access this page.');
-      router.push('/login');
+      toast.warning("Please log in to access this page.");
+      router.push("/login");
       return false;
     }
     return true;
@@ -54,52 +54,56 @@ const Navbar = () => {
   const fetchUserData = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
-      
-      const token = localStorage.getItem('authToken'); 
-      
+
+      const token = localStorage.getItem("authToken");
+
       if (!token) {
         setIsAuthenticated(false);
         setUserData(null);
+        // Don't redirect here as this might be a public page
         return;
       }
 
       const response = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
         },
-        credentials: 'include'
+        credentials: "include",
       });
 
       if (response.status === 401) {
-        localStorage.removeItem('authToken');
+        // Token is invalid or expired
+        localStorage.removeItem("authToken");
         setIsAuthenticated(false);
         setUserData(null);
-        toast.error('Your session has expired. Please log in again.');
-        router.push('/login');
+        toast.error("Your session has expired. Please log in again.");
+        router.push("/login");
         return;
       }
 
       if (!response.ok) {
-        throw new Error('Failed to fetch user data');
+        throw new Error("Failed to fetch user data");
       }
 
       const data = await response.json();
       setUserData(data.data);
       setIsAuthenticated(true);
     } catch (error) {
-      console.error('Navbar - Authentication error:', error);
+      console.error("Navbar - Authentication error:", error);
       setIsAuthenticated(false);
       setUserData(null);
-      
+
       if (error instanceof Error) {
-        if (error.message === 'Session expired') {
-          localStorage.removeItem('authToken');
-          toast.error('Your session has expired. Please log in again.');
-          router.push('/login');
-        } else if (error.message !== 'No authentication token found in localStorage') {
-          toast.error('Failed to load user data.');
+        if (error.message === "Session expired") {
+          localStorage.removeItem("authToken");
+          toast.error("Your session has expired. Please log in again.");
+          router.push("/login");
+        } else if (
+          error.message !== "No authentication token found in localStorage"
+        ) {
+          toast.error("Failed to load user data.");
         }
       }
     } finally {
@@ -108,14 +112,16 @@ const Navbar = () => {
   }, [router]);
 
   const handleSignOut = (): void => {
-    localStorage.removeItem('authToken'); 
-    document.cookie = 'authToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'; 
+    localStorage.removeItem("authToken");
+    document.cookie =
+      "authToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
     setUserData(null);
     setIsAuthenticated(false);
-    router.push('/login');
-    toast.success('Logged out successfully');
+    router.push("/login");
+    toast.success("Logged out successfully");
   };
 
+  // Protected navigation handler
   const handleProtectedNavigation = (path: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     if (checkAuthenticationAndRedirect()) {
@@ -123,34 +129,36 @@ const Navbar = () => {
     }
   };
 
+  // Fetch user data once when the component mounts
   useEffect(() => {
     const initializeAuth = async () => {
       await fetchUserData();
     };
-    
+
     initializeAuth();
-  }, [fetchUserData]); 
+  }, [fetchUserData]);
 
   const toggleModal = () => setShowModal(!showModal);
 
   const toggleDropdown = (menu: DropdownMenuType) => {
-    const protectedMenus: DropdownMenuType[] = ['buy', 'assest', 'tools', 'user'];
+    const protectedMenus: DropdownMenuType[] = [
+      "buy",
+      "assest",
+      "tools",
+      "user",
+    ];
     if (protectedMenus.includes(menu) && !userData) {
-      router.push('/login');
-      toast.info('Please login to access this feature');
+      router.push("/login");
+      toast.info("Please login to access this feature");
       return;
     }
-    
+
     setActiveDropdown((prev) => (prev === menu ? null : menu));
   };
 
-  useEffect(() => {
-  // Close mobile menu and reset dropdowns when route changes
-  setIsOpen(false);
-  setActiveDropdown(null);
-}, [pathname])
   return (
     <header className="bg-gray-900 border-b border-gray-800 py-3 px-6 flex items-center w-full fixed top-0 z-50">
+      {/* Logo - Left aligned */}
       <div className="flex-none">
         <Link
           href="/landingpage"
@@ -166,8 +174,10 @@ const Navbar = () => {
         </Link>
       </div>
 
+      {/* Nav Links - Center aligned */}
       <nav className="hidden md:flex flex-1 items-center justify-center">
         <div className="flex items-center space-x-8">
+          {/* Buy Crypto Dropdown */}
           <div className="relative">
             <button
               className="text-white font-medium flex items-center"
@@ -194,7 +204,11 @@ const Navbar = () => {
                 </div>
 
                 <div className="space-y-4 text-sm">
-                  <Link href="/buy/p2p" className="block" onClick={handleProtectedNavigation('/buy/p2p')}>
+                  <Link
+                    href="/buy/p2p"
+                    className="block"
+                    onClick={handleProtectedNavigation("/buy/p2p")}
+                  >
                     <div>
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
                         <Image
@@ -212,11 +226,14 @@ const Navbar = () => {
                     </p>
                   </Link>
 
-                  <Link href="/Apexion" className="block" onClick={handleProtectedNavigation('/Apexion')}>
+                  <Link
+                    href="/Apexion"
+                    className="block"
+                    onClick={handleProtectedNavigation("/Apexion")}
+                  >
                     <div>
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
-                       <CreditCard size={14}/> {" "}
-                        Bidvest Card
+                        <CreditCard size={14} /> Bidvest Card
                       </p>
                     </div>
                     <p className="text-gray-400 text-xs ml-6">
@@ -224,7 +241,11 @@ const Navbar = () => {
                     </p>
                   </Link>
 
-                  <Link href="/buy/coin" className="block" onClick={handleProtectedNavigation('/buy/coin')}>
+                  <Link
+                    href="/buy/coin"
+                    className="block"
+                    onClick={handleProtectedNavigation("/buy/coin")}
+                  >
                     <div>
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
                         <Image
@@ -242,7 +263,11 @@ const Navbar = () => {
                     </p>
                   </Link>
 
-                  <Link href="/buy/credit-card" className="block" onClick={handleProtectedNavigation('/buy/credit-card')}>
+                  <Link
+                    href="/buy/credit-card"
+                    className="block"
+                    onClick={handleProtectedNavigation("/buy/credit-card")}
+                  >
                     <div className="flex flex-col">
                       <p className="font-semibold flex items-center gap-2 hover:text-blue-400 transition">
                         <Image
@@ -264,14 +289,16 @@ const Navbar = () => {
             )}
           </div>
 
-          <Link 
-            href="/market" 
+          {/* Market Link */}
+          <Link
+            href="/market"
             className="text-gray-300 hover:text-white"
-            onClick={handleProtectedNavigation('/market')}
+            onClick={handleProtectedNavigation("/market")}
           >
             Market
           </Link>
 
+          {/* Assets Dropdown */}
           <div className="relative">
             <button
               className="text-gray-300 hover:text-white flex items-center"
@@ -280,17 +307,19 @@ const Navbar = () => {
               Assets
               <ChevronDown size={16} className="ml-1" />
             </button>
-            {activeDropdown === "assest" && isAuthenticated && <Overview/>}
+            {activeDropdown === "assest" && isAuthenticated && <Overview />}
           </div>
 
-          <Link 
-            href="/trade" 
+          {/* Trade Link */}
+          <Link
+            href="/trade"
             className="text-gray-300 hover:text-white"
-            onClick={handleProtectedNavigation('/trade')}
+            onClick={handleProtectedNavigation("/trade")}
           >
             Trade
           </Link>
 
+          {/* Tools Dropdown */}
           <div className="relative">
             <button
               className="text-gray-300 hover:text-white flex items-center"
@@ -303,7 +332,11 @@ const Navbar = () => {
               <div className="absolute top-full left-0 mt-3 w-[500px] bg-[#0D1B2A] text-white rounded-xl shadow-xl z-50 p-4 flex gap-4">
                 <div className="w-1/2 space-y-4">
                   <div className="p-4 rounded-lg transition cursor-pointer ">
-                    <Link href='/copy' className="font-semibold flex items-center gap-2" onClick={handleProtectedNavigation('/copy')}>
+                    <Link
+                      href="/copy"
+                      className="font-semibold flex items-center gap-2"
+                      onClick={handleProtectedNavigation("/copy")}
+                    >
                       🔥 Copy Trading
                     </Link>
                     <p className="text-gray-400 text-xs">
@@ -314,7 +347,7 @@ const Navbar = () => {
                   <Link
                     href="/tools/leaderboard"
                     className="block p-4 rounded-lg transition"
-                    onClick={handleProtectedNavigation('/tools/leaderboard')}
+                    onClick={handleProtectedNavigation("/tools/leaderboard")}
                   >
                     <p className="font-semibold flex items-center gap-2">
                       📊 Leaderboard
@@ -328,6 +361,7 @@ const Navbar = () => {
             )}
           </div>
 
+          {/* More Dropdown */}
           <div className="relative">
             <button
               className="text-gray-300 hover:text-white flex items-center"
@@ -366,16 +400,17 @@ const Navbar = () => {
 
       {/* Mobile User Controls */}
       <div className="md:hidden flex-1 flex items-center justify-end space-x-4">
-        <button 
+        <button
           className="text-gray-300 hover:text-white"
           onClick={() => setShowMobileSearch(!showMobileSearch)}
         >
           <Search size={20} />
         </button>
 
+        {/* Mobile Notifications - Only show if authenticated */}
         {isAuthenticated && (
           <div className="relative">
-            <button 
+            <button
               className="relative p-1 rounded-full hover:bg-gray-800"
               onClick={() => {
                 setShowNotifications(!showNotifications);
@@ -390,9 +425,12 @@ const Navbar = () => {
               )}
             </button>
 
+            {/* Notification Modal for Mobile */}
             {showNotifications && (
-              <div className="fixed inset-0 z-40">
-                <NotificationModal onClose={() => setShowNotifications(false)} />
+              <div className="fixed top-6 -left-8 -right-4 w-full z-50 p-4">
+                <NotificationModal
+                  onClose={() => setShowNotifications(false)}
+                />
               </div>
             )}
           </div>
@@ -421,26 +459,26 @@ const Navbar = () => {
                   <Link
                     href="security/verfication"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation('security/verfication')}
+                    onClick={handleProtectedNavigation("security/verfication")}
                   >
                     My Profile
                   </Link>
                   <Link
                     href="/security"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation('/security')}
+                    onClick={handleProtectedNavigation("/security")}
                   >
                     Security
                   </Link>
                   <Link
                     href="security/settings"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation('security/settings')}
+                    onClick={handleProtectedNavigation("security/settings")}
                   >
                     Settings
                   </Link>
                   <div className="border-t border-gray-700 my-1"></div>
-                  <button 
+                  <button
                     onClick={handleSignOut}
                     className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
                   >
@@ -471,6 +509,7 @@ const Navbar = () => {
         </button>
       </div>
 
+      {/* Mobile Search Bar */}
       {showMobileSearch && (
         <div className="fixed top-16 left-0 right-0 bg-gray-900 p-4 z-30 md:hidden">
           <div className="relative">
@@ -480,7 +519,7 @@ const Navbar = () => {
               className="bg-gray-800 rounded-lg py-2 pl-9 pr-3 text-sm w-full text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
               autoFocus
             />
-            <button 
+            <button
               className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400"
               onClick={() => setShowMobileSearch(false)}
             >
@@ -492,6 +531,7 @@ const Navbar = () => {
 
       {/* Desktop Right Side */}
       <div className="hidden md:flex items-center space-x-4 flex-none">
+        {/* Search */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Search size={16} className="text-gray-400" />
@@ -503,22 +543,24 @@ const Navbar = () => {
           />
         </div>
 
+        {/* Language Selector */}
         <div className="relative">
           <div
             className="flex items-center cursor-pointer"
             onClick={toggleModal}
           >
             <Flag
-              code={country.toUpperCase()} 
+              code={country.toUpperCase()}
               style={{ width: 34, height: 18 }}
             />
             <ChevronDown size={16} className="ml-1 text-gray-400" />
           </div>
         </div>
 
+        {/* Notifications - Only show if authenticated */}
         {isAuthenticated && (
           <div className="relative">
-            <button 
+            <button
               className="relative p-1 rounded-full hover:bg-gray-800"
               onClick={() => {
                 setShowNotifications(!showNotifications);
@@ -532,13 +574,19 @@ const Navbar = () => {
                 <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
               )}
             </button>
-            
+
+            {/* Notification Modal for Desktop */}
             {showNotifications && (
-              <NotificationModal onClose={() => setShowNotifications(false)} />
+              <div className="fixed md:absolute top-16 md:top-14 left-3 -right-6 md:left-auto md:right-0 w-full md:w-80 z-50 p-4 md:p-0"> 
+                <NotificationModal
+                  onClose={() => setShowNotifications(false)}
+                />
+              </div>
             )}
           </div>
         )}
 
+        {/* User Profile */}
         {loading ? (
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-full bg-gray-700 animate-pulse"></div>
@@ -576,26 +624,26 @@ const Navbar = () => {
                   <Link
                     href="security/verfication"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation('security/verfication')}
+                    onClick={handleProtectedNavigation("security/verfication")}
                   >
                     My Profile
                   </Link>
                   <Link
                     href="/security"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation('/security')}
+                    onClick={handleProtectedNavigation("/security")}
                   >
                     Security
                   </Link>
                   <Link
                     href="security/settings"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation('security/settings')}
+                    onClick={handleProtectedNavigation("security/settings")}
                   >
                     Settings
                   </Link>
                   <div className="border-t border-gray-700 my-1"></div>
-                  <button 
+                  <button
                     onClick={handleSignOut}
                     className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
                   >
@@ -623,6 +671,7 @@ const Navbar = () => {
         )}
       </div>
 
+      {/* Language Modal */}
       {showModal && (
         <div className="absolute top-14 right-0 bg-white rounded-md shadow-lg p-4 w-80 z-20">
           <div className="flex justify-between items-center pb-2 mb-2">
@@ -654,6 +703,7 @@ const Navbar = () => {
         </div>
       )}
 
+      {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden">
           <MenuBar

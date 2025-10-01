@@ -724,6 +724,8 @@ export enum WithdrawalType {
   CRYPTO = 'CRYPTO',
   BANK_TRANSFER = 'BANK_TRANSFER',
   PAYPAL = 'PAYPAL'
+  CASHAPP = 'CASHAPP',
+  GCASH = 'GCASH'
 }
 
 export interface WithdrawalRequest {
