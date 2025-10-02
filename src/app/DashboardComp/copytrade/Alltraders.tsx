@@ -197,62 +197,63 @@ const Alltraders = () => {
   };
 
   const handleUnCopy = async () => {
-            const token = localStorage.getItem("authToken");
-        
-            if (!token || !selectedTrader) return;
-        
-            setShowUncopyConfirm(false);
-        
-            try {
-              const response = await fetch(API_ENDPOINTS.TRADERS.UNCOPY_TRADER, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ traderId: selectedTrader }),
-              });
-        
-              if (!response.ok) {
-                throw new Error(`Failed to uncopy trader: ${response.status}`);
-              }
-              const result = await response.json();
-        
-              if (
-                result.status === 201 ||
-                result.message === "Successfully started copying trader"
-              ) {
-                setTraders((prevTrader) =>
-                  prevTrader.map((trader) =>
-                    trader.id === selectedTrader
-                      ? { ...trader, isCopied: false }
-                      : trader
-                  )
-                );
-              }
-              setSelectedTrader(null);
-              setSuccessMessage(
-                result.message ||
-                  `Successfully stopped copying trader ${
-                    selectedTraderData?.username || ""
-                  }.`
-              );
-            } catch (err) {
-              console.error("Uncopy failed:", err);
-              setError(
-                err instanceof Error
-                  ? err.message
-                  : "An unknown error occurred during uncopy."
-              );
-            } finally {
-              setShowUncopyConfirm(false);
-            }
-          };
-          const closeModal = () => {
-            setShowModal(false);
-            setShowUncopyConfirm(false);
-            setSelectedTrader(null);
-          };
+    const token = localStorage.getItem("authToken");
+
+    if (!token || !selectedTrader) return;
+
+    setShowUncopyConfirm(false);
+
+    try {
+      const response = await fetch(API_ENDPOINTS.TRADERS.UNCOPY_TRADER, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ traderId: selectedTrader }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to uncopy trader: ${response.status}`);
+      }
+      const result = await response.json();
+
+      if (
+        result.status === 201 ||
+        result.message === "Successfully started copying trader"
+      ) {
+        setTraders((prevTrader) =>
+          prevTrader.map((trader) =>
+            trader.id === selectedTrader
+              ? { ...trader, isCopied: false }
+              : trader
+          )
+        );
+      }
+      setSelectedTrader(null);
+      setSuccessMessage(
+        result.message ||
+          `Successfully stopped copying trader ${
+            selectedTraderData?.username || ""
+          }.`
+      );
+    } catch (err) {
+      console.error("Uncopy failed:", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An unknown error occurred during uncopy."
+      );
+    } finally {
+      setShowUncopyConfirm(false);
+    }
+  };
+  
+  const closeModal = () => {
+    setShowModal(false);
+    setShowUncopyConfirm(false);
+    setSelectedTrader(null);
+  };
 
   const handleFavourite = async (traderId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -283,7 +284,6 @@ const Alltraders = () => {
       });
 
       if (!resFavourite.ok) {
-        // Revert UI if API call fails
         setTraders(prevTraders => 
           prevTraders.map(trader => 
             trader.id === traderId 
@@ -321,7 +321,7 @@ const Alltraders = () => {
 
   if (isLoading) {
     return (
-      <div className="mt-6">
+      <div className="mt-4 sm:mt-6 px-2 sm:px-0">
         <div className="flex justify-center items-center h-64">
           <p className="text-white">Loading traders...</p>
         </div>
@@ -331,13 +331,13 @@ const Alltraders = () => {
 
   if (error) {
     return (
-      <div className="mt-6">
-        <div className="flex justify-center items-center h-64">
-          <p className="text-red-500">Error: {error}</p>
+      <div className="mt-4 sm:mt-6 px-2 sm:px-0">
+        <div className="flex flex-col justify-center items-center h-64 gap-4">
+          <p className="text-red-500 text-center px-4">Error: {error}</p>
           {error.includes('Authentication failed') && (
             <button
               onClick={() => router.push('/login')}
-              className="ml-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               Login Again
             </button>
@@ -348,7 +348,7 @@ const Alltraders = () => {
   }
 
   return (
-    <div className="mt-6">
+    <div className="mt-4 sm:mt-6 px-2 sm:px-0">
       {showModal && selectedTraderData && (
         <CopyTradeModal
           traderName={selectedTraderData.username}
@@ -361,36 +361,37 @@ const Alltraders = () => {
       )}
 
       {showUncopyConfirm && selectedTraderData && (
-                    <UncopyConfirmModal
-                      onClose={closeModal}
-                      onConfirm={handleUnCopy}
-                      traderName={selectedTraderData.username}
-                    />
-        )}
-      {successMessage && (
-        <CopySuccess message ={successMessage} onClose ={()=> setSuccessMessage(null)}/>
+        <UncopyConfirmModal
+          onClose={closeModal}
+          onConfirm={handleUnCopy}
+          traderName={selectedTraderData.username}
+        />
       )}
       
-      <div className="md:flex justify-between items-center hidden">
-        <p className="text-[#7D8491] text-[16px] font-medium">
+      {successMessage && (
+        <CopySuccess message={successMessage} onClose={() => setSuccessMessage(null)}/>
+      )}
+      
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 mb-4 sm:mb-0">
+        <p className="text-[#7D8491] text-sm sm:text-base font-medium">
           Traders that balance profit and risk.
         </p>
         <Link
           href="/copymore"
-          className="flex items-center text-16px text-[#F2AF29] gap-2 hover:text-[#f8c966] transition-colors"
+          className="flex items-center text-sm sm:text-base text-[#F2AF29] gap-2 hover:text-[#f8c966] transition-colors"
         >
           view more <ArrowRight size={18} />
         </Link>
       </div>
 
-      <div>
+      <div className="mt-4">
         {traders.length === 0 ? (
           <div className="flex justify-center items-center h-64">
             <p className="text-gray-400">No traders available at the moment.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {traders.slice(0,6).map((trader) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+            {traders.slice(0, 6).map((trader) => {
               const currentValue = trader.profitPercentage || 0;
               const numericId = parseInt(trader.id) || 0;
               const { minValue, maxValue, dataPoints } = generateChartData(
@@ -404,15 +405,16 @@ const Alltraders = () => {
                   className="bg-[#141E323D] border-2 border-[#141E32] rounded-lg overflow-hidden p-2 hover:border-[#1e2a4a] transition-colors duration-300 cursor-pointer"
                   onClick={() => handleNavigation(trader.id)}
                 >
-                  <div className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3 flex-1">
+                  {/* Header Section */}
+                  <div className="p-3 sm:p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
                       <div className="relative flex-shrink-0">
-                        <div className="w-10 h-10 bg-blue-700 rounded-full overflow-hidden">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-700 rounded-full overflow-hidden">
                           <Image
                             src={trader.profilePicture || "/img/Avatar DP.png"}
                             alt="profile"
-                            width={40}
-                            height={40}
+                            width={48}
+                            height={48}
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -423,7 +425,7 @@ const Alltraders = () => {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-center gap-2">
-                          <h3 className="text-white text-sm font-medium truncate hover:text-[#F2AF29] transition-colors">
+                          <h3 className="text-white text-sm sm:text-base font-medium truncate hover:text-[#F2AF29] transition-colors">
                             {trader.username}
                           </h3>
                           <button 
@@ -439,13 +441,13 @@ const Alltraders = () => {
 
                         <div className="flex justify-between items-center mt-1">
                           <div className="flex items-center gap-1 text-gray-400">
-                            <PiUsersThree className="text-xs" />
-                            <span className="text-xs">
+                            <PiUsersThree className="text-xs sm:text-sm" />
+                            <span className="text-xs sm:text-sm">
                               {trader.completedOrders}
                             </span>
                           </div>
 
-                          <div className="flex items-center gap-1 text-green-500 text-xs font-medium">
+                          <div className="flex items-center gap-1 text-green-500 text-xs sm:text-sm font-medium">
                             <BiSolidUpArrow className="text-[10px]" />
                             <span>+{trader.profitPercentage || 0}%</span>
                           </div>
@@ -454,17 +456,18 @@ const Alltraders = () => {
                     </div>
                   </div>
 
-                  <div className="p-2 flex justify-between items-center gap-2 border-b border-gray-800">
-                    <div>
+                  {/* Chart Section */}
+                  <div className="p-2 sm:p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-2 border-b border-gray-800">
+                    <div className="w-full sm:w-auto">
                       <div className="bg-gray-800 text-white text-xs px-2 py-1 rounded inline-block mb-2">
                         ROI 30D
                       </div>
-                      <div className="text-green-500 text-[16px] font-bold mt-6">
+                      <div className="text-green-500 text-base sm:text-lg font-bold">
                         +{trader.profitPercentage || 0}%
                       </div>
                     </div>
                     
-                    <div className="w-1/2 md:w-full h-20">
+                    <div className="w-full sm:w-1/2 h-16 sm:h-20">
                       <svg viewBox="0 0 100 40" className="w-full h-full">
                         <defs>
                           <linearGradient
@@ -550,27 +553,31 @@ const Alltraders = () => {
                     </div>
                   </div>
 
-                  <div className="p-4 text-xs space-y-2">
-                    <div className="flex justify-between">
+                  {/* Stats Section */}
+                  <div className="p-3 sm:p-4 text-xs sm:text-sm space-y-2">
+                    <div className="flex justify-between items-center">
                       <span className="text-gray-400">Total PnL</span>
-                      <span className="text-white">${trader.totalPnL?.toLocaleString() || 0}</span>
+                      <span className="text-white font-medium">${trader.totalPnL?.toLocaleString() || 0}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="text-gray-400">Copiers PnL</span>
-                      <span className="text-white">${trader.copiersPnL?.toLocaleString() || 0}</span>
+                      <span className="text-white font-medium">${trader.copiersPnL?.toLocaleString() || 0}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="text-gray-400">AUM</span>
-                      <span className="text-white">${trader.aum?.toLocaleString() || 0}</span>
+                      <span className="text-white font-medium">${trader.aum?.toLocaleString() || 0}</span>
                     </div>
                   </div>
 
-                  <button
-                    className={`w-full py-3 ${trader.isCopied ? 'bg-gray-600' : 'bg-[#439A86] hover:bg-[#3a8a77]'} text-white font-medium transition-colors rounded-md mt-4 cursor-pointer`}
-                    onClick={(e) => handleCopyClick(trader.id, !!trader.isCopied, e)}
-                  >
-                    {trader.isCopied ? 'Copied' : 'Copy'}
-                  </button>
+                  {/* Copy Button */}
+                  <div className="px-3 pb-3 sm:px-4 sm:pb-4">
+                    <button
+                      className={`w-full py-2.5 sm:py-3 ${trader.isCopied ? 'bg-gray-600' : 'bg-[#439A86] hover:bg-[#3a8a77]'} text-white text-sm sm:text-base font-medium transition-colors rounded-md cursor-pointer`}
+                      onClick={(e) => handleCopyClick(trader.id, !!trader.isCopied, e)}
+                    >
+                      {trader.isCopied ? 'Copied' : 'Copy'}
+                    </button>
+                  </div>
                 </div>
               );
             })}

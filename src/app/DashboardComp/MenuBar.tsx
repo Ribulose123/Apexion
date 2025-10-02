@@ -98,7 +98,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
                     <p className="font-medium">Credit/Debit Card</p>
                     <p className="text-xs text-gray-400">Buy crypto via Visa or Mastercard</p>
                   </Link>
-                  <Link href="Apexion" onClick={handleLinkClick} className="block py-2 hover:text-white">
+                  <Link href="/Apexion" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">Bidvest Card</p>
                     <p className="text-xs text-gray-400">Spend globally with your card.</p>
                   </Link>
