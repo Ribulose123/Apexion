@@ -417,7 +417,7 @@ const AllTrades = ({ searchQuery = "" }) => {
   }
 
   return (
-    <div className="p-4">
+    <div className="p-4 w-full">
       {showModal && selectedTraderData && (
         <CopyTradeModal
           traderName={selectedTraderData.username}
@@ -467,8 +467,8 @@ const AllTrades = ({ searchQuery = "" }) => {
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full hidden md:table">
+      <div className="overflow-x-auto w-full">
+        <table className="w-full">
           <thead className="border-[#141E32] border-b border-t py-1">
             <tr>
               <th className="px-6 py-4 text-left text-gray-300 text-[13px] font-medium"></th>
@@ -623,7 +623,7 @@ const AllTrades = ({ searchQuery = "" }) => {
 
       {/* Pagination Controls */}
       {!isLoading && traders.length > 0 && (
-        <div className="flex flex-col md:flex-row items-center justify-between mt-6 text-sm text-gray-300">
+        <div className="flex flex-row items-center justify-between mt-6 text-sm text-gray-300">
           <div className="mb-4 md:mb-0">
             <span className="text-[#7D8491DE]">
               {startIndex + 1} - {Math.min(endIndex, traders.length)} of{" "}

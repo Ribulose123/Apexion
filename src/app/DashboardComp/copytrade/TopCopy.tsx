@@ -40,7 +40,7 @@ const TopCopy = () => {
           {tabs.map((tab) => (
             <button
               key={tab}
-              className={`relative px-1 text-[20px] md:text-[20px] ${
+              className={`relative px-1 text-[15px] md:text-[20px] ${
                 leadeTrade === tab
                   ? "text-white after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-full after:bg-[#6967AE]"
                   : "text-[#7D8491]"

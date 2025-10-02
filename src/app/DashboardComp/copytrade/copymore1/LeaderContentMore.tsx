@@ -481,7 +481,7 @@ const LeaderContentMore = ({ searchQuery = "" }) => {
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full hidden md:table">
+        <table className="w-full ">
           <thead className="border-[#141E32] border-b border-t py-1">
             <tr>
               <th className="px-6 py-4 text-left text-gray-300 text-[13px] font-medium"></th>
