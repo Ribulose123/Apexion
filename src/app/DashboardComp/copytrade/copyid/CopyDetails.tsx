@@ -301,244 +301,250 @@ const CopyDetails = () => {
 
   return (
     <div className="p-4 md:p-6 w-full max-w-6xl mx-auto">
-      {showModal && (
-        <CopyTradeModal
-          traderName={traderData.username}
-          minAmount={traderData.minCopyAmount}
-          maxAmount={traderData.maxCopyAmount}
-          commissionRate={traderData.commissionRate}
-          onClose={closeModal}
-          onConfirmCopy={handleConfirmCopy}
-        />
-      )}
+  {showModal && (
+    <CopyTradeModal
+      traderName={traderData.username}
+      minAmount={traderData.minCopyAmount}
+      maxAmount={traderData.maxCopyAmount}
+      commissionRate={traderData.commissionRate}
+      onClose={closeModal}
+      onConfirmCopy={handleConfirmCopy}
+    />
+  )}
 
-      {showUncopyConfirm && (
-        <UncopyConfirmModal
-          traderName={traderData.username}
-          onClose={closeUncopyModal} 
-          onConfirm={handleUnCopy} 
-        />
-      )}
+  {showUncopyConfirm && (
+    <UncopyConfirmModal
+      traderName={traderData.username}
+      onClose={closeUncopyModal} 
+      onConfirm={handleUnCopy} 
+    />
+  )}
 
-      {successMessage && (
-        <CopySuccess
-          message={successMessage}
-          onClose={() => setSuccessMessage(null)}
-        />
-      )}
+  {successMessage && (
+    <CopySuccess
+      message={successMessage}
+      onClose={() => setSuccessMessage(null)}
+    />
+  )}
 
-      <div className=" to-gray-850 rounded-xl border border-gray-800 p-6 shadow-xl">
-        <div className="flex flex-col lg:flex-row justify-between gap-6 pb-6 border-b border-gray-800">
-          <div className="flex-1 flex flex-col sm:flex-row gap-6">
-            <div className="relative flex-shrink-0">
-              <Image
-                src={traderData.profilePicture || "/img/Avatar DP.png"}
-                alt={traderData.username}
-                width={120}
-                height={120}
-                className="rounded-full border-4 border-green-500/30 shadow-lg"
-              />
-              {traderData.isVerified && (
-                <div className="absolute bottom-2 right-2 bg-blue-500 rounded-full p-1">
-                  <Award size={16} className="text-white" />
-                </div>
-              )}
-            </div>
+  {/* Main Container with Enhanced Styling */}
+  <div className="bg-gradient-to-br from-gray-900 to-gray-850 rounded-xl border border-gray-700 p-6 shadow-2xl backdrop-blur-sm">
+    <div className="flex flex-col lg:flex-row justify-between gap-6 pb-6 border-b border-gray-700">
+      <div className="flex-1 flex flex-col sm:flex-row gap-6">
+        {/* Profile Image Section */}
+        <div className="relative flex-shrink-0">
+          <Image
+            src={traderData.profilePicture || "/img/Avatar DP.png"}
+            alt={traderData.username}
+            width={120}
+            height={120}
+            className="rounded-full border-4 border-green-500/50 shadow-xl hover:scale-105 transition-transform duration-200"
+          />
+          {traderData.isVerified && (
+            <div className="absolute bottom-2 right-2 bg-blue-500 rounded-full p-1 shadow-lg">
+              <Award size={16} className="text-white" />
+            </div>
+          )}
+        </div>
 
-            <div className="flex-1 space-y-4">
-              <div>
-                <div className="flex items-center gap-3">
-                  <h1 className="text-white text-2xl font-bold">
-                    {traderData.username}
-                  </h1>
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      traderData.status === "ACTIVE"
-                        ? "bg-green-500/20 text-green-400"
-                        : "bg-red-500/20 text-red-400"
-                    }`}
-                  >
-                    {traderData.status}
-                  </span>
-                </div>
-                <p className="text-gray-400 mt-2">
-                  {traderData.bio || "No biography available"}
-                </p>
-                <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <Calendar size={14} />
-                    Joined {daysSinceCreated} day(s) ago
-                  </span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1">
-                    <Users size={14} />
-                    {traderData.totalCopiers} total copiers
-                  </span>
-                </div>
-              </div>
+        {/* Trader Info Section */}
+        <div className="flex-1 space-y-4">
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-white text-2xl font-bold">
+                {traderData.username}
+              </h1>
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-medium border ${
+                  traderData.status === "ACTIVE"
+                    ? "bg-green-500/20 text-green-300 border-green-500/30"
+                    : "bg-red-500/20 text-red-300 border-red-500/30"
+                }`}
+              >
+                {traderData.status}
+              </span>
+            </div>
+            <p className="text-gray-400 mt-2">
+              {traderData.bio || "No biography available"}
+            </p>
+            <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
+              <span className="flex items-center gap-1">
+                <Calendar size={14} />
+                Joined {daysSinceCreated} day(s) ago
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Users size={14} />
+                {traderData.totalCopiers} total copiers
+              </span>
+            </div>
+          </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
-                <div className="bg-gray-800/50 p-3 rounded-lg">
-                  <p className="text-gray-400 text-sm">Current Copiers</p>
-                  <h3 className="text-white text-xl font-bold">
-                    {traderData.currentCopiers.toLocaleString()}
-                    <span className="text-green-400 text-sm ml-1">
-                      /{traderData.maxCopiers}
-                    </span>
-                  </h3>
-                </div>
-                <div className="bg-gray-800/50 p-3 rounded-lg">
-                  <p className="text-gray-400 text-sm">Win Rate</p>
-                  <h3 className="text-white text-xl font-bold">{winRate}%</h3>
-                </div>
-                <div className="bg-gray-800/50 p-3 rounded-lg">
-                  <p className="text-gray-400 text-sm">Risk Score</p>
-                  <h3 className="text-white text-xl font-bold">
-                    {traderData.riskScore}/10
-                  </h3>
-                </div>
-                <div className="bg-gray-800/50 p-3 rounded-lg">
-                  <p className="text-gray-400 text-sm">Commission</p>
-                  <h3 className="text-white text-xl font-bold">
-                    {traderData.commissionRate}%
-                  </h3>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+            <div className="bg-gray-800/30 hover:bg-gray-700/40 transition-colors p-4 rounded-xl border border-gray-700">
+              <p className="text-gray-400 text-xs font-medium uppercase tracking-wide mb-2">Current Copiers</p>
+              <h3 className="text-white text-xl font-bold">
+                {traderData.currentCopiers.toLocaleString()}
+                <span className="text-green-400 text-sm ml-1">
+                  /{traderData.maxCopiers}
+                </span>
+              </h3>
+            </div>
+            <div className="bg-gray-800/30 hover:bg-gray-700/40 transition-colors p-4 rounded-xl border border-gray-700">
+              <p className="text-gray-400 text-xs font-medium uppercase tracking-wide mb-2">Win Rate</p>
+              <h3 className="text-white text-xl font-bold">{winRate}%</h3>
+            </div>
+            <div className="bg-gray-800/30 hover:bg-gray-700/40 transition-colors p-4 rounded-xl border border-gray-700">
+              <p className="text-gray-400 text-xs font-medium uppercase tracking-wide mb-2">Risk Score</p>
+              <h3 className="text-white text-xl font-bold">
+                {traderData.riskScore}/10
+              </h3>
+            </div>
+            <div className="bg-gray-800/30 hover:bg-gray-700/40 transition-colors p-4 rounded-xl border border-gray-700">
+              <p className="text-gray-400 text-xs font-medium uppercase tracking-wide mb-2">Commission</p>
+              <h3 className="text-white text-xl font-bold">
+                {traderData.commissionRate}%
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-4 justify-end">
-              <button className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-gray-800">
-                <Share2 size={18} />
-                <span className="text-sm">Share</span>
-              </button>
-              <button
-                className={`flex items-center gap-2 p-2 rounded-lg transition-colors ${
-                  traderData.favorited
-                    ? "text-red-500 hover:text-red-400 bg-red-500/10"
-                    : "text-gray-400 hover:text-white hover:bg-gray-800"
-                }`}
-              >
-                <Heart
-                  size={18}
-                  fill={traderData.favorited ? "currentColor" : "none"}
-                />
-                <span className="text-sm">Subscribe</span>
-              </button>
-            </div>
+      {/* Action Buttons Section */}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4 justify-end">
+          <button className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors p-3 rounded-xl hover:bg-gray-800/60">
+            <Share2 size={18} />
+            <span className="text-sm">Share</span>
+          </button>
+          <button
+            className={`flex items-center gap-2 p-3 rounded-xl transition-colors ${
+              traderData.favorited
+                ? "text-red-500 hover:text-red-400 bg-red-500/10 border border-red-500/20"
+                : "text-gray-400 hover:text-white hover:bg-gray-800/60 border border-transparent"
+            }`}
+          >
+            <Heart
+              size={18}
+              fill={traderData.favorited ? "currentColor" : "none"}
+            />
+            <span className="text-sm">Subscribe</span>
+          </button>
+        </div>
 
-            <div className="flex flex-col gap-2">
-            {/* Conditional Button for Copy/Uncopy */}
-              {traderData.copied ? (
-                <button
-                  className="bg-red-600 hover:bg-red-500 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:bg-gray-500 disabled:cursor-not-allowed"
-                  onClick={handleUncopyClick}
-                  disabled={uncopying}
-                >
-                  {uncopying ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin" />
-                      Stopping Copy...
-                    </>
-                  ) : (
-                    <>
-                      <XCircle size={18} />
-                      Stop Copying
-                    </>
-                  )}
-                </button>
-              ) : (
-                <button
-                  className="bg-green-600 hover:bg-green-500 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:bg-gray-500 disabled:cursor-not-allowed"
-                  onClick={handleCopyClick}
-                  disabled={copying}
-                >
-                  {copying ? (
-                    <>
-                      <Loader2 size={18} className="animate-spin" />
-                      Copying...
-                    </>
-                  ) : (
-                    <>
-                      <Target size={18} />
-                      Copy Trader
-                  </>
-                  )}
-                </button>
-              )}
-            {/* End Conditional Button */}
+        <div className="flex flex-col gap-2">
+          {/* Conditional Button for Copy/Uncopy */}
+          {traderData.copied ? (
+            <button
+              className="bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-red-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={handleUncopyClick}
+              disabled={uncopying}
+            >
+              {uncopying ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Stopping Copy...
+                </>
+              ) : (
+                <>
+                  <XCircle size={18} />
+                  Stop Copying
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-green-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={handleCopyClick}
+              disabled={copying}
+            >
+              {copying ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  Copying...
+                </>
+              ) : (
+                <>
+                  <Target size={18} />
+                  Copy Trader
+                </>
+              )}
+            </button>
+          )}
+          {/* End Conditional Button */}
 
-              <div className="text-center text-xs text-gray-500">
-                Min: ${traderData.minCopyAmount} | Max: $
-                {traderData.maxCopyAmount.toLocaleString()}
-              </div>
-            </div>
-          </div>
-        </div>
+          <div className="text-center text-xs text-gray-500 pt-2">
+            Min: ${traderData.minCopyAmount} | Max: $
+            {traderData.maxCopyAmount.toLocaleString()}
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-6">
-          <div className="bg-gray-800/30 p-4 rounded-xl border border-gray-800">
-            <div className="flex items-center gap-2 text-gray-400 mb-2">
-              <CircleDollarSign size={16} />
-              <span className="text-sm">Total P&L</span>
-            </div>
-            <h2
-              className={`text-2xl font-bold ${
-                traderData.totalPnL >= 0 ? "text-green-400" : "text-red-400"
-              }`}
-            >
-              ${traderData.totalPnL >= 0 ? "+" : "-"}{Math.abs(traderData.totalPnL).toLocaleString()}
-            </h2>
-          </div>
+    {/* Performance Metrics Grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 py-6">
+      <div className="bg-gray-800/30 hover:bg-gray-700/40 transition-colors p-4 rounded-xl border border-gray-700">
+        <div className="flex items-center gap-2 text-gray-400 mb-2">
+          <CircleDollarSign size={16} />
+          <span className="text-xs font-medium uppercase tracking-wide">Total P&L</span>
+        </div>
+        <h2
+          className={`text-2xl font-bold ${
+            traderData.totalPnL >= 0 ? "text-green-400" : "text-red-400"
+          }`}
+        >
+          ${traderData.totalPnL >= 0 ? "+" : ""}{Math.abs(traderData.totalPnL).toLocaleString()}
+        </h2>
+      </div>
 
-          <div className="bg-gray-800/30 p-4 rounded-xl border border-gray-800">
-            <div className="flex items-center gap-2 text-gray-400 mb-2">
-              <Wallet size={16} />
-              <span className="text-sm">Copiers P&L</span>
-            </div>
-            <h2
-              className={`text-2xl font-bold ${
-                traderData.copiersPnL >= 0 ? "text-green-400" : "text-red-400"
-              }`}
-            >
-              ${traderData.copiersPnL >= 0 ? "+" : "-"}{Math.abs(traderData.copiersPnL).toLocaleString()}
-            </h2>
-          </div>
+      <div className="bg-gray-800/30 hover:bg-gray-700/40 transition-colors p-4 rounded-xl border border-gray-700">
+        <div className="flex items-center gap-2 text-gray-400 mb-2">
+          <Wallet size={16} />
+          <span className="text-xs font-medium uppercase tracking-wide">Copiers P&L</span>
+        </div>
+        <h2
+          className={`text-2xl font-bold ${
+            traderData.copiersPnL >= 0 ? "text-green-400" : "text-red-400"
+          }`}
+        >
+          ${traderData.copiersPnL >= 0 ? "+" : ""}{Math.abs(traderData.copiersPnL).toLocaleString()}
+        </h2>
+      </div>
 
-          <div className="bg-gray-800/30 p-4 rounded-xl border border-gray-800">
-            <div className="flex items-center gap-2 text-gray-400 mb-2">
-              <PieChart size={16} />
-              <span className="text-sm">Assets Under Mgt</span>
-            </div>
-            <h2 className="text-2xl font-bold text-white">
-              ${traderData.aum.toLocaleString()}
-            </h2>
-          </div>
+      <div className="bg-gray-800/30 hover:bg-gray-700/40 transition-colors p-4 rounded-xl border border-gray-700">
+        <div className="flex items-center gap-2 text-gray-400 mb-2">
+          <PieChart size={16} />
+          <span className="text-xs font-medium uppercase tracking-wide">Assets Under Mgt</span>
+        </div>
+        <h2 className="text-2xl font-bold text-white">
+          ${traderData.aum.toLocaleString()}
+        </h2>
+      </div>
 
-          <div className="bg-gray-800/30 p-4 rounded-xl border border-gray-800">
-            <div className="flex items-center gap-2 text-gray-400 mb-2">
-              <BarChart3 size={16} />
-              <span className="text-sm">Trading Pairs</span>
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {traderData.tradingPairs.map((pair, index) => (
-                <span
-                  key={index}
-                  className="bg-gray-700 text-gray-300 px-2 py-1 rounded-full text-xs"
-                >
-                  {pair}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
+      <div className="bg-gray-800/30 hover:bg-gray-700/40 transition-colors p-4 rounded-xl border border-gray-700">
+        <div className="flex items-center gap-2 text-gray-400 mb-2">
+          <BarChart3 size={16} />
+          <span className="text-xs font-medium uppercase tracking-wide">Trading Pairs</span>
+        </div>
+        <div className="flex flex-wrap gap-1">
+          {traderData.tradingPairs.map((pair, index) => (
+            <span
+              key={index}
+              className="bg-gray-700/80 text-gray-300 px-2 py-1 rounded-full text-xs border border-gray-600"
+            >
+              {pair}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
 
-        <div className="mt-6">
-          <Usersdetails copyData={traderData} />
-        </div>
-      </div>
-    </div>
+    <div className="mt-6">
+      <Usersdetails copyData={traderData} />
+    </div>
+  </div>
+</div>
   );
 };
 

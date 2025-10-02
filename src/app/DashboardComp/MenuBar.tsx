@@ -106,7 +106,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
                     <p className="font-medium">P2P Trading</p>
                     <p className="text-xs text-gray-400">Buy crypto from verified merchants</p>
                   </Link>
-                  <Link href="/buy/quick" onClick={handleLinkClick} className="block py-2 hover:text-white">
+                  <Link href="/buy/coin" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">Quick Buy</p>
                     <p className="text-xs text-gray-400">Buy with card, e-wallet and third-party</p>
                   </Link>
@@ -133,14 +133,14 @@ const MenuBar: React.FC<MenuBarProps> = ({
               </button>
               {activeDropdown === 'tools' && (
                 <div className="mt-2 ml-4 text-sm text-gray-300 space-y-3">
-                  <Link href='/copy' onClick={handleLinkClick} className="block py-2 hover:text-white">
+                  <Link href='/copymore' onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">🔥 Copy Trading</p>
                     <p className="text-xs text-gray-400">Follow top trading experts</p>
                     
                     
                   </Link>
                   
-                  <Link href="/tools/leaderboard" onClick={handleLinkClick} className="block py-2 hover:text-white">
+                  <Link href="/copy" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     <p className="font-medium">📊 Leaderboard</p>
                     <p className="text-xs text-gray-400">Fiat to crypto and crypto to fiat block trades</p>
                   </Link>
@@ -159,10 +159,10 @@ const MenuBar: React.FC<MenuBarProps> = ({
               </button>
               {activeDropdown === 'more' && (
                 <div className="mt-2 ml-4 text-sm text-gray-300 space-y-1">
-                  <Link href="/about" onClick={handleLinkClick} className="block py-2 hover:text-white">
+                  <Link href="/about-us" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     About Us
                   </Link>
-                  <Link href="/support" onClick={handleLinkClick} className="block py-2 hover:text-white">
+                  <Link href="/contact" onClick={handleLinkClick} className="block py-2 hover:text-white">
                     Support
                   </Link>
                   <Link href="/blog" onClick={handleLinkClick} className="block py-2 hover:text-white">

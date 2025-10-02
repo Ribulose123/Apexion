@@ -333,7 +333,7 @@ const Navbar = () => {
                 <div className="w-1/2 space-y-4">
                   <div className="p-4 rounded-lg transition cursor-pointer ">
                     <Link
-                      href="/copy"
+                      href="/copymore"
                       className="font-semibold flex items-center gap-2"
                       onClick={handleProtectedNavigation("/copy")}
                     >
@@ -345,9 +345,9 @@ const Navbar = () => {
                   </div>
 
                   <Link
-                    href="/tools/leaderboard"
+                    href="/copy"
                     className="block p-4 rounded-lg transition"
-                    onClick={handleProtectedNavigation("/tools/leaderboard")}
+                    onClick={handleProtectedNavigation("/copy")}
                   >
                     <p className="font-semibold flex items-center gap-2">
                       📊 Leaderboard
@@ -427,7 +427,8 @@ const Navbar = () => {
 
             {/* Notification Modal for Mobile */}
             {showNotifications && (
-              <div className="fixed top-6 -left-8 -right-4 w-full z-50 p-4">a
+              <div className="fixed top-6 -left-8 -right-4 w-full z-50 p-4">
+                a
                 <NotificationModal
                   onClose={() => setShowNotifications(false)}
                 />
@@ -457,9 +458,9 @@ const Navbar = () => {
               <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
                 <div className="py-1">
                   <Link
-                    href="security/verfication"
+                    href="/security/verfication"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation("security/verfication")}
+                    onClick={handleProtectedNavigation("/security/verfication")}
                   >
                     My Profile
                   </Link>
@@ -473,7 +474,7 @@ const Navbar = () => {
                   <Link
                     href="security/settings"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation("security/settings")}
+                    onClick={handleProtectedNavigation("/security/settings")}
                   >
                     Settings
                   </Link>
@@ -577,7 +578,7 @@ const Navbar = () => {
 
             {/* Notification Modal for Desktop */}
             {showNotifications && (
-              <div className="fixed md:absolute top-16 md:top-14 left-3 -right-6 md:left-auto md:right-0 w-full md:w-80 z-50 p-4 md:p-0"> 
+              <div className="fixed md:absolute top-16 md:top-14 left-3 -right-6 md:left-auto md:right-0 w-full md:w-80 z-50 p-4 md:p-0">
                 <NotificationModal
                   onClose={() => setShowNotifications(false)}
                 />
@@ -622,13 +623,15 @@ const Navbar = () => {
               <div className="absolute top-full right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-10">
                 <div className="py-1">
                   <Link
-                    href="security/verfication"
+                    // FIX: Added leading slash for absolute path
+                    href="/security/verfication"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation("security/verfication")}
+                    onClick={handleProtectedNavigation("/security/verfication")}
                   >
                     My Profile
                   </Link>
                   <Link
+                    // This link was already correct (it had a leading slash)
                     href="/security"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
                     onClick={handleProtectedNavigation("/security")}
@@ -636,9 +639,10 @@ const Navbar = () => {
                     Security
                   </Link>
                   <Link
-                    href="security/settings"
+                    // FIX: Added leading slash for absolute path
+                    href="/security/settings"
                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
-                    onClick={handleProtectedNavigation("security/settings")}
+                    onClick={handleProtectedNavigation("/security/settings")}
                   >
                     Settings
                   </Link>
