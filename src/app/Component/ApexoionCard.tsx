@@ -59,10 +59,10 @@ const ApexoionCard = () => {
           <h1 className="text-5xl md:text-start text-center">
             Experience the Future <br className="md:block hidden" /> of Payments
             with <br className="md:block hidden" />{" "}
-            <span className="text-[#439A86]">Apexion Card</span>
+            <span className="text-[#439A86]">Bidvest Card</span>
           </h1>
           <p className="text-[#797A80] text-[13px] md:text-start text-center">
-            Unlock exclusive rewards and seamless transactions with the Apexion
+            Unlock exclusive rewards and seamless transactions with the Bidvest
             Card today!
           </p>
 
