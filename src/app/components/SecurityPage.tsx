@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import TwoFactorSection from './TwoFactorSection';
 import AdvancedProtectionSection from './AdvancedProtectionSection';
 import DeviceActivitiesSection from './DeviceActivitiesSection';
+import KycSection from './KycSection'; // Import the new KycSection
 import { useRouter } from 'next/navigation';
 import { handleSecurityAction, loadSecurityPreferences } from './securityActions';
 import { SecurityState } from '../data/data';
 
-// Define a default/initial state that is guaranteed to be the same on server and client
 const defaultSecurityState: SecurityState = {
   loginPassword: { enabled: false, email: null },
   emailAuth: { enabled: false, email: '' },
@@ -15,8 +15,9 @@ const defaultSecurityState: SecurityState = {
   fundPassword: { enabled: false },
   antiPhishing: { enabled: false },
   passKeys: { enabled: false },
-  deviceManagement: {}, // UPDATED THIS
-  accountActivity: {},  // UPDATED THIS
+  deviceManagement: {},
+  accountActivity: {},
+  kycStatus: 'NOT_SUBMITTED', // Add KYC status
 };
 
 const SecurityPage: React.FC = () => {
@@ -29,20 +30,31 @@ const SecurityPage: React.FC = () => {
   }, []);
 
   const handleActionClick = (option: string) => {
-    handleSecurityAction(
-      option,
-      securityOptions,
-      setSecurityOptions,
-      (path: string) => router.push(path),
-      undefined,
-      'user@example.com'
-    );
+    if (option === 'kycVerification') {
+      // Navigate to KYC verification page
+      router.push('/security/kyc-verification');
+    } else {
+      handleSecurityAction(
+        option,
+        securityOptions,
+        setSecurityOptions,
+        (path: string) => router.push(path),
+        undefined,
+        'user@example.com'
+      );
+    }
   };
 
   return (
     <div className="min-h-screen text-white">
       <div className="max-w-7xl mx-auto px-4 py-6">
         <h1 className="text-2xl font-bold mb-6">Security</h1>
+
+        {/* Add KYC Section */}
+        <KycSection
+          securityOptions={securityOptions}
+          onActionClick={handleActionClick}
+        />
 
         <TwoFactorSection
           securityOptions={securityOptions}
@@ -55,7 +67,7 @@ const SecurityPage: React.FC = () => {
         />
 
         <DeviceActivitiesSection
-          securityOptions={securityOptions} // Still passing this prop
+          securityOptions={securityOptions}
           onActionClick={handleActionClick}
         />
       </div>

@@ -627,7 +627,7 @@ export interface SecurityOptionProps {
   icon: React.ReactNode;
   title: string;
   description: string;
-  status?: 'enabled' | 'disabled'; // Made optional
+  status?: 'disabled' | 'enabled' | 'pending';
   email?: string;
   action?: string;
   link?: string;
@@ -660,6 +660,8 @@ export interface SecurityState {
   // as their status is implicitly 'disabled' or 'manageable'
   deviceManagement: object;
   accountActivity: object;
+  kycStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'NOT_SUBMITTED';
+  kycImage?: string;
 }
 
 

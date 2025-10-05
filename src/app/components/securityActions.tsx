@@ -8,22 +8,34 @@ type NavigateFunction = (path: string) => void;
 
 const SECURITY_STORAGE_KEY = 'securityPreferences';
 
-export const initialSecurityState: SecurityState = {
+// Enhanced SecurityState interface with KYC status
+export interface EnhancedSecurityState extends SecurityState {
+  kycStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'NOT_SUBMITTED';
+  kycImage?: string;
+}
+
+export const initialSecurityState: EnhancedSecurityState = {
   loginPassword: { enabled: true, email: null },
   emailAuth: { enabled: true, email: 'user@example.com' },
   googleAuth: { enabled: false, email: null },
   fundPassword: { enabled: false },
   antiPhishing: { enabled: false },
   passKeys: { enabled: false },
-  // Added missing properties to match SecurityState interface
   deviceManagement: {},
   accountActivity: {},
+  kycStatus: 'NOT_SUBMITTED',
+  kycImage: undefined,
 };
 
-export const loadSecurityPreferences = (): SecurityState => {
+export const loadSecurityPreferences = (): EnhancedSecurityState => {
   if (typeof window !== 'undefined') {
-    const savedPrefs = localStorage.getItem(SECURITY_STORAGE_KEY);
-    return savedPrefs ? JSON.parse(savedPrefs) : initialSecurityState;
+    try {
+      const savedPrefs = localStorage.getItem(SECURITY_STORAGE_KEY);
+      return savedPrefs ? JSON.parse(savedPrefs) : initialSecurityState;
+    } catch (error) {
+      console.warn('Failed to load security preferences from localStorage:', error);
+      return initialSecurityState;
+    }
   }
   return initialSecurityState;
 };
@@ -36,11 +48,12 @@ export const clearSecurityPreferences = () => {
 
 export const handleSecurityAction = async (
   option: string,
-  securityOptions: SecurityState,
-  setSecurityOptions: React.Dispatch<React.SetStateAction<SecurityState>>,
+  securityOptions: EnhancedSecurityState,
+  setSecurityOptions: React.Dispatch<React.SetStateAction<EnhancedSecurityState>>,
   navigate?: NavigateFunction,
   openModal?: ModalHandler,
-  userEmail?: string
+  userEmail?: string,
+  file?: File
 ) => {
   try {
     const newOptions = { ...securityOptions };
@@ -98,13 +111,77 @@ export const handleSecurityAction = async (
         if (navigate) navigate('/security/account-activity');
         break;
 
+      case 'kycUpload':
+        if (!file) {
+          throw new Error('Please select a file to upload');
+        }
+
+        // Enhanced file validation
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+        if (!validTypes.includes(file.type)) {
+          throw new Error('Invalid file type. Please upload JPG, PNG, or PDF files only.');
+        }
+
+        // File size validation (5MB max)
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+          throw new Error('File size too large. Please upload files smaller than 5MB.');
+        }
+
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken?.trim()) throw new Error('Please login first');
+
+        const formData = new FormData();
+        formData.append('kycImage', file);
+        
+        // Add metadata if needed
+        formData.append('uploadTimestamp', new Date().toISOString());
+
+        const kycResponse = await fetch(API_ENDPOINTS.USER.KYC, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+          },
+          body: formData,
+        });
+
+        if (!kycResponse.ok) {
+          // Enhanced error handling
+          let errorMessage = 'KYC upload failed';
+          try {
+            const errorData = await kycResponse.json();
+            errorMessage = errorData.message || errorMessage;
+          } catch {
+            errorMessage = `Server error: ${kycResponse.status} ${kycResponse.statusText}`;
+          }
+          throw new Error(errorMessage);
+        }
+
+        const result = await kycResponse.json();
+        
+        // Update security state with KYC information
+        newOptions.kycStatus = result.data.kycStatus || 'PENDING';
+        newOptions.kycImage = result.data.kycImage;
+        
+        // Show success message
+        alert(`KYC document uploaded successfully! Status: ${result.data.kycStatus}`);
+        break;
+
       default:
         console.warn('Unknown security option:', option);
         return;
     }
 
     setSecurityOptions(newOptions);
-    localStorage.setItem(SECURITY_STORAGE_KEY, JSON.stringify(newOptions));
+    
+    // Safely update localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(SECURITY_STORAGE_KEY, JSON.stringify(newOptions));
+      } catch (storageError) {
+        console.warn('Could not save to localStorage:', storageError);
+      }
+    }
 
     if (option === 'googleAuth') {
       alert(`2FA ${newOptions.googleAuth.enabled ? 'enabled' : 'disabled'}! ${
@@ -114,6 +191,11 @@ export const handleSecurityAction = async (
 
   } catch (error) {
     console.error('Security action error:', error);
-    alert(error instanceof Error ? error.message : 'An error occurred');
+    
+    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+    
+    alert(`Security action failed: ${errorMessage}`);
+    
+    throw error;
   }
 };

@@ -39,7 +39,7 @@ const TwoFactorSection: React.FC<TwoFactorSectionProps> = ({
         email={securityOptions.emailAuth.email || undefined}
         action="edit"
         onActionClick={() => onActionClick('emailAuth')}
-        link="/settings/emailauth"
+        link="#"
       />
       
       <SecurityOption

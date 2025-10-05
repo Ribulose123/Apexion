@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
     USER_UPDATEPASSWORD: `${API_BASE_URL}/user/update-password`,
     CONVERT_ASSEST: `${API_BASE_URL}/user/convert-asset`,
     TWO_FACTOR: `${API_BASE_URL}/user/update-user`,
+    KYC:`${API_BASE_URL}/user/kyc`
   },
   ASSET: {
     ASSET_LIST: `${API_BASE_URL}/asset`,
