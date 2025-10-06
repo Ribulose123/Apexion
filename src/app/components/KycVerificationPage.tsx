@@ -1,10 +1,12 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
-// Dynamically import icons
+const KYC_STATUS_KEY = 'kycVerificationStatus';
+type KycStatus = 'NOT_SUBMITTED' | 'PENDING' | 'APPROVED' | 'REJECTED';
+
 const ArrowLeft = dynamic(() => import('lucide-react').then(mod => mod.ArrowLeft), { ssr: false });
 const Upload = dynamic(() => import('lucide-react').then(mod => mod.Upload), { ssr: false });
 const CheckCircle = dynamic(() => import('lucide-react').then(mod => mod.CheckCircle), { ssr: false });
@@ -16,20 +18,33 @@ const KycVerificationPage: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [kycStatus, setKycStatus] = useState<'NOT_SUBMITTED' | 'PENDING' | 'APPROVED' | 'REJECTED'>('NOT_SUBMITTED');
+  const [kycStatus, setKycStatus] = useState<KycStatus>('NOT_SUBMITTED');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedStatus = localStorage.getItem(KYC_STATUS_KEY);
+      if (storedStatus) {
+        setKycStatus(storedStatus as KycStatus);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(KYC_STATUS_KEY, kycStatus);
+    }
+  }, [kycStatus]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Validate file type - only images
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
       if (!validTypes.includes(file.type)) {
         alert('Please select a valid image file (JPG, PNG only)');
         return;
       }
       
-      // Validate file size (2MB max for profile images)
       if (file.size > 2 * 1024 * 1024) {
         alert('Image size must be less than 2MB');
         return;
@@ -37,7 +52,6 @@ const KycVerificationPage: React.FC = () => {
       
       setSelectedFile(file);
       
-      // Create preview
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreviewUrl(e.target?.result as string);
@@ -54,14 +68,11 @@ const KycVerificationPage: React.FC = () => {
 
     setIsUploading(true);
     try {
-      // Simulate API call - replace with your actual KYC upload API
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Update status to pending
       setKycStatus('PENDING');
       alert('Profile photo uploaded successfully! Your verification is under review.');
       
-      // Clear selection
       setSelectedFile(null);
       setPreviewUrl(null);
       if (fileInputRef.current) {
@@ -83,7 +94,7 @@ const KycVerificationPage: React.FC = () => {
     }
   };
 
-  const getStatusConfig = (status: string) => {
+  const getStatusConfig = (status: KycStatus) => {
     switch (status) {
       case 'APPROVED':
         return { color: 'text-green-500', icon: <CheckCircle size={20} />, text: 'Verified' };
@@ -101,7 +112,6 @@ const KycVerificationPage: React.FC = () => {
   return (
     <div className="min-h-screen text-white">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header */}
         <div className="flex items-center mb-8">
           <button 
             onClick={() => router.back()}
@@ -112,7 +122,6 @@ const KycVerificationPage: React.FC = () => {
           <h1 className="text-2xl font-bold">KYC Verification</h1>
         </div>
 
-        {/* Status Card */}
         <div className="bg-gray-800 rounded-lg p-6 mb-8">
           <div className="flex items-center justify-between">
             <div>
@@ -130,12 +139,10 @@ const KycVerificationPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Upload Section */}
-        {kycStatus !== 'APPROVED' && kycStatus !== 'PENDING' && (
+        {(kycStatus === 'NOT_SUBMITTED' || kycStatus === 'REJECTED') && (
           <div className="bg-gray-800 rounded-lg p-6">
             <h3 className="text-lg font-semibold mb-4">Upload Profile Photo</h3>
             
-            {/* Image Preview */}
             {previewUrl && (
               <div className="mb-6 flex flex-col items-center">
                 <div className="relative w-40 h-40 rounded-full overflow-hidden border-2 border-blue-500">
@@ -156,7 +163,6 @@ const KycVerificationPage: React.FC = () => {
               </div>
             )}
             
-            {/* File Input */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-300 mb-3">
                 Select Profile Image
@@ -180,7 +186,6 @@ const KycVerificationPage: React.FC = () => {
               </p>
             </div>
 
-            {/* Upload Button */}
             <button
               onClick={handleUpload}
               disabled={!selectedFile || isUploading}
@@ -201,7 +206,6 @@ const KycVerificationPage: React.FC = () => {
           </div>
         )}
 
-        {/* Requirements Card */}
         <div className="bg-gray-800 rounded-lg p-6 mt-6">
           <h3 className="text-lg font-semibold mb-4">Photo Requirements</h3>
           <ul className="text-sm text-gray-300 space-y-2">

@@ -8,6 +8,8 @@ interface WithdrawalAddressProps {
   onNext: (amount: number, destinationAddress?: string) => Promise<void>;
   isSubmitting: boolean;
   isLoading: boolean;
+  userData?: { allowWithdrawal: boolean } | null;
+  onShowDepositModal?: () => void; // Add callback for showing deposit modal
 }
 
 const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
@@ -17,6 +19,8 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
   onNext,
   isSubmitting,
   isLoading,
+  userData,
+  onShowDepositModal,
 }) => {
   const [amount, setAmount] = useState<number | "">("");
   const [customAddress, setCustomAddress] = useState("");
@@ -36,6 +40,14 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
   const [addressError, setAddressError] = useState<string | null>(null);
 
   const handleNextButtonClick = async () => {
+    // Check if withdrawal is allowed
+    if (userData && !userData.allowWithdrawal) {
+      if (onShowDepositModal) {
+        onShowDepositModal();
+      }
+      return;
+    }
+
     // Validate amount
     if (typeof amount !== "number" || amount <= 0) {
       setAmountError("Please enter a valid amount greater than 0");
