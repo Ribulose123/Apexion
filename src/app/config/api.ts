@@ -47,7 +47,8 @@ export const API_ENDPOINTS = {
     COPY_FAVOURITE: `${API_BASE_URL}/trade/favorites`,
     CREATE_TRADE: `${API_BASE_URL}/trade/user/create`,
     TRADERS_TRADE: `${API_BASE_URL}/trade/trader/{traderId}/trades`,
-    TRADER_HOSTORY: `${API_BASE_URL}/trade/user/trades`
+    TRADER_HOSTORY: `${API_BASE_URL}/trade/user/trades`,
+    USER_TRADERS: `${API_BASE_URL}/trade/user/trades`
   },
 };
 

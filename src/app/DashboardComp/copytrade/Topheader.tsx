@@ -5,6 +5,7 @@ import { LuMegaphone } from "react-icons/lu";
 import { ArrowRight, EyeOff, Eye, Info } from "lucide-react";
 import SlideData from "@/app/Component/SlideData";
 import { API_ENDPOINTS } from "@/app/config/api";
+import { useRouter } from "next/navigation";
 
 interface UserCopyStats {
   totalAssetsUSDT: number;
@@ -32,7 +33,8 @@ const Topheader = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  
+  const router = useRouter()
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -71,6 +73,10 @@ const Topheader = () => {
   const handleBalance = () => {
     setShowBalance(!showBalance);
   };
+
+  const handleNavigation = ()=>{
+    router.push('/user')
+  }
 
   if(error){
     return(
@@ -126,7 +132,9 @@ const Topheader = () => {
                     Insufficient balance
                   </span>
                 </div>
-                <ArrowRight size={16} className="shrink-0" />
+                <button className="cursor-pointer" onClick={handleNavigation}>
+                  <ArrowRight size={16} className="shrink-0" />
+                </button>
               </div>
             </div>
 
