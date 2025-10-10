@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import TwoFactorSection from './TwoFactorSection';
 import AdvancedProtectionSection from './AdvancedProtectionSection';
 import DeviceActivitiesSection from './DeviceActivitiesSection';
-import KycSection from './KycSection'; // Import the new KycSection
 import { useRouter } from 'next/navigation';
 import { handleSecurityAction, loadSecurityPreferences } from './securityActions';
 import { SecurityState } from '../data/data';
@@ -50,11 +49,7 @@ const SecurityPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 py-6">
         <h1 className="text-2xl font-bold mb-6">Security</h1>
 
-        {/* Add KYC Section */}
-        <KycSection
-          securityOptions={securityOptions}
-          onActionClick={handleActionClick}
-        />
+        
 
         <TwoFactorSection
           securityOptions={securityOptions}

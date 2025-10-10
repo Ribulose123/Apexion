@@ -53,7 +53,6 @@ export const handleSecurityAction = async (
   navigate?: NavigateFunction,
   openModal?: ModalHandler,
   userEmail?: string,
-  file?: File
 ) => {
   try {
     const newOptions = { ...securityOptions };
@@ -111,62 +110,7 @@ export const handleSecurityAction = async (
         if (navigate) navigate('/security/account-activity');
         break;
 
-      case 'kycUpload':
-        if (!file) {
-          throw new Error('Please select a file to upload');
-        }
-
-        // Enhanced file validation
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
-        if (!validTypes.includes(file.type)) {
-          throw new Error('Invalid file type. Please upload JPG, PNG, or PDF files only.');
-        }
-
-        // File size validation (5MB max)
-        const maxSize = 5 * 1024 * 1024; // 5MB
-        if (file.size > maxSize) {
-          throw new Error('File size too large. Please upload files smaller than 5MB.');
-        }
-
-        const authToken = localStorage.getItem('authToken');
-        if (!authToken?.trim()) throw new Error('Please login first');
-
-        const formData = new FormData();
-        formData.append('kycImage', file);
-        
-        // Add metadata if needed
-        formData.append('uploadTimestamp', new Date().toISOString());
-
-        const kycResponse = await fetch(API_ENDPOINTS.USER.KYC, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${authToken}`,
-          },
-          body: formData,
-        });
-
-        if (!kycResponse.ok) {
-          // Enhanced error handling
-          let errorMessage = 'KYC upload failed';
-          try {
-            const errorData = await kycResponse.json();
-            errorMessage = errorData.message || errorMessage;
-          } catch {
-            errorMessage = `Server error: ${kycResponse.status} ${kycResponse.statusText}`;
-          }
-          throw new Error(errorMessage);
-        }
-
-        const result = await kycResponse.json();
-        
-        // Update security state with KYC information
-        newOptions.kycStatus = result.data.kycStatus || 'PENDING';
-        newOptions.kycImage = result.data.kycImage;
-        
-        // Show success message
-        alert(`KYC document uploaded successfully! Status: ${result.data.kycStatus}`);
-        break;
-
+      
       default:
         console.warn('Unknown security option:', option);
         return;
