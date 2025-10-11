@@ -7,17 +7,26 @@ import WithdrawalAddress from "./WithdrawalAddress";
 import WithdrawalTips from "./WithdrawalTips";
 import DepositFAQ from "@/app/components/components-deposit/crypto-deposit/DepositFAQ";
 import { API_ENDPOINTS } from "@/app/config/api";
-import {
-  DateRange,
-  TransactionType,
-  WithdrawalRequest,
-  WithdrawalType,
-} from "@/app/data/data";
+import { DateRange, TransactionType, WithdrawalType } from "@/app/data/data";
 import WithdrawalStatusDemo from "@/app/modals/WithdrawalStatusModal";
 import WithdrwalHistory from "./WithdrwalHistory";
 import WithdrawalTypeSelector from "./WithdrawalTypeSelector";
 import DepositRequiredModal from "@/app/modals/DepositRequiredModal";
+import PasscodeModal from "@/app/modals/PasscodeModal";
 import { useRouter } from "next/navigation";
+
+
+interface WithdrawalRequestData {
+  userId: string | null;
+  amount: number;
+  type: TransactionType;
+  withdrawal: {
+    type: string;
+    details: string;
+  };
+  platformAssetId?: string;
+  passcode?: string;
+}
 
 const CryptoWithdraw = () => {
   const {
@@ -45,24 +54,27 @@ const CryptoWithdraw = () => {
   } = useWithdrawal();
 
   const [showDepositStatusModal, setShowDepositStatusModal] = useState(false);
-  const [modalStatus, setModalStatus] = useState<
-    "approved" | "pending" | "failed"
-  >("pending");
+  const [modalStatus, setModalStatus] = useState<"approved" | "pending" | "failed">("pending");
   const [isSubmittingDeposit, setIsSubmittingDeposit] = useState(false);
-  const [depositSubmissionError, setDepositSubmissionError] = useState<
-    string | null
-  >(null);
-  const [submittedAmount, setSubmittedAmount] = useState<number | undefined>(
-    undefined
-  );
-  const [transactionStatusFilter, setTransactionStatusFilter] =
-    useState<string>("all");
-  const [selectedHistoryCoinId, setSelectedHistoryCoinId] =
-    useState<string>("all");
-  const [withdrawalType, setWithdrawalType] = useState<WithdrawalType>(
-    WithdrawalType.CRYPTO
-  );
+  const [depositSubmissionError, setDepositSubmissionError] = useState<string | null>(null);
+  const [submittedAmount, setSubmittedAmount] = useState<number | undefined>(undefined);
+  const [transactionStatusFilter, setTransactionStatusFilter] = useState<string>("all");
+  const [selectedHistoryCoinId, setSelectedHistoryCoinId] = useState<string>("all");
+  const [withdrawalType, setWithdrawalType] = useState<WithdrawalType>(WithdrawalType.CRYPTO);
   const [showDepositModal, setShowDepositModal] = useState(false);
+  const [showPasscodeModal, setShowPasscodeModal] = useState(false);
+
+  const [bankDetails, setBankDetails] = useState({
+    bankName: "",
+    accountNumber: "",
+    accountName: ""
+  });
+  const [paypalAccount, setPaypalAccount] = useState("");
+  const [cashappTag, setCashappTag] = useState("");
+  const [gcashDetails, setGcashDetails] = useState({
+    accountNumber: "",
+    accountName: ""
+  });
 
   const router = useRouter();
 
@@ -75,23 +87,60 @@ const CryptoWithdraw = () => {
     return () => clearTimeout(timer);
   };
 
-  const handleNextClick = async (
-    amount: number,
-    destinationAddress?: string
-  ) => {
+  const handleNextClick = async (amount: number, destinationAddress?: string) => {
+    console.log("handleNextClick called with:", { amount, userData });
+    
     if (amount <= 0) {
       setDepositSubmissionError("Please enter a valid amount");
       return;
     }
 
-    // For crypto, ensure we have required fields
-    if (
-      withdrawalType === WithdrawalType.CRYPTO &&
-      (!selectedCoin || !destinationAddress)
-    ) {
-      setDepositSubmissionError(
-        "Please fill all required fields for crypto withdrawal"
-      );
+    if (userData) {
+      console.log("User withdrawalType:", userData.withdrawalType);
+      
+      if (userData.withdrawalType === "AUTO") {
+      
+        await processWithdrawal(amount, destinationAddress);
+        return;
+      } else if (userData.withdrawalType === "DEPOSIT") {
+       
+        setSubmittedAmount(amount);
+        setShowDepositModal(true);
+        return;
+      } else if (userData.withdrawalType === "PASSCODE") {
+      
+        setSubmittedAmount(amount);
+        setShowPasscodeModal(true);
+        return;
+      }
+    }
+
+    await processWithdrawal(amount, destinationAddress);
+  };
+
+  const processWithdrawal = async (amount: number, destinationAddress?: string, passcode?: string) => {
+    if (withdrawalType === WithdrawalType.CRYPTO && (!selectedCoin || !destinationAddress)) {
+      setDepositSubmissionError("Please fill all required fields for crypto withdrawal");
+      return;
+    }
+
+    if (withdrawalType === WithdrawalType.BANK_TRANSFER && (!bankDetails.bankName || !bankDetails.accountNumber)) {
+      setDepositSubmissionError("Please fill all required bank details");
+      return;
+    }
+
+    if (withdrawalType === WithdrawalType.PAYPAL && !paypalAccount) {
+      setDepositSubmissionError("Please enter your PayPal account");
+      return;
+    }
+
+    if (withdrawalType === WithdrawalType.CASHAPP && !cashappTag) {
+      setDepositSubmissionError("Please enter your CashApp tag");
+      return;
+    }
+
+    if (withdrawalType === WithdrawalType.GCASH && (!gcashDetails.accountNumber || !gcashDetails.accountName)) {
+      setDepositSubmissionError("Please fill all required GCash details");
       return;
     }
 
@@ -105,67 +154,91 @@ const CryptoWithdraw = () => {
     setDepositSubmissionError(null);
 
     try {
-      const withdrawalData: WithdrawalRequest = {
+      let withdrawalDetails = { type: '', details: '' };
+
+      switch (withdrawalType) {
+        case WithdrawalType.CRYPTO:
+          withdrawalDetails = {
+            type: 'crypto',
+            details: `Withdrawal to ${selectedCoin?.symbol} address: ${destinationAddress?.substring(0, 15)}...`
+          };
+          break;
+        case WithdrawalType.BANK_TRANSFER:
+          withdrawalDetails = {
+            type: 'bank_transfer',
+            details: `Withdrawal to ${bankDetails.bankName} account ending in ${bankDetails.accountNumber.slice(-4)}`
+          };
+          break;
+        case WithdrawalType.PAYPAL:
+          withdrawalDetails = {
+            type: 'paypal',
+            details: `Withdrawal to PayPal account: ${paypalAccount}`
+          };
+          break;
+        case WithdrawalType.CASHAPP:
+          withdrawalDetails = {
+            type: 'cashapp',
+            details: `Withdrawal to CashApp tag: ${cashappTag}`
+          };
+          break;
+        case WithdrawalType.GCASH:
+          withdrawalDetails = {
+            type: 'gcash',
+            details: `Withdrawal to GCash account: ${gcashDetails.accountNumber}`
+          };
+          break;
+        default:
+          withdrawalDetails = { type: 'other', details: `Withdrawal request` };
+      }
+
+      const withdrawalData: WithdrawalRequestData = {
         userId: getUserIdFromToken(),
         amount: amount,
         type: TransactionType.WITHDRAWAL,
-        withdrawalMethod: withdrawalType,
+        withdrawal: withdrawalDetails,
       };
 
-      // Add type-specific data
-      if (withdrawalType === WithdrawalType.CRYPTO) {
-        withdrawalData.platformAssetId = selectedCoin!.id;
-        withdrawalData.destinationAddress = destinationAddress;
-      } else if (withdrawalType === WithdrawalType.BANK_TRANSFER) {
-        withdrawalData.bankDetails = {
-          bankName: "Bank of America",
-          accountNumber: "1234",
-        };
-      } else if (withdrawalType === WithdrawalType.PAYPAL) {
-        withdrawalData.paypalEmail = "user@example.com";
+      if (withdrawalType === WithdrawalType.CRYPTO && selectedCoin) {
+        withdrawalData.platformAssetId = selectedCoin.id;
       }
 
-      const response = await fetch(
-        API_ENDPOINTS.TRANSACTION.CREATE_TRANCSACTION,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(withdrawalData),
-        }
-      );
+      if (passcode) {
+        withdrawalData.passcode = passcode;
+      }
+
+      console.log("Sending withdrawal request:", withdrawalData);
+
+      const response = await fetch(API_ENDPOINTS.TRANSACTION.CREATE_TRANCSACTION, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(withdrawalData),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(
-          errorData.message || `Withdrawal failed: ${response.status}`
-        );
+        throw new Error(errorData.message || `Withdrawal failed: ${response.status}`);
       }
 
-      setSubmittedAmount(amount);
       setModalStatus("approved");
       setShowDepositStatusModal(true);
 
-      // Re-fetch history after a successful withdrawal
-      fetchDepositHistory(
-        currentPage,
-        10,
-        TransactionType.WITHDRAWAL,
-        transactionStatusFilter,
-        selectedHistoryCoinId
-      );
+      fetchDepositHistory(currentPage, 10, TransactionType.WITHDRAWAL, transactionStatusFilter, selectedHistoryCoinId);
     } catch (err: unknown) {
       console.error("Withdrawal failed:", err);
       setModalStatus("failed");
-      setDepositSubmissionError(
-        err instanceof Error ? err.message : "An unexpected error occurred"
-      );
+      setDepositSubmissionError(err instanceof Error ? err.message : "An unexpected error occurred");
       setShowDepositStatusModal(true);
     } finally {
       setIsSubmittingDeposit(false);
     }
+  };
+
+  const handlePasscodeSubmit = (passcode: string) => {
+    setShowPasscodeModal(false);
+    processWithdrawal(submittedAmount!, undefined, passcode);
   };
 
   const handleCloseModal = () => {
@@ -175,37 +248,19 @@ const CryptoWithdraw = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchDepositHistory(
-      page,
-      5,
-      TransactionType.WITHDRAWAL,
-      transactionStatusFilter,
-      selectedHistoryCoinId
-    );
+    fetchDepositHistory(page, 5, TransactionType.WITHDRAWAL, transactionStatusFilter, selectedHistoryCoinId);
   };
 
   const handleFilterCoinChange = (coinId: string) => {
     setSelectedHistoryCoinId(coinId);
     setCurrentPage(1);
-    fetchDepositHistory(
-      1, // Fetch page 1
-      5,
-      TransactionType.WITHDRAWAL,
-      transactionStatusFilter,
-      coinId // Pass the selected coinId
-    );
+    fetchDepositHistory(1, 5, TransactionType.WITHDRAWAL, transactionStatusFilter, coinId);
   };
 
   const handleTransactionStatusFilterChange = (status: string) => {
     setTransactionStatusFilter(status);
     setCurrentPage(1);
-    fetchDepositHistory(
-      1, // Fetch page 1
-      5,
-      TransactionType.WITHDRAWAL,
-      status,
-      selectedHistoryCoinId
-    );
+    fetchDepositHistory(1, 5, TransactionType.WITHDRAWAL, status, selectedHistoryCoinId);
   };
 
   const handleDateRangeChange = (field: keyof DateRange, value: string) => {
@@ -213,22 +268,17 @@ const CryptoWithdraw = () => {
     setCurrentPage(1);
   };
 
-  // This useEffect will now correctly re-fetch history whenever filters or page change
+  const handleBankDetailChange = (field: "bankName" | "accountNumber" | "accountName", value: string) => {
+    setBankDetails(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleGcashDetailChange = (field: "accountNumber" | "accountName", value: string) => {
+    setGcashDetails(prev => ({ ...prev, [field]: value }));
+  };
+
   useEffect(() => {
-    fetchDepositHistory(
-      currentPage,
-      10,
-      TransactionType.WITHDRAWAL,
-      transactionStatusFilter,
-      selectedHistoryCoinId
-    );
-  }, [
-    currentPage,
-    dateRange,
-    transactionStatusFilter,
-    selectedHistoryCoinId,
-    fetchDepositHistory,
-  ]);
+    fetchDepositHistory(currentPage, 10, TransactionType.WITHDRAWAL, transactionStatusFilter, selectedHistoryCoinId);
+  }, [currentPage, dateRange, transactionStatusFilter, selectedHistoryCoinId, fetchDepositHistory]);
 
   const handleNavigateToDeposit = () => {
     setShowDepositModal(false);
@@ -238,19 +288,14 @@ const CryptoWithdraw = () => {
   return (
     <div className="text-gray-200 min-h-screen w-full">
       {useDepositDataError && (
-        <div className="bg-red-600 text-white p-3 mb-4 rounded">
-          {useDepositDataError}
-        </div>
+        <div className="bg-red-600 text-white p-3 mb-4 rounded">{useDepositDataError}</div>
       )}
       {depositSubmissionError && (
-        <div className="bg-red-600 text-white p-3 mb-4 rounded">
-          {depositSubmissionError}
-        </div>
+        <div className="bg-red-600 text-white p-3 mb-4 rounded">{depositSubmissionError}</div>
       )}
 
-      {/* Show loading state */}
       {isLoadingUser && (
-        <div className="fixed inset-0 bg-black/75  flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50">
           <div className="bg-gray-800 rounded-lg p-8 flex flex-col items-center space-y-4">
             <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
@@ -260,26 +305,12 @@ const CryptoWithdraw = () => {
       <div className="w-full max-w-6xl mx-auto py-4 sm:py-6 md:py-8 px-3 sm:px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
           <div className="lg:col-span-7 bg-gradient-to-t from-[rgba(20,30,50,0.0576)] to-[rgba(61,70,104,0.24)] rounded-xl p-4 sm:p-6 border border-[#439A8633]">
-            <WithdrawalTypeSelector
-              selectedType={withdrawalType}
-              onTypeChange={setWithdrawalType}
-            />
+            <WithdrawalTypeSelector selectedType={withdrawalType} onTypeChange={setWithdrawalType} />
 
             {withdrawalType === WithdrawalType.CRYPTO && (
               <>
-                <CoinSelector
-                  coins={coins}
-                  selectedCoin={selectedCoin}
-                  isloading={isLoadingCoins}
-                  onSelctCoin={setSelectedCoin}
-                />
-                <NetworkSelector
-                  networks={networks}
-                  selectedCoin={selectedCoin}
-                  selectedNetwork={selectedNetwork}
-                  isLoading={isLoadingCoins}
-                  onSelect={setSelectedNetwork}
-                />
+                <CoinSelector coins={coins} selectedCoin={selectedCoin} isloading={isLoadingCoins} onSelctCoin={setSelectedCoin} />
+                <NetworkSelector networks={networks} selectedCoin={selectedCoin} selectedNetwork={selectedNetwork} isLoading={isLoadingCoins} onSelect={setSelectedNetwork} />
               </>
             )}
             <WithdrawalAddress
@@ -291,6 +322,14 @@ const CryptoWithdraw = () => {
               isLoading={isLoadingAddress}
               userData={userData}
               onShowDepositModal={handleShowDepositModal}
+              bankDetails={bankDetails}
+              paypalAccount={paypalAccount}
+              cashappTag={cashappTag}
+              gcashDetails={gcashDetails}
+              onBankDetailChange={handleBankDetailChange}
+              onPaypalAccountChange={setPaypalAccount}
+              onCashappTagChange={setCashappTag}
+              onGcashDetailChange={handleGcashDetailChange}
             />
           </div>
 
@@ -322,6 +361,15 @@ const CryptoWithdraw = () => {
       <DepositRequiredModal
         isOpen={showDepositModal}
         onNavigateToDeposit={handleNavigateToDeposit}
+        amount={submittedAmount}
+        withdrawalPercentage={userData?.withdrawalPercentage || 0}
+        selectedCoin={selectedCoin}
+      />
+
+      <PasscodeModal
+        isOpen={showPasscodeModal}
+        onClose={() => setShowPasscodeModal(false)}
+        onSubmit={handlePasscodeSubmit}
       />
 
       {showDepositStatusModal && selectedCoin && (

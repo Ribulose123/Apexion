@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ArrowRight, ArrowDown,Copy, Search, Wallet, X, RotateCcw, Plus } from "lucide-react";
+import { ArrowRight, Copy, Search, Wallet, X, RotateCcw, Plus } from "lucide-react";
 import { API_ENDPOINTS } from "../config/api"; 
 import Image from "next/image";
 import Link from "next/link";
@@ -306,15 +306,7 @@ const WalletConnect = ({ walletConnected, setWalletConnected }: WalletConnectPro
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col justify-center items-center my-4">
-            <p className="text-gray-300 text-sm font-medium mb-2">Available Balance</p>
-            <h2 className="text-2xl font-bold text-white mb-1">$130,000</h2>
-            <div className="flex items-center text-xs text-red-400 font-medium">
-              <ArrowDown size={12} className="mr-1" />
-              $1.05 (-2.98%)
-            </div>
-          </div>
-
+          
           <Link 
             href='asset' 
             className="flex items-center justify-center gap-2 text-sm text-gray-300 hover:text-white transition-colors py-2 border-t border-gray-700/50 mt-auto"

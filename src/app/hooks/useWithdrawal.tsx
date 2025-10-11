@@ -21,41 +21,35 @@ interface BackendTransaction {
   createdAt: string;
 }
 
+interface UserData {
+  withdrawalType: "AUTO" | "DEPOSIT" | "PASSCODE";
+  withdrawalPercentage?: number;
+}
+
 export const useWithdrawal = () => {
   const [coins, setCoins] = useState<CoinDepost[]>([]);
   const [networks, setNetworks] = useState<Network[]>([]);
-  const [withdrawalHistory, setWithdrawalHistory] = useState<DepositHistory[]>(
-    []
-  );
-  const [userData, setUserData] = useState<{ allowWithdrawal: boolean } | null>(
-    null
-  );
+  const [withdrawalHistory, setWithdrawalHistory] = useState<DepositHistory[]>([]);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(false);
   const [selectedCoin, setSelectedCoin] = useState<CoinDepost | null>(null);
   const [selectedNetwork, setSelectedNetwork] = useState<Network | null>(null);
   const [depositAddress, setDepositAddress] = useState("");
-  const [allBackendAssets, setAllBackendAssets] = useState<AssetFromBackend[]>(
-    []
-  );
-  const [withdrawalType, setWithdrawalType] = useState<WithdrawalType>(
-    WithdrawalType.CRYPTO
-  );
+  const [allBackendAssets, setAllBackendAssets] = useState<AssetFromBackend[]>([]);
+  const [withdrawalType, setWithdrawalType] = useState<WithdrawalType>(WithdrawalType.CRYPTO);
   const [isLoadingCoins, setIsLoadingCoins] = useState(false);
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1); // This is the state
+  const [currentPage, setCurrentPage] = useState(1);
   const [dateRange, setDateRange] = useState<DateRange>({
-    startDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0],
+    startDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
     endDate: new Date().toISOString().split("T")[0],
   });
 
   const getAuthToken = useCallback(() => {
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
+    const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : null;
     if (!token) {
       setError("Authentication token not found. Please log in.");
       return null;
@@ -65,51 +59,59 @@ export const useWithdrawal = () => {
 
   const getUserIdFromToken = useCallback((): string | null => {
     const token = getAuthToken();
-    if (!token) {
-      return null;
-    }
+    if (!token) return null;
     try {
       const decoded: { id?: string } = jwtDecode(token);
-      if (decoded && decoded.id) {
-        return decoded.id;
-      }
-      setError("User ID not found in token.");
-      return null;
+      return decoded?.id || null;
     } catch (e) {
       setError("Invalid or malformed token.");
       console.error("Error decoding token:", e);
       return null;
     }
   }, [getAuthToken]);
+const fetchUserData = useCallback(async () => {
+  setIsLoadingUser(true);
+  setError(null);
+  try {
+    const token = getAuthToken();
+    if (!token) return;
 
-  const fetchUserData = useCallback(async () => {
-    setIsLoadingUser(true);
-    setError(null);
-    try {
-      const token = getAuthToken();
-      if (!token) return;
-
-      const response = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch user data");
-      }
-
-      const userData = await response.json();
-
-      setUserData(userData);
-    } catch (err) {
-      console.error("Error fetching user data:", err);
-      setError("Unable to verify withdrawal permissions");
-    } finally {
-      setIsLoadingUser(false);
+    console.log("Fetching user data from API...");
+    const response = await fetch(API_ENDPOINTS.USER.USER_PROFILE, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch user data");
     }
-  }, [getAuthToken]);
+
+    const responseData = await response.json();
+    /* console.log("Full API response:", responseData);
+    console.log("Data object:", responseData.data);
+    console.log("Withdrawal type from data:", responseData.data?.withdrawalType); */
+
+    // Extract user data from the data property
+    const userDataFromApi = responseData.data;
+    
+    if (!userDataFromApi) {
+      throw new Error("No user data found in response");
+    }
+
+    setUserData({
+      withdrawalType: userDataFromApi.withdrawalType,
+      withdrawalPercentage: userDataFromApi.withdrawalPercentage || 0
+    });
+  } catch (err) {
+    console.error("Error fetching user data:", err);
+    setError("Unable to verify withdrawal permissions");
+  } finally {
+    setIsLoadingUser(false);
+  }
+}, [getAuthToken]);
 
   useEffect(() => {
     fetchUserData();
@@ -143,11 +145,7 @@ export const useWithdrawal = () => {
       } else if (responseData && Array.isArray(responseData.data)) {
         backendAssets = responseData.data;
       } else {
-        if (
-          responseData &&
-          typeof responseData === "object" &&
-          responseData.id
-        ) {
+        if (responseData && typeof responseData === "object" && responseData.id) {
           backendAssets = [responseData as AssetFromBackend];
         } else {
           throw new Error("Unexpected API response structure for assets.");
@@ -196,17 +194,11 @@ export const useWithdrawal = () => {
         setSelectedCoin(processedCoins[0]);
       }
       if (derivedNetworks.length > 0 && !selectedNetwork) {
-        const defaultNetwork =
-          derivedNetworks.find(
-            (net) => net.id === "bep20" || net.id === "erc20"
-          ) || derivedNetworks[0];
+        const defaultNetwork = derivedNetworks.find((net) => net.id === "bep20" || net.id === "erc20") || derivedNetworks[0];
         setSelectedNetwork(defaultNetwork);
       }
     } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Failed to load assets. An unknown error occurred.";
+      const errorMessage = err instanceof Error ? err.message : "Failed to load assets. An unknown error occurred.";
       setError(errorMessage);
       console.error("Error fetching coins:", err);
     } finally {
@@ -224,14 +216,10 @@ export const useWithdrawal = () => {
     setError(null);
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
       const mockAddress = `0x${Math.random().toString(16).substring(2, 42)}`;
       setDepositAddress(mockAddress);
     } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Failed to load deposit address. An unknown error occurred.";
+      const errorMessage = err instanceof Error ? err.message : "Failed to load deposit address. An unknown error occurred.";
       setError(errorMessage);
       console.error("Error fetching deposit address:", err);
       setDepositAddress("");
@@ -250,16 +238,9 @@ export const useWithdrawal = () => {
     ) => {
       const page = pageParam !== undefined ? pageParam : currentPage;
       const limit = limitParam !== undefined ? limitParam : 10;
-      const transactionTypeFilter =
-        transactionTypeFilterParam !== undefined
-          ? transactionTypeFilterParam
-          : "DEPOSIT";
-      const transactionStatusFilter =
-        transactionStatusFilterParam !== undefined
-          ? transactionStatusFilterParam
-          : "all";
-      const coinIdFilter =
-        coinIdFilterParam !== undefined ? coinIdFilterParam : "all";
+      const transactionTypeFilter = transactionTypeFilterParam !== undefined ? transactionTypeFilterParam : "DEPOSIT";
+      const transactionStatusFilter = transactionStatusFilterParam !== undefined ? transactionStatusFilterParam : "all";
+      const coinIdFilter = coinIdFilterParam !== undefined ? coinIdFilterParam : "all";
 
       setIsLoadingHistory(true);
       setError(null);
@@ -279,29 +260,21 @@ export const useWithdrawal = () => {
           type: transactionTypeFilter,
         });
 
-        const response = await fetch(
-          `${
-            API_ENDPOINTS.TRANSACTION.TRANSACTION_HISTORY
-          }?${params.toString()}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_ENDPOINTS.TRANSACTION.TRANSACTION_HISTORY}?${params.toString()}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           const errorData: { message?: string } = await response.json();
-          throw new Error(
-            errorData.message || "Failed to load transaction history."
-          );
+          throw new Error(errorData.message || "Failed to load transaction history.");
         }
 
         const responseData = await response.json();
-        const backendTransactions: BackendTransaction[] =
-          responseData.data || [];
+        const backendTransactions: BackendTransaction[] = responseData.data || [];
         const pagination = responseData.pagination?.pagination;
 
         let mappedHistory: DepositHistory[] = backendTransactions
@@ -310,13 +283,10 @@ export const useWithdrawal = () => {
             const start = new Date(dateRange.startDate);
             const end = new Date(dateRange.endDate);
             end.setDate(end.getDate() + 1);
-
             return txDate >= start && txDate < end;
           })
           .map((tx) => {
-            const asset = allBackendAssets.find(
-              (asset) => asset.id === tx.platformAssetId
-            );
+            const asset = allBackendAssets.find((asset) => asset.id === tx.platformAssetId);
 
             let frontendStatus: "pending" | "completed" | "failed";
             switch (tx.status) {
@@ -344,12 +314,9 @@ export const useWithdrawal = () => {
             };
           });
 
-        // Apply client-side filtering for coin/asset if needed
         if (coinIdFilter !== "all") {
           mappedHistory = mappedHistory.filter((historyItem) => {
-            const asset = allBackendAssets.find(
-              (asset) => asset.symbol === historyItem.coin
-            );
+            const asset = allBackendAssets.find((asset) => asset.symbol === historyItem.coin);
             return asset?.id === coinIdFilter;
           });
         }
@@ -383,10 +350,7 @@ export const useWithdrawal = () => {
           setCurrentPage(1);
         }
       } catch (err: unknown) {
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "Failed to load deposit history. An unknown error occurred.";
+        const errorMessage = err instanceof Error ? err.message : "Failed to load deposit history. An unknown error occurred.";
         setError(errorMessage);
         console.error("Error fetching deposit history:", err);
         setWithdrawalHistory([]);
@@ -397,6 +361,7 @@ export const useWithdrawal = () => {
     },
     [currentPage, dateRange, getAuthToken, getUserIdFromToken, allBackendAssets]
   );
+
   useEffect(() => {
     fetchCoins();
   }, [fetchCoins]);
@@ -422,10 +387,7 @@ export const useWithdrawal = () => {
         );
 
         if (derivedNetworks.length > 0) {
-          const defaultNetwork =
-            derivedNetworks.find(
-              (net) => net.id === "bep20" || net.id === "erc20"
-            ) || derivedNetworks[0];
+          const defaultNetwork = derivedNetworks.find((net) => net.id === "bep20" || net.id === "erc20") || derivedNetworks[0];
           setSelectedNetwork(defaultNetwork);
         } else {
           setSelectedNetwork(null);

@@ -8,8 +8,28 @@ interface WithdrawalAddressProps {
   onNext: (amount: number, destinationAddress?: string) => Promise<void>;
   isSubmitting: boolean;
   isLoading: boolean;
-  userData?: { allowWithdrawal: boolean } | null;
-  onShowDepositModal?: () => void; // Add callback for showing deposit modal
+  userData?: { 
+    withdrawalType: "AUTO" | "DEPOSIT" | "PASSCODE";
+    withdrawalPercentage?: number;
+  } | null;
+  onShowDepositModal?: () => void;
+  
+  bankDetails?: {
+    bankName: string;
+    accountNumber: string;
+    accountName: string;
+  };
+  paypalAccount?: string;
+  cashappTag?: string;
+  gcashDetails?: {
+    accountNumber: string;
+    accountName: string;
+  };
+  
+  onBankDetailChange?: (field: "bankName" | "accountNumber" | "accountName", value: string) => void;
+  onPaypalAccountChange?: (value: string) => void;
+  onCashappTagChange?: (value: string) => void;
+  onGcashDetailChange?: (field: "accountNumber" | "accountName", value: string) => void;
 }
 
 const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
@@ -21,40 +41,34 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
   isLoading,
   userData,
   onShowDepositModal,
+  bankDetails = { bankName: "", accountNumber: "", accountName: "" },
+  paypalAccount = "",
+  cashappTag = "",
+  gcashDetails = { accountNumber: "", accountName: "" },
+  onBankDetailChange,
+  onPaypalAccountChange,
+  onCashappTagChange,
+  onGcashDetailChange,
 }) => {
   const [amount, setAmount] = useState<number | "">("");
   const [customAddress, setCustomAddress] = useState("");
-  const [bankDetails, setBankDetails] = useState({
-    bankName: "",
-    accountNumber: "",
-    accountName: ""
-  });
-  const [paypalAccount, setPaypalAccount] = useState("");
-  const [cashappTag, setCashappTag] = useState("");
-  const [gcashDetails, setGcashDetails] = useState({
-    accountNumber: "",
-    accountName: ""
-  });
   
   const [amountError, setAmountError] = useState<string | null>(null);
   const [addressError, setAddressError] = useState<string | null>(null);
 
   const handleNextButtonClick = async () => {
-    // Check if withdrawal is allowed
-    if (userData && !userData.allowWithdrawal) {
+    if (userData && userData.withdrawalType === "DEPOSIT") {
       if (onShowDepositModal) {
         onShowDepositModal();
       }
       return;
     }
 
-    // Validate amount
     if (typeof amount !== "number" || amount <= 0) {
       setAmountError("Please enter a valid amount greater than 0");
       return;
     }
 
-    // Validate address for crypto withdrawals
     let finalDestinationAddress = withdrawalAddress;
 
     if (withdrawalType === WithdrawalType.CRYPTO) {
@@ -65,23 +79,53 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
       finalDestinationAddress = customAddress;
     }
 
+    if (withdrawalType === WithdrawalType.BANK_TRANSFER && (!bankDetails.bankName || !bankDetails.accountNumber)) {
+      setAmountError("Please fill all required bank details");
+      return;
+    }
+
+    if (withdrawalType === WithdrawalType.PAYPAL && !paypalAccount) {
+      setAmountError("Please enter your PayPal account");
+      return;
+    }
+
+    if (withdrawalType === WithdrawalType.CASHAPP && !cashappTag) {
+      setAmountError("Please enter your CashApp tag");
+      return;
+    }
+
+    if (withdrawalType === WithdrawalType.GCASH && (!gcashDetails.accountNumber || !gcashDetails.accountName)) {
+      setAmountError("Please fill all required GCash details");
+      return;
+    }
+
     setAmountError(null);
     setAddressError(null);
     await onNext(amount, finalDestinationAddress);
   };
 
-  const handleBankDetailChange = (field: keyof typeof bankDetails, value: string) => {
-    setBankDetails(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleBankDetailChange = (field: "bankName" | "accountNumber" | "accountName", value: string) => {
+    if (onBankDetailChange) {
+      onBankDetailChange(field, value);
+    }
   };
 
-  const handleGcashDetailChange = (field: keyof typeof gcashDetails, value: string) => {
-    setGcashDetails(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleGcashDetailChange = (field: "accountNumber" | "accountName", value: string) => {
+    if (onGcashDetailChange) {
+      onGcashDetailChange(field, value);
+    }
+  };
+
+  const handlePaypalAccountChange = (value: string) => {
+    if (onPaypalAccountChange) {
+      onPaypalAccountChange(value);
+    }
+  };
+
+  const handleCashappTagChange = (value: string) => {
+    if (onCashappTagChange) {
+      onCashappTagChange(value);
+    }
   };
 
   const renderAddressField = () => {
@@ -95,16 +139,12 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
                 type="text"
                 value={customAddress}
                 onChange={(e) => setCustomAddress(e.target.value)}
-                placeholder={`Enter your ${
-                  selectedCoin?.symbol || "crypto"
-                } address`}
+                placeholder={`Enter your ${selectedCoin?.symbol || "crypto"} address`}
                 className="w-full bg-transparent text-white placeholder-gray-500 focus:outline-none"
                 disabled={isLoading}
               />
             </div>
-            {addressError && (
-              <p className="text-red-400 text-sm mt-1">{addressError}</p>
-            )}
+            {addressError && <p className="text-red-400 text-sm mt-1">{addressError}</p>}
           </div>
         );
 
@@ -124,7 +164,7 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
                 />
               </div>
             </div>
-             <div className="mb-4">
+            <div className="mb-4">
               <h3 className="text-[#E8E8E8] mb-2">Account Number</h3>
               <div className="rounded-lg p-4 border border-[#439A8633] text-[#E8E8E8]">
                 <input
@@ -161,7 +201,7 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
               <input
                 type="text"
                 value={paypalAccount}
-                onChange={(e) => setPaypalAccount(e.target.value)}
+                onChange={(e) => handlePaypalAccountChange(e.target.value)}
                 className="w-full bg-transparent text-white placeholder-gray-500 focus:outline-none"
                 placeholder="user@example.com"
                 disabled={isLoading}
@@ -178,7 +218,7 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
               <input
                 type="text"
                 value={cashappTag}
-                onChange={(e) => setCashappTag(e.target.value)}
+                onChange={(e) => handleCashappTagChange(e.target.value)}
                 className="w-full bg-transparent text-white placeholder-gray-500 focus:outline-none"
                 placeholder="Enter CashApp tag"
                 disabled={isLoading}
@@ -234,18 +274,21 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
           <input
             type="number"
             value={amount}
-            onChange={(e) =>
-              setAmount(e.target.value ? parseFloat(e.target.value) : "")
-            }
+            onChange={(e) => setAmount(e.target.value ? parseFloat(e.target.value) : "")}
             placeholder={`Enter amount in ${selectedCoin?.symbol || "Coin"}`}
             className="w-full bg-transparent text-white placeholder-gray-500 focus:outline-none"
             disabled={isLoading}
           />
-          {amountError && (
-            <p className="text-red-400 text-sm mt-1">{amountError}</p>
-          )}
+          {amountError && <p className="text-red-400 text-sm mt-1">{amountError}</p>}
         </div>
       </div>
+
+      {userData?.withdrawalType === "DEPOSIT" && userData.withdrawalPercentage && (
+        <div className="mb-4 p-3 bg-blue-500/20 rounded border border-blue-500/50">
+          <p className="text-sm text-blue-300">Withdrawal Percentage: {userData.withdrawalPercentage}%</p>
+          <p className="text-sm text-white">You&apos;ll need to deposit {userData.withdrawalPercentage}% of your withdrawal amount</p>
+        </div>
+      )}
 
       <button
         onClick={handleNextButtonClick}
@@ -254,12 +297,14 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
           isLoading ||
           amount === "" ||
           amount <= 0 ||
-          (withdrawalType === WithdrawalType.CRYPTO && !customAddress.trim())
+          (withdrawalType === WithdrawalType.CRYPTO && !customAddress.trim()) ||
+          (withdrawalType === WithdrawalType.BANK_TRANSFER && (!bankDetails.bankName || !bankDetails.accountNumber)) ||
+          (withdrawalType === WithdrawalType.PAYPAL && !paypalAccount) ||
+          (withdrawalType === WithdrawalType.CASHAPP && !cashappTag) ||
+          (withdrawalType === WithdrawalType.GCASH && (!gcashDetails.accountNumber || !gcashDetails.accountName))
         }
         className={`mt-4 mb-3 w-full p-2 flex items-center justify-center rounded-lg text-white ${
-          isSubmitting || isLoading
-            ? "bg-[#3d665c] cursor-not-allowed"
-            : "bg-[#439A86] hover:bg-[#3d665c]"
+          isSubmitting || isLoading ? "bg-[#3d665c] cursor-not-allowed" : "bg-[#439A86] hover:bg-[#3d665c]"
         }`}
       >
         {isSubmitting ? "Processing..." : isLoading ? "Loading..." : "Withdraw"}
