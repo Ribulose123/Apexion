@@ -37,14 +37,24 @@ const WalletConnectModal: React.FC<WalletConnectModalProps> = ({
   const [authMethod, setAuthMethod] = useState<'phrase' | 'key'>('phrase');
   const [modalError, setModalError] = useState<string | null>(null);
 
-  const wallets: Wallet[] = [
-    { id: 1, name: "Metamask Wallet", icon: "/img/meta.webp", color: "bg-orange-500" },
-    { id: 2, name: "TONKeeper Wallet", icon: "/img/tonkeeper.png", color: "bg-blue-500" },
-    { id: 3, name: "Trust Wallet", icon: "/img/trustwallet.jpeg", color: "bg-blue-600" },
-    { id: 4, name: "Coinbase Wallet", icon: "/img/coinwallet.jpeg", color: "bg-blue-700" },
-    { id: 5, name: "WalletConnect", icon: "/img/walletCoin.jpeg", color: "bg-purple-500" },
-    { id: 6, name: "Phantom Wallet", icon: "/img/phantom.png", color: "bg-purple-600" }
-  ];
+ const wallets: Wallet[] = [
+  { id: 1, name: "Metamask Wallet", icon: "/img/meta.webp", color: "bg-orange-500" },
+  { id: 2, name: "TONKeeper Wallet", icon: "/img/tonkeeper.png", color: "bg-blue-500" },
+  { id: 3, name: "Trust Wallet", icon: "/img/trustwallet.jpeg", color: "bg-blue-600" },
+  { id: 4, name: "Coinbase Wallet", icon: "/img/coinwallet.jpeg", color: "bg-blue-700" },
+  { id: 5, name: "WalletConnect", icon: "/img/walletCoin.jpeg", color: "bg-purple-500" },
+  { id: 6, name: "Phantom Wallet", icon: "/img/phantom.png", color: "bg-purple-600" },
+  { id: 7, name: "Rainbow Wallet", icon: "/img/rainbow.jpeg", color: "bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500" },
+  { id: 8, name: "Binance Wallet", icon: "/img/binance1.png", color: "bg-yellow-500" },
+  { id: 9, name: "OKX Wallet", icon: "/img/okb-logo.png", color: "bg-black" },
+  { id: 10, name: "Crypto.com Wallet", icon: "/img/coin-cro-logo.png", color: "bg-blue-400" },
+  { id: 11, name: "Solflare Wallet", icon: "/img/solana-sol-logo.png", color: "bg-green-500" },
+  { id: 12, name: "Zerion Wallet", icon: "/img/z.png", color: "bg-indigo-500" },
+  { id: 13, name: "SafePal Wallet", icon: "/img/safepal-sfp-logo.png", color: "bg-gray-700" },
+  { id: 14, name: "Exodus Wallet", icon: "/img/exodus.jpeg", color: "bg-cyan-600" },
+  { id: 15, name: "Ledger Live Wallet", icon: "/img/ledger.png", color: "bg-gray-800" }
+];
+
 
   const visibleWallets = showMore ? wallets : wallets.slice(0, 4);
   const filteredWallets = visibleWallets.filter(wallet =>
@@ -162,6 +172,7 @@ const WalletConnectModal: React.FC<WalletConnectModalProps> = ({
                         width={24}
                         height={24}
                         className="w-6 h-6 rounded"
+                        unoptimized
                       />
                     </div>
                     <span className="font-medium">{wallet.name}</span>
@@ -188,6 +199,7 @@ const WalletConnectModal: React.FC<WalletConnectModalProps> = ({
                     width={48}
                     height={48}
                     className="w-16 h-16 rounded-full"
+                    unoptimized
                   />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-1">
@@ -210,6 +222,7 @@ const WalletConnectModal: React.FC<WalletConnectModalProps> = ({
                       width={24}
                       height={24}
                       className="w-6 h-6 rounded"
+                      unoptimized
                     />
                   </div>
                   <span className="font-medium text-[#01040F]">{selectedWallet?.name}</span>
