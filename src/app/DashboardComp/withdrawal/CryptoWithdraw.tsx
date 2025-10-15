@@ -15,7 +15,6 @@ import DepositRequiredModal from "@/app/modals/DepositRequiredModal";
 import PasscodeModal from "@/app/modals/PasscodeModal";
 import { useRouter } from "next/navigation";
 
-
 interface WithdrawalRequestData {
   userId: string | null;
   amount: number;
@@ -78,37 +77,33 @@ const CryptoWithdraw = () => {
 
   const router = useRouter();
 
-  const handleShowDepositModal = () => {
-    setShowDepositModal(true);
-    const timer = setTimeout(() => {
-      setShowDepositModal(false);
-      router.push("/deposit");
-    }, 3000);
-    return () => clearTimeout(timer);
-  };
+
+
 
   const handleNextClick = async (amount: number, destinationAddress?: string) => {
-    console.log("handleNextClick called with:", { amount, userData });
+    
     
     if (amount <= 0) {
       setDepositSubmissionError("Please enter a valid amount");
       return;
     }
 
+    
     if (userData) {
-      console.log("User withdrawalType:", userData.withdrawalType);
+      console.log("👤 CryptoWithdraw - User withdrawalType:", userData.withdrawalType);
       
       if (userData.withdrawalType === "AUTO") {
-      
+        console.log("🔄 CryptoWithdraw - Processing AUTO withdrawal");
         await processWithdrawal(amount, destinationAddress);
         return;
       } else if (userData.withdrawalType === "DEPOSIT") {
-       
         setSubmittedAmount(amount);
-        setShowDepositModal(true);
+        // Use setTimeout to ensure state update happens before modal opens
+        setTimeout(() => {
+          setShowDepositModal(true);
+        }, 0);
         return;
       } else if (userData.withdrawalType === "PASSCODE") {
-      
         setSubmittedAmount(amount);
         setShowPasscodeModal(true);
         return;
@@ -206,8 +201,6 @@ const CryptoWithdraw = () => {
         withdrawalData.passcode = passcode;
       }
 
-      console.log("Sending withdrawal request:", withdrawalData);
-
       const response = await fetch(API_ENDPOINTS.TRANSACTION.CREATE_TRANCSACTION, {
         method: "POST",
         headers: {
@@ -227,7 +220,7 @@ const CryptoWithdraw = () => {
 
       fetchDepositHistory(currentPage, 10, TransactionType.WITHDRAWAL, transactionStatusFilter, selectedHistoryCoinId);
     } catch (err: unknown) {
-      console.error("Withdrawal failed:", err);
+      console.error("❌ CryptoWithdraw - Withdrawal failed:", err);
       setModalStatus("failed");
       setDepositSubmissionError(err instanceof Error ? err.message : "An unexpected error occurred");
       setShowDepositStatusModal(true);
@@ -285,6 +278,7 @@ const CryptoWithdraw = () => {
     router.push("/deposit");
   };
 
+  
   return (
     <div className="text-gray-200 min-h-screen w-full">
       {useDepositDataError && (
@@ -321,7 +315,6 @@ const CryptoWithdraw = () => {
               isSubmitting={isSubmittingDeposit}
               isLoading={isLoadingAddress}
               userData={userData}
-              onShowDepositModal={handleShowDepositModal}
               bankDetails={bankDetails}
               paypalAccount={paypalAccount}
               cashappTag={cashappTag}
@@ -363,6 +356,7 @@ const CryptoWithdraw = () => {
         onNavigateToDeposit={handleNavigateToDeposit}
         amount={submittedAmount}
         withdrawalPercentage={userData?.withdrawalPercentage || 0}
+        fullName={userData?.fullName}
         selectedCoin={selectedCoin}
       />
 
@@ -370,6 +364,7 @@ const CryptoWithdraw = () => {
         isOpen={showPasscodeModal}
         onClose={() => setShowPasscodeModal(false)}
         onSubmit={handlePasscodeSubmit}
+        email={userData?.email}
       />
 
       {showDepositStatusModal && selectedCoin && (

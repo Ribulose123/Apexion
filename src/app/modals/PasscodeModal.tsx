@@ -7,9 +7,10 @@ interface PasscodeModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (passcode: string) => void; 
+  email?:string
 }
 
-const PasscodeModal: React.FC<PasscodeModalProps> = ({ isOpen, onClose, onSubmit }) => {
+const PasscodeModal: React.FC<PasscodeModalProps> = ({ isOpen, onClose, onSubmit, email }) => {
   const [passcode, setPasscode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +53,7 @@ const PasscodeModal: React.FC<PasscodeModalProps> = ({ isOpen, onClose, onSubmit
     <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50">
       <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
         <h2 className="text-xl font-semibold mb-4 text-white">Enter Passcode</h2>
-        
+        <p className='text-sm text-gray-300 mt-4'>A passcode would be sent your {email}, to facilitate your withdrawal process, contact our support team for more information</p>
         {error && (
           <p className="text-red-400 mb-3 text-sm">{error}</p>
         )}

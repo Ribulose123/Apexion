@@ -24,6 +24,8 @@ interface BackendTransaction {
 interface UserData {
   withdrawalType: "AUTO" | "DEPOSIT" | "PASSCODE";
   withdrawalPercentage?: number;
+  fullName:string
+  email:string
 }
 
 export const useWithdrawal = () => {
@@ -96,14 +98,15 @@ const fetchUserData = useCallback(async () => {
 
     // Extract user data from the data property
     const userDataFromApi = responseData.data;
-    
     if (!userDataFromApi) {
       throw new Error("No user data found in response");
     }
 
     setUserData({
       withdrawalType: userDataFromApi.withdrawalType,
-      withdrawalPercentage: userDataFromApi.withdrawalPercentage || 0
+      withdrawalPercentage: userDataFromApi.withdrawalPercentage || 0,
+      fullName: userDataFromApi.fullName,
+      email:userDataFromApi.email
     });
   } catch (err) {
     console.error("Error fetching user data:", err);

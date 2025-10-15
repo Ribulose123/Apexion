@@ -12,7 +12,6 @@ interface WithdrawalAddressProps {
     withdrawalType: "AUTO" | "DEPOSIT" | "PASSCODE";
     withdrawalPercentage?: number;
   } | null;
-  onShowDepositModal?: () => void;
   
   bankDetails?: {
     bankName: string;
@@ -40,7 +39,6 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
   isSubmitting,
   isLoading,
   userData,
-  onShowDepositModal,
   bankDetails = { bankName: "", accountNumber: "", accountName: "" },
   paypalAccount = "",
   cashappTag = "",
@@ -57,18 +55,19 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
   const [addressError, setAddressError] = useState<string | null>(null);
 
   const handleNextButtonClick = async () => {
-    if (userData && userData.withdrawalType === "DEPOSIT") {
-      if (onShowDepositModal) {
-        onShowDepositModal();
-      }
-      return;
-    }
 
+    // Common validation for all withdrawal types
     if (typeof amount !== "number" || amount <= 0) {
-      setAmountError("Please enter a valid amount greater than 0");
       return;
     }
 
+    // For DEPOSIT type, just pass the amount (no address needed)
+    if (userData && userData.withdrawalType === "DEPOSIT") {
+      await onNext(amount);
+      return;
+    }
+
+    // For other withdrawal types, do the full validation
     let finalDestinationAddress = withdrawalAddress;
 
     if (withdrawalType === WithdrawalType.CRYPTO) {
@@ -273,6 +272,7 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
         <div className="rounded-lg p-4 mb-4 border border-[#439A8633] mt-3">
           <input
             type="number"
+            name="amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value ? parseFloat(e.target.value) : "")}
             placeholder={`Enter amount in ${selectedCoin?.symbol || "Coin"}`}
@@ -283,13 +283,7 @@ const WithdrawalAddress: React.FC<WithdrawalAddressProps> = ({
         </div>
       </div>
 
-      {userData?.withdrawalType === "DEPOSIT" && userData.withdrawalPercentage && (
-        <div className="mb-4 p-3 bg-blue-500/20 rounded border border-blue-500/50">
-          <p className="text-sm text-blue-300">Withdrawal Percentage: {userData.withdrawalPercentage}%</p>
-          <p className="text-sm text-white">You&apos;ll need to deposit {userData.withdrawalPercentage}% of your withdrawal amount</p>
-        </div>
-      )}
-
+      
       <button
         onClick={handleNextButtonClick}
         disabled={
